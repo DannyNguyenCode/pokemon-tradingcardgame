@@ -8,4 +8,8 @@ API for pokemon trading card game, written in Python
 ### Instructions
 1. Create Python environment - python -m venv env
 2. Activate virtual environment - env/Scripts/activate
-3. install requirements - pip install -r requirements.txt
+    1. install requirements - pip install -r requirements.txt
+        - Run project
+    2. Build and run via Docker
+        - ```bash
+        - docker compose up --build

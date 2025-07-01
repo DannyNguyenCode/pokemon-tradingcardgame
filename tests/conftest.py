@@ -1,0 +1,52 @@
+import pytest
+import os
+
+os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+
+from api import create_app
+from api.db import init_db
+
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_database():
+    """
+    Create all tables in the in-memory SQLite database once per test session.
+    """
+    # Import all models so they’re registered on Base
+    from api.models import Card
+
+    # Run the CREATE TABLE …
+    init_db()
+
+    # No teardown needed: SQLite in-memory goes away when the process ends
+    yield
+
+@pytest.fixture(scope="session")
+def app():
+    """
+    Create a Flask app with TESTING=True.
+    """
+    app = create_app()
+    app.config.update({"TESTING": True})
+    return app
+
+@pytest.fixture()
+def client(app):
+    """
+    A test client for the app.
+    """
+    return app.test_client()
+
+@pytest.fixture()
+def db_session():
+    """
+    Provide a SQLAlchemy session bound to the in-memory engine,
+    and roll back after each test.
+    """
+    from api.db import SessionLocal
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.rollback()
+        session.close()

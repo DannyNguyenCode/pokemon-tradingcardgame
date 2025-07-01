@@ -8,5 +8,5 @@ services:
     env_file:
       - .env
     volumes:
-      - ./api:/app
+      - ./api:/app/api
     command: gunicorn --bind 0.0.0.0:8000 main:app
