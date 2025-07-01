@@ -2,8 +2,9 @@
 Web Browser Pokemon trading card game, where users can collect, trade, and battle.
 
 
-### Milestones
-Milestone 1 (M1): Foundation & CRUD
+## Milestones
+
+### Milestone 1 (M1): Foundation & CRUD
 
 #### 1.1 Repo & Monorepo Setup
 - Create a GitHub organization or project repo “poketcg”
