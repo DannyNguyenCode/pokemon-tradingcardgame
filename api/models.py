@@ -3,10 +3,8 @@ import uuid
 from datetime import datetime
 from sqlalchemy import String, Integer, Text, DateTime, JSON, text
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Mapped, mapped_column,DeclarativeBase
-
-class Base(DeclarativeBase):
-    pass
+from sqlalchemy.orm import Mapped, mapped_column
+from api.db import Base
  
 class Card(Base):
     __tablename__ = "card" 
