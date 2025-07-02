@@ -7,20 +7,20 @@ Web Browser Pokemon trading card game, where users can collect, trade, and battl
 ### Milestone 1 (M1): Foundation & CRUD
 
 #### 1.1 Repo & Monorepo Setup
-- Create a GitHub organization or project repo “poketcg”
-- Decide: monorepo (with web/, api/, infra/) or two repos (poketcg-web, poketcg-api)
-- Initialize .gitignore, README.md, and license
+- ~~Create a GitHub organization or project repo “poketcg”~~
+- ~~Decide: monorepo (with web/, api/, infra/) or two repos (poketcg-web, poketcg-api)~~
+- ~~Initialize .gitignore, README.md, and license~~
 
 #### 1.2 Back-end: Card Catalog Service
-- Tech: Python + Flask + Flask-Smorest
-- Scaffold: api/ folder with main.py, routers/cards.py, models.py, schemas.py
-- Connect to Supabase Postgres via asyncpg or Supabase SDK
+- ~~Tech: Python + Flask + Flask-Smorest~~
+- ~~Scaffold: api/ folder with main.py, routers/cards.py, models.py, schemas.py~~
+- ~~Connect to Supabase Postgres via asyncpg or Supabase SDK~~
 - Implement endpoints:
     - GET /cards (list, paging, basic filters)
-    - GET /cards/{id}
-    - POST /cards (admin only)
-    - PUT /cards/{id}, DELETE /cards/{id}
-- Write Pydantic schemas and SQLAlchemy models
+    - ~~GET /cards/{id}~~
+    - ~~POST /cards (admin only)~~
+    - ~~PUT /cards/{id}, DELETE /cards/{id}~~
+- ~~Write Pydantic schemas and SQLAlchemy models~~
 
 #### 1.3 Front-end: Card Catalog Page
 - Tech: React (CRA or Next.js) + Redux Toolkit
