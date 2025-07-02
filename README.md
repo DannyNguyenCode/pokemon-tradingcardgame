@@ -1,7 +1,20 @@
 # cardgame
 Web Browser Pokemon trading card game, where users can collect, trade, and battle.
 
-
+## Folder Structure
+```bash
+.
+└── pokemon-tcg/
+    ├── app/
+    │   ├── lib/
+    │   │   └── data.tsx
+    │   └── ui/
+    │       └── components/
+    │           ├── page.tsx
+    │           └── layout.tsx
+    ├── layout.tsx
+    └── page.tsx
+```
 ## Milestones
 
 ### Milestone 1 (M1): Foundation & CRUD
