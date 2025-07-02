@@ -50,3 +50,10 @@ def db_session():
     finally:
         session.rollback()
         session.close()
+
+@pytest.fixture(autouse=True)
+def patch_sessionlocal(monkeypatch, db_session):
+    """
+    Ensure any call to SessionLocal() in api.logic returns our in-memory db_session.
+    """
+    monkeypatch.setattr("api.logic.SessionLocal", lambda: db_session)
