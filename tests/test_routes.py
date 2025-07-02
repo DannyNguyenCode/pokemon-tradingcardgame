@@ -1,6 +1,6 @@
 def test_post_card_directly(client, monkeypatch):
     monkeypatch.setattr(
-        "api.routers.cards.create_tcg_card",
+        "api.routers.cards.logic.create_tcg_card",
         lambda identifier: ({"name": identifier,
                              "rarity": "Common",
                              "type": "Normal",

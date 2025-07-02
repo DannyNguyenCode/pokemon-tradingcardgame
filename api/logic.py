@@ -18,7 +18,7 @@ def create_card_logic(**kwargs):
         with SessionLocal() as db:
             card = crud.create_card(db, **kwargs)
             if not card:
-                return {"error": "Company creation failed"}, 500
+                return {"error": "Card creation failed"}, 500
             response = services.generate_response(
                 message="Card created",
                 status=201,
@@ -33,7 +33,7 @@ def list_cards():
     try:
         with SessionLocal() as db:
             cards = crud.list_cards(db)
-            response = services.generate_response("Card List retreived",200,[card.to_dict() for card in cards])
+            response = services.generate_response(message="Card List retreived",status=200,data=[card.to_dict() for card in cards])
             return response,200
     except Exception as error:
         return {"error": f"{error}"}, 500
@@ -44,7 +44,7 @@ def get_card_by_id(id:int):
             card = crud.get_card_by_id(db,id)
             if not card:
                 return {"error": f"Card with id {id} not found"}, 404
-            response = services.generate_response("Card retreived",200,card)
+            response = services.generate_response("Card retreived",200,card.to_dict())
             return response,200
     except Exception as error:
         return {"error": f"{error}"}, 500       
@@ -53,7 +53,7 @@ def update_card(id:int,**kwargs):
     try:
         with SessionLocal() as db:
             card = crud.update_card(db,id, **kwargs)
-            response = services.generate_response("Card updated",200,card)
+            response = services.generate_response("Card updated",200,card.to_dict())
             return response,200
     except Exception as error:
         return {"error": f"{error}"}, 500
@@ -64,7 +64,7 @@ def delete_card(id:int):
             card = crud.delete_card(db,id)
             if not card:
                 return {"error": f"Card with id {id} not found"}, 404
-            response = services.generate_response("Card deleted",200,card)
+            response = services.generate_response("Card deleted",200)
             return response,200
     except Exception as error:
         return {"error": f"{error}"}, 500
