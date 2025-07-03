@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ToastManager from "./ui/components/ToastManage";
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,8 +30,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StoreProvider>
-          <ToastManager />
-          {children}
+          <AppRouterCacheProvider>
+            <ToastManager />
+            {children}
+          </AppRouterCacheProvider>
         </StoreProvider>
       </body>
     </html>
