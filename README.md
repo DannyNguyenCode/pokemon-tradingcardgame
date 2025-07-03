@@ -36,9 +36,11 @@ Web Browser Pokemon trading card game, where users can collect, trade, and battl
 - ~~Write Pydantic schemas and SQLAlchemy models~~
 
 #### 1.3 Front-end: Card Catalog Page
-- Tech: React (CRA or Next.js) + Redux Toolkit
-- Scaffold app: web/ folder, npm init, ESLint/Prettier, Tailwind config
-- Create Redux “cards” slice with async thunks for fetchCards()
+- ~~Tech: React (CRA or Next.js) + Redux Toolkit~~
+- ~~Scaffold app: web/ folder, npm init, ESLint/Prettier, Tailwind config~~
+- ~~Create Redux “cards” slice with async thunks for fetchCards()~~
+    - decided on a plain reducer
+    - no thunk, fetch will be done in the react server component (NextJS Server Side Rendering)
 - Build /cards page: grid layout, card components, loading/error states
 - Wire environment var REACT_APP_API_URL=http://localhost:8000
 

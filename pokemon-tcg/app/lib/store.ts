@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-
+import cardsReducer from './features/cards/cardsSlice'
+import toastifyReducer from './features/toastify/toastifySlice'
 export const makeStore = () => {
     return configureStore({
-        reducer: {}
+        reducer: {
+            cards: cardsReducer,
+            toasify: toastifyReducer
+        }
     })
 }
 
