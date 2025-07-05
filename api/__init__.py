@@ -17,13 +17,14 @@ def create_app(config_object=None):
 
     if config_object:
         app.config.from_object(config_object)
-        
+
     # 2) Initialize extensions
     api = Api(app)
 
     # 3) Register blueprints
     from api.routers.cards import cards_blp
+    from api.routers.authentications.cookies import cookies_blp
     api.register_blueprint(cards_blp)
-
+    api.register_blueprint(cookies_blp)
 
     return app

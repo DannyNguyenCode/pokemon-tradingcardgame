@@ -41,3 +41,6 @@ class CardUpdate(CardIn):
 
     class Meta:
         title = "CardUpdate"   # unique OpenAPI name
+
+class CookiesTheme(Schema):
+    theme=fields.Str()
