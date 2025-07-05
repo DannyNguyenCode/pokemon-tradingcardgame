@@ -15,7 +15,7 @@ class CookieSetThemes(MethodView):
         try:
             data = request.json.get("theme","light")
             response = make_response(jsonify({"theme":data}))
-            response.set_cookie("theme",data,max_age=60*60*24*365,samesite="Lax",secure=True,httponly=False)
+            response.set_cookie("theme",data,max_age=60*60*24*365,samesite="None",secure=True,httponly=False)
             return response
         except Exception as e:
             return {"message":f"Failed to generate cookie for setting theme"},500
