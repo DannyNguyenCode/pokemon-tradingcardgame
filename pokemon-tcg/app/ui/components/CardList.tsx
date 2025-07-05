@@ -9,7 +9,7 @@ const CardList = ({ data }: { data: Pokemon[] }) => {
             <Grid container spacing={2}>
                 {data.map((pokemon) => {
                     return (
-                        <Grid key={pokemon.id} size={{ sm: 12, md: 3 }}>
+                        <Grid key={pokemon.id} size={{ sm: 12, md: 2 }}>
                             <PokemonCard pokemon={pokemon} />
                         </Grid>
                     )

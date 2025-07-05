@@ -1,36 +1,38 @@
 import type { Metadata } from "next";
-// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ToastManager from "./ui/components/ToastManage";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
-// const geistSans = Geist({
-//   variable: "--font-geist-sans",
-//   subsets: ["latin"],
-// });
-
-// const geistMono = Geist_Mono({
-//   variable: "--font-geist-mono",
-//   subsets: ["latin"],
-// });
+import { cookies } from 'next/headers'
+import NavBar from './ui/components/NavBar'
+import ThemeProvider from "./ui/theme/ThemeProvider";
+// import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
 
 export const metadata: Metadata = {
   title: "Pokemon-Trading Card Game",
   description: "View, Collect, and Battle with your favourite Pokemon",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const theme = (await cookies()).get('theme')?.value ?? 'light'
+  console.log("error checking =======")
+  console.log(theme)
+
+
   return (
-    <html data-theme="light" lang="en">
+    <html data-theme={theme} lang="en">
       <body >
         <StoreProvider>
           <AppRouterCacheProvider>
-            <ToastManager />
-            {children}
+            <ThemeProvider initialTheme={theme}>
+              <NavBar />
+              <ToastManager />
+              {children}
+            </ThemeProvider>
           </AppRouterCacheProvider>
         </StoreProvider>
       </body>
