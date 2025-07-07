@@ -1,0 +1,82 @@
+{
+    "fire": {
+        "color": "#EE8130",
+        "icon": "/icons/fire.png"
+    },
+    "water": {
+        "color": "#6390F0",
+        "icon": "/icons/water.png"
+    },
+    "ice": {
+        "color": "#6390F0",
+        "icon": "/icons/water.png"
+    },
+    "lightning": {
+        "color": "#F7D02C",
+        "icon": "/icons/lightning.png"
+    },
+    "electric": {
+        "color": "#F7D02C",
+        "icon": "/icons/lightning.png"
+    },
+    "grass": {
+        "color": "#7AC74C",
+        "icon": "/icons/grass.png"
+    },
+    "fighting": {
+        "color": "#C22E28",
+        "icon": "/icons/fighting.png"
+    },
+    "psychic": {
+        "color": "#F95587",
+        "icon": "/icons/psychic.png"
+    },
+    "dark": {
+        "color": "#705746",
+        "icon": "/icons/darkness.png"
+    },
+    "metal": {
+        "color": "#B7B7CE",
+        "icon": "/icons/metal.png"
+    },
+    "fairy": {
+        "color": "#D685AD",
+        "icon": "/icons/fairy.png"
+    },
+    "normal": {
+        "color": "#A8A77A",
+        "icon": "/icons/colorless.png"
+    },
+    "dragon": {
+        "color": "#A8A77A",
+        "icon": "/icons/colorless.png"
+    },
+    "poison": {
+        "color": "#7AC74C",
+        "icon": "/icons/grass.png"
+    },
+    "ground": {
+        "color": "#C22E28",
+        "icon": "/icons/fighting.png"
+    },
+    "flying": {
+        "color": "#A8A77A",
+        "icon": "/icons/colorless.png"
+    },
+    "bug": {
+        "color": "#7AC74C",
+        "icon": "/icons/grass.png"
+    },
+    "rock": {
+        "color": "#C22E28",
+        "icon": "/icons/fighting.png"
+    },
+    "ghost": {
+        "color": "#F95587",
+        "icon": "/icons/psychic.png"
+    },
+    "steel": {
+        "color": "#B7B7CE",
+        "icon": "/icons/metal.png"
+    }
+}

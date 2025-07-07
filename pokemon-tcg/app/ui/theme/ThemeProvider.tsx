@@ -1,23 +1,10 @@
 'use client'
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 interface Ctx { theme: string; toggle: () => void; }
 
 const ThemeCtx = createContext<Ctx | null>(null);
-const baseUrl = process.env.BASE_API_URL;
 export const useTheme = () => useContext(ThemeCtx)!;
-// Mui theme declerations
-const darkTheme = createTheme({
-    palette: {
-        mode: 'dark',
-    },
-});
-const lightTheme = createTheme({
-    palette: {
-        mode: 'light',
-    },
-});
+
 // component
 const ThemeProvider = ({
     initialTheme,
@@ -46,7 +33,7 @@ const ThemeProvider = ({
 
     }
     return (
-        <ThemeCtx.Provider value={{ theme, toggle }}><MuiThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>  <CssBaseline />{children}</MuiThemeProvider></ThemeCtx.Provider>
+        <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>
     )
 }
 

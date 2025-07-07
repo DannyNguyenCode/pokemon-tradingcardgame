@@ -1,24 +1,13 @@
-'use client'
-import React from 'react'
-import { Pokemon } from '@app/lib/definitions'
-import { Grid, Box } from '@mui/material'
-import PokemonCard from './PokemonCard'
-const CardList = ({ data }: { data: Pokemon[] }) => {
+import React from 'react';
+import { Pokemon } from '@app/lib/definitions';
+import PokemonCard from './PokemonCard';
+
+export default function CardList({ data }: { data: Pokemon[] }) {
     return (
-        <Box sx={{ flexGrow: 1, margin: '2em' }}>
-            <Grid container spacing={2}>
-                {data.map((pokemon) => {
-                    return (
-                        <Grid key={pokemon.id} size={{ sm: 12, md: 2 }}>
-                            <PokemonCard pokemon={pokemon} />
-                        </Grid>
-                    )
-                })}
-
-            </Grid>
-        </Box>
-
-    )
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4">
+            {data.map((pokemon) => (
+                <PokemonCard key={pokemon.id} pokemon={pokemon} />
+            ))}
+        </div>
+    );
 }
-
-export default CardList

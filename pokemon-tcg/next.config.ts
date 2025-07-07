@@ -1,7 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // keep any other settings you already have
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/PokeAPI/sprites/**', // wildcard all sprite paths
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+        pathname: '/PokeAPI/sprites/**', // wildcard all sprite paths
+      }
+    ],
+  },
   devIndicators: false
 };
 
