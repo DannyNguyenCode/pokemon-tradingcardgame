@@ -7,6 +7,8 @@ from api.pokeapi import Pokemon
 
 BASE = Path(__file__).parent
 _MOVE_OVERRIDES = json.loads((BASE / "move_overrides.json").read_text())
+ENERGY_MAP = json.loads((BASE / "lib/data/energyMap.json").read_text())
+
 
 def get_override_move(species: str) -> str | None:
     return _MOVE_OVERRIDES.get(species.lower())
@@ -41,9 +43,12 @@ def map_power_to_damage(power: int) -> int:
 def map_damage_to_cost(damage: int, energy_per_symbol: int = 20) -> int:
     return max(1, ceil(damage / energy_per_symbol))
 
+
 def format_cost_symbols(count: int, poke_type: str) -> str:
-    symbols = [poke_type] * (count - 1) + ["Colorless"]
-    return " ".join(symbols)
+    energy_key = ENERGY_MAP.get(poke_type.lower(), "colorless")
+
+    symbols = [energy_key] * (count - 1)
+    return symbols
 
 def map_hp_to_retreat(hp: int, hp_per_retreat: int = 60) -> int:
     return max(1, ceil(hp / hp_per_retreat))

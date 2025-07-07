@@ -12,7 +12,7 @@ from api.poke_utils import (
     calculate_rarity,
     determine_set_code,
 )
-
+CARDS_CACHE= None
 def create_card_logic(**kwargs):
     try:
         with SessionLocal() as db:
@@ -29,11 +29,15 @@ def create_card_logic(**kwargs):
         return {"error": f"{error}"}, 500
     
 def list_cards():
-
     try:
+        global CARDS_CACHE
+        if CARDS_CACHE:
+            return services.generate_response("Card List retrieved", 200, CARDS_CACHE), 200
+    
         with SessionLocal() as db:
             cards = crud.list_cards(db)
-            response = services.generate_response(message="Card List retreived",status=200,data=[card.to_dict() for card in cards])
+            CARDS_CACHE = [card.to_dict() for card in cards]
+            response = services.generate_response(message="Card List retreived",status=200,data=CARDS_CACHE)
             return response,200
     except Exception as error:
         return {"error": f"{error}"}, 500
