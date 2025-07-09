@@ -1,0 +1,12 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./api:/app/api
+    command: gunicorn --bind 0.0.0.0:8000 main:app

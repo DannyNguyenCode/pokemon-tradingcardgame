@@ -1,0 +1,21 @@
+# Python cache & virtualenvs
+__pycache__/
+*.py[cod]
+env/
+venv/
+
+# Git & editor files
+.git
+.gitignore
+*.swp
+.vscode/
+.idea/
+
+# Test artifacts
+tests/
+coverage.*
+
+# Local config & secrets
+.env
+*.pem
+*.key
