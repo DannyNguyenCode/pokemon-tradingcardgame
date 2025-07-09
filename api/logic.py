@@ -116,3 +116,37 @@ def create_tcg_card(identifier: str|int):
     # 5) Persist
     return create_card_logic(**card_data)
 
+def register_user(**data):
+    try:
+        with SessionLocal() as db:
+            user_exists = crud.get_user_by_id(data['email'])
+            if user_exists:
+                return {"error":f"{data['email']} already exists in the database"},409
+            data['password'] = services.hash_password(data.get("password"))
+            user = crud.create_user(db, **data)
+            if not user:
+                return{"error":"User registration failed"},500
+            response,status = services.generate_response(message="User registered",status=201,data=user.to_dict())
+            return response,status
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def login_user(**data):
+    try:
+        with SessionLocal() as db:
+            
+            user = crud.get_user_by_email(db,data['email'])
+            if not user:
+                return {"error":f"User with {data['email']} does not exist in database"},404
+            if not services.check_password(data["password"],user.password):
+                return {"error":"User email or password is not valid"},401
+            return {
+                "message":"User has logged in successfully",
+                "status":200,
+                "data":{
+                    "id":user.id,
+                    "email":user.email
+                }
+                },200
+    except Exception as error:
+        return {"error": f"{error}"}, 500

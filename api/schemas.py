@@ -1,11 +1,11 @@
 from marshmallow import Schema, fields
-
+from marshmallow.validate import Length
 class AttackSchema(Schema):
     name   = fields.Str(dump_only=True, allow_none=True)
     damage = fields.Int(dump_only=True, allow_none=True)
     cost   = fields.Str(dump_only=True, allow_none=True)
+
 class CardBase(Schema):
-    __tablename__='card'
     id = fields.Str(dump_only=True)
     name=fields.Str()
     rarity=fields.Str()
@@ -23,24 +23,33 @@ class CardBase(Schema):
 
 
 class CardIn(CardBase):
-    """Payload for creates / updates (no id/created_at)."""
-
     class Meta:
         title = "CardInput"
 
 class CardOut(CardBase):
-    """Representation returned by the API."""
-
-    attacks = fields.List(fields.Nested(AttackSchema))
+    pass
 
     class Meta:
         title = "Card"
     
 class CardUpdate(CardIn):
-    """Schema used for PUT/PATCH bodies."""
-
     class Meta:
-        title = "CardUpdate"   # unique OpenAPI name
+        title = "CardUpdate" 
 
 class CookiesTheme(Schema):
     theme=fields.Str()
+
+class User(Schema):
+    id = fields.UUID(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
+    email=fields.Email(required=True)
+    password = fields.Str(required=True,load_only=True,validate=Length(min=8))
+
+class Pokemon_Collection(Schema):
+    user_id=fields.UUID(required=True)
+    card_id=fields.UUID(required=True)
+    card = fields.Nested(CardOut, dump_only=True)
+
+class LoginSchema(Schema):
+    email=fields.Email(required=True,load_only=True)
+    password=fields.Str(required=True,load_only=True,validate=Length(min=8))

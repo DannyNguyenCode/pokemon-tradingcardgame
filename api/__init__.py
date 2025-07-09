@@ -26,7 +26,9 @@ def create_app(config_object=None):
     # 3) Register blueprints
     from api.routers.cards import cards_blp
     from api.routers.authentications.cookies import cookies_blp
+    from api.routers.authentications import auth_blp
     api.register_blueprint(cards_blp)
     api.register_blueprint(cookies_blp)
+    api.register_blueprint(auth_blp)
 
     return app
