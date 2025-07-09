@@ -13,6 +13,7 @@ API for pokemon trading card game, written in Python
     2. Build and run via Docker
         - ```bash
         - docker compose up --build
+    3. If not working, might be missing .env file
 3. Running Pytest
     - Make sure in root directory
     - python -m pytest -q

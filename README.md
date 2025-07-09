@@ -1,5 +1,10 @@
 # Pokemon Trading Card Game
 
+## Instructions
+README in backend diretory to set up and run api
+README in frontend directory to set up and run client
+
+
 ## Milestones
 
 ### Milestone 1 (M1): Foundation & CRUD
