@@ -1,7 +1,8 @@
 import { object, string, minLength, maxLength, regex, refine, z } from "zod"
 
-// Password validation regex for security best practices
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+// Password validation regex for security best practices - matches backend requirements
+// Backend requires: 2 uppercase, 2 numbers, 2 special characters, 8+ length
+const PASSWORD_REGEX = /^(?=.*[A-Z].*[A-Z])(?=.*[a-z])(?=.*\d.*\d)(?=.*[@$!%*?&].*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
 // Email validation regex (RFC 5322 compliant)
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -13,14 +14,14 @@ const emailSchema = string({ error: "Email is required" })
     .max(254, "Email address is too long")
     .transform(email => email.toLowerCase().trim())
 
-// Password validation with security requirements
+// Password validation with security requirements - matches backend exactly
 const passwordSchema = string({ error: "Password is required" })
     .min(1, "Password is required")
     .min(8, "Password must be at least 8 characters long")
     .max(128, "Password must be less than 128 characters")
     .regex(
         PASSWORD_REGEX,
-        "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)"
+        "Password must contain at least 2 uppercase letters, 2 numbers, and 2 special characters (@$!%*?&)"
     )
 
 // Sign-in schema (login)

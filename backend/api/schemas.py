@@ -1,9 +1,8 @@
 from marshmallow import Schema, fields
 from marshmallow.validate import Length, Regexp
-import re
 
-# Password validation regex (same as frontend)
-PASSWORD_REGEX = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+# Password validation regex (matches frontend - requires 2 uppercase, 2 numbers, 2 special)
+PASSWORD_REGEX = r"^(?=.*[A-Z].*[A-Z])(?=.*[a-z])(?=.*\d.*\d)(?=.*[@$!%*?&].*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
 
 
 class AttackSchema(Schema):
@@ -62,7 +61,7 @@ class User(Schema):
                    error="Password must be between 8 and 128 characters"),
             Regexp(
                 PASSWORD_REGEX,
-                error="Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)"
+                error="Password must contain at least 2 uppercase letters, 2 numbers, and 2 special characters (@$!%*?&)"
             )
         ]
     )
