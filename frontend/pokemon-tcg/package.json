@@ -12,10 +12,12 @@
     "@reduxjs/toolkit": "^2.8.2",
     "daisyui": "^5.0.43",
     "next": "15.3.4",
+    "next-auth": "^5.0.0-beta.29",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -5,7 +5,7 @@ import ToastManager from "./ui/components/ToastManage";
 import { cookies } from 'next/headers'
 import NavBar from './ui/components/NavBar'
 import ThemeProvider from "./ui/theme/ThemeProvider";
-// import { ThemeProvider as MuiThemeProvider } from '@mui/material/styles'
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Pokemon-Trading Card Game",
@@ -23,13 +23,15 @@ export default async function RootLayout({
   return (
     <html data-theme={theme} lang="en">
       <body >
-        <StoreProvider>
-          <ThemeProvider initialTheme={theme}>
-            <NavBar />
-            <ToastManager />
-            {children}
-          </ThemeProvider>
-        </StoreProvider>
+        <Providers>
+          <StoreProvider>
+            <ThemeProvider initialTheme={theme}>
+              <NavBar />
+              <ToastManager />
+              {children}
+            </ThemeProvider>
+          </StoreProvider>
+        </Providers>
       </body>
     </html>
   );

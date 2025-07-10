@@ -12,7 +12,9 @@ from api.poke_utils import (
     calculate_rarity,
     determine_set_code,
 )
-CARDS_CACHE= None
+CARDS_CACHE = None
+
+
 def create_card_logic(**kwargs):
     try:
         with SessionLocal() as db:
@@ -23,57 +25,65 @@ def create_card_logic(**kwargs):
                 message="Card created",
                 status=201,
                 data=card.to_dict()
-                )
-            return response,201 
+            )
+            return response, 201
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
+
 def list_cards():
     try:
         global CARDS_CACHE
         if CARDS_CACHE:
             return services.generate_response("Card List retrieved", 200, CARDS_CACHE), 200
-    
+
         with SessionLocal() as db:
             cards = crud.list_cards(db)
             CARDS_CACHE = [card.to_dict() for card in cards]
-            response = services.generate_response(message="Card List retreived",status=200,data=CARDS_CACHE)
-            return response,200
-    except Exception as error:
-        return {"error": f"{error}"}, 500
-    
-def get_card_by_id(id:int):
-    try:
-        with SessionLocal() as db:
-            card = crud.get_card_by_id(db,id)
-            if not card:
-                return {"error": f"Card with id {id} not found"}, 404
-            response = services.generate_response("Card retreived",200,card.to_dict())
-            return response,200
-    except Exception as error:
-        return {"error": f"{error}"}, 500       
-
-def update_card(id:int,**kwargs):
-    try:
-        with SessionLocal() as db:
-            card = crud.update_card(db,id, **kwargs)
-            response = services.generate_response("Card updated",200,card.to_dict())
-            return response,200
+            response = services.generate_response(
+                message="Card List retreived", status=200, data=CARDS_CACHE)
+            return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
 
-def delete_card(id:int):
+
+def get_card_by_id(id: int):
     try:
         with SessionLocal() as db:
-            card = crud.delete_card(db,id)
+            card = crud.get_card_by_id(db, id)
             if not card:
                 return {"error": f"Card with id {id} not found"}, 404
-            response = services.generate_response("Card deleted",200)
-            return response,200
+            response = services.generate_response(
+                "Card retreived", 200, card.to_dict())
+            return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
-     
-def create_tcg_card(identifier: str|int):
+
+
+def update_card(id: int, **kwargs):
+    try:
+        with SessionLocal() as db:
+            card = crud.update_card(db, id, **kwargs)
+            response = services.generate_response(
+                "Card updated", 200, card.to_dict())
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+
+
+def delete_card(id: int):
+    try:
+        with SessionLocal() as db:
+            card = crud.delete_card(db, id)
+            if not card:
+                return {"error": f"Card with id {id} not found"}, 404
+            response = services.generate_response("Card deleted", 200)
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+
+
+def create_tcg_card(identifier: str | int):
     # 1) Core fetch
     try:
         p = Pokemon.fetch(identifier)
@@ -82,15 +92,15 @@ def create_tcg_card(identifier: str|int):
 
     # 2) Single attack
     move_info = select_best_levelup_move(p)
-    dmg       = map_power_to_damage(move_info["power"])
-    cost_cnt  = map_damage_to_cost(dmg)
-    cost_str  = format_cost_symbols(cost_cnt, p.types[0])
+    dmg = map_power_to_damage(move_info["power"])
+    cost_cnt = map_damage_to_cost(dmg)
+    cost_str = format_cost_symbols(cost_cnt, p.types[0])
 
     # 3) Other computed fields
     relations = p.fetch_damage_relations()
-    retreat   = map_hp_to_retreat(p.hp)
-    rarity    = calculate_rarity(p)
-    set_code  = determine_set_code(p)
+    retreat = map_hp_to_retreat(p.hp)
+    rarity = calculate_rarity(p)
+    set_code = determine_set_code(p)
 
     # 4) Payload
     card_data = {
@@ -116,37 +126,46 @@ def create_tcg_card(identifier: str|int):
     # 5) Persist
     return create_card_logic(**card_data)
 
+
 def register_user(**data):
     try:
         with SessionLocal() as db:
-            user_exists = crud.get_user_by_id(data['email'])
+            user_exists = crud.get_user_by_email(db, data['email'])
             if user_exists:
-                return {"error":f"{data['email']} already exists in the database"},409
-            data['password'] = services.hash_password(data.get("password"))
+                return {"error": "Registration failed"}, 400
+            validate_password, status = services.validate_password_strength(
+                data["password"])
+            if status == "violation":
+                return {"error": validate_password}, 400
+            data['password'] = services.hash_password(data["password"])
             user = crud.create_user(db, **data)
             if not user:
-                return{"error":"User registration failed"},500
-            response,status = services.generate_response(message="User registered",status=201,data=user.to_dict())
-            return response,status
+                return {"error": "User registration failed"}, 500
+            response = services.generate_response(
+                message=f"User registered with {validate_password}", status=201, data=user.to_dict())
+            return response, 201
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
+
 def login_user(**data):
     try:
         with SessionLocal() as db:
-            
-            user = crud.get_user_by_email(db,data['email'])
+
+            user = crud.get_user_by_email(db, data['email'])
             if not user:
-                return {"error":f"User with {data['email']} does not exist in database"},404
-            if not services.check_password(data["password"],user.password):
-                return {"error":"User email or password is not valid"},401
+                # Use generic error message to prevent user enumeration
+                return {"error": "Invalid credentials"}, 401
+            if not services.check_password(data["password"], user.password):
+                # Use same generic error message for security
+                return {"error": "Invalid credentials"}, 401
             return {
-                "message":"User has logged in successfully",
-                "status":200,
-                "data":{
-                    "id":user.id,
-                    "email":user.email
+                "message": "User has logged in successfully",
+                "status": 200,
+                "data": {
+                    "id": user.id,
+                    "email": user.email
                 }
-                },200
+            }, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
