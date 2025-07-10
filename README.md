@@ -32,17 +32,17 @@ README in frontend directory to set up and run client
     - decided on a plain reducer
     - no thunk, fetch will be done in the react server component (NextJS Server Side Rendering)
 - Build /cards page: grid layout, card components, loading/error states
-- Wire environment var REACT_APP_API_URL=http://localhost:8000
+- ~~Wire environment var REACT_APP_API_URL=http://localhost:8000~~
 
 #### 1.4 Infra: Docker & Compose
 - Infra:
-    - Write api/Dockerfile (from previous)
-    - Write docker-compose.yml to spin up api + Supabase emulator (or real Supabase)
-- Verify: docker-compose up --build, then hit http://localhost:8000/cards
+    - ~~Write api/Dockerfile (from previous)~~
+    - ~~Write docker-compose.yml to spin up api + Supabase emulator (or real Supabase)~~
+- ~~Verify: docker-compose up --build, then hit http://localhost:8000/cards~~
 
 #### 1.5 Testing & CI
-- Add pytest tests for the card catalog routes (CRUD & validation)
-- Add Jest + React Testing Library tests for the /cards page
+- ~~Add pytest tests for the card catalog routes (CRUD & validation)~~
+- ~~Add Jest + React Testing Library tests for the /cards page~~
 - Create GitHub Actions workflow:
     -Lint Python (flake8) & JS (eslint), run tests, build Docker image
 
