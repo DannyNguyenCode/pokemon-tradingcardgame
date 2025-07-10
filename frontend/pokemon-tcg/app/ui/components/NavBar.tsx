@@ -25,7 +25,7 @@ export default function NavBar() {
     }
 
     return (
-        <div className="navbar bg-base-100 shadow-sm">
+        <div className="navbar h-16 bg-base-100 shadow-sm">
             <div className="navbar-start">
                 <div className="dropdown">
                     <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -50,22 +50,33 @@ export default function NavBar() {
                         )}
                     </ul>
                 </div>
-                <a className="btn btn-ghost text-xl">daisyUI</a>
+                <Link href={'/'} className="link link-hover link-active text-xl items-center hidden lg:flex gap-2 p-4">
+                    <span className="text-xl">Pokemon TCG</span>
+                    <div className="flex justify-center items-center pt-1.5">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+                            <path d='M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4m2-2h7M3 12h7' />
+                            <path d='M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0' />
+                        </svg>
+                    </div>
+                </Link>
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-                    <li><Link href={'/'}>Home</Link></li>
+
                     <li><Link href={'/catalogue'}>Catalogue</Link></li>
                     <li><Link href={'/collection'}>Collection</Link></li>
                     {session ? (
                         <>
-                            <li><span className="text-sm opacity-70">Welcome, {session.user?.email?.split('@')[0]}</span></li>
                             <li><button onClick={handleLogout}>Logout</button></li>
+                            <li className="menu-title pt-1.5">
+                                <span className="text-sm font-bold text-neutral">Logged in as {session.user?.email?.split('@')[0]}</span>
+                            </li>
                         </>
                     ) : (
                         <>
-                            <li><Link href={'/login'}>Login</Link></li>
                             <li><Link href={'/register'}>Register</Link></li>
+                            <li><Link href={'/login'}>Login</Link></li>
+
                         </>
                     )}
                 </ul>

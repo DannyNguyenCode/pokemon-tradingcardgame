@@ -1,9 +1,9 @@
 'use client'
 import React from 'react'
-import { Pokemon } from '@app/lib/definitions'
-import { useAppDispatch } from '@app/lib/hooks'
-import { loadToastifyState } from '@app/lib/features/toastify/toastifySlice'
-import { mapPokemonToCardBase } from '@app/lib/mappers/pokemonCreateMapper'
+import { Pokemon } from '@/lib/definitions'
+import { useAppDispatch } from '@/lib/hooks'
+import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
+import { mapPokemonToCardBase } from '@/lib/mappers/pokemonCreateMapper'
 const PokemonAddBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
     const payload = mapPokemonToCardBase(pokemonData)
     const dispatch = useAppDispatch()

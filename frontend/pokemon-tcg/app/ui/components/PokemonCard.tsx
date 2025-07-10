@@ -1,6 +1,6 @@
 import React from 'react'
-import { Pokemon } from '@app/lib/definitions'
-import typeMap from '@app/lib/data/typeMap.json';
+import { Pokemon } from '@/lib/definitions'
+import typeMap from '@/lib/data/typeMap.json';
 import Image from 'next/image';
 import PokemonAddBtn from './PokemonAddBtn'
 type TypeMeta = (typeof typeMap)[keyof typeof typeMap];

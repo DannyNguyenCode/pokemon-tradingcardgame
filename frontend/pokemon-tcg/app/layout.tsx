@@ -6,6 +6,7 @@ import { cookies } from 'next/headers'
 import NavBar from './ui/components/NavBar'
 import ThemeProvider from "./ui/theme/ThemeProvider";
 import Providers from "./providers";
+import Footer from "./ui/components/Footer";
 
 export const metadata: Metadata = {
   title: "Pokemon-Trading Card Game",
@@ -26,9 +27,14 @@ export default async function RootLayout({
         <Providers>
           <StoreProvider>
             <ThemeProvider initialTheme={theme}>
-              <NavBar />
-              <ToastManager />
-              {children}
+              <div className="min-h-screen flex flex-col ">
+                <NavBar />
+                <ToastManager />
+                <div className="flex-1 flex flex-col overflow-y-auto">
+                  {children}
+                </div>
+                <Footer />
+              </div>
             </ThemeProvider>
           </StoreProvider>
         </Providers>

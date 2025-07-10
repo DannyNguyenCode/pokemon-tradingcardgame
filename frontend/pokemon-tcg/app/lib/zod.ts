@@ -2,7 +2,7 @@ import { object, string, minLength, maxLength, regex, refine, z } from "zod"
 
 // Password validation regex for security best practices - matches backend requirements
 // Backend requires: 2 uppercase, 2 numbers, 2 special characters, 8+ length
-const PASSWORD_REGEX = /^(?=.*[A-Z].*[A-Z])(?=.*[a-z])(?=.*\d.*\d)(?=.*[@$!%*?&].*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+export const PASSWORD_REGEX = /^(?=.*[A-Z].*[A-Z])(?=.*[a-z])(?=.*\d.*\d)(?=.*[@$!%*?&].*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
 // Email validation regex (RFC 5322 compliant)
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/

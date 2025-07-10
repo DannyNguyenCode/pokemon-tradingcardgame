@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { signInSchema } from "@/app/lib/zod"
+import { signInSchema } from "@/lib/zod"
 
 // Check for required environment variables with better error handling
 const requiredEnvVars = {

@@ -26,3 +26,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+
+/*  Targeting autofill styles for a primary themed input */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--p);
+  /* Primary color */
+  -webkit-box-shadow: 0 0 0px 1000px var(--pf) inset;
+  /* Primary background */
+  transition: background-color 5000s ease-in-out 0s;
+}

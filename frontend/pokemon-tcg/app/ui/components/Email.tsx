@@ -3,7 +3,8 @@ import React from 'react'
 const Email = () => {
     return (
         <div>
-            <label className="input validator">
+            <label htmlFor="email" className="input validator">
+                <span className="sr-only">Email address</span>
                 <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <g
                         strokeLinejoin="round"
@@ -17,10 +18,12 @@ const Email = () => {
                     </g>
                 </svg>
                 <input
+                    id="email"
                     type="email"
                     name="email"
                     placeholder="mail@site.com"
                     required
+                    className="[&:-webkit-autofill]:!bg-transparent [&:-webkit-autofill]:!shadow-[0_0_0_30px_transparent_inset]"
                 />
             </label>
             <div className="validator-hint hidden">Enter valid email address</div>

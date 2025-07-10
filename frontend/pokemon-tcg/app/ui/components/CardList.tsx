@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pokemon } from '@app/lib/definitions';
+import { Pokemon } from '@/lib/definitions';
 import PokemonCard from './PokemonCard';
 
 export default function CardList({ data }: { data: Pokemon[] }) {

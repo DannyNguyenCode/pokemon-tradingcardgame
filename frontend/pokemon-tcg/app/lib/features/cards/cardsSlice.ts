@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Pokemon } from '@app/lib/definitions'
+import { Pokemon } from '@/lib/definitions'
 
 export interface CardsState {
     data: Pokemon[],
