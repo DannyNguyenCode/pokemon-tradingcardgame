@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime
 from api.models import Card
 
+
 def test_card_to_dict_defaults():
     now = datetime.now()
     card = Card(
@@ -12,7 +13,7 @@ def test_card_to_dict_defaults():
         type="Normal",
         hp=50,
         set_code="Kanto",
-        collector_number="001",
+        collector_number=1,
         description="A test Pokémon.",
         attack_1_name="Tackle",
         attack_1_dmg=40,

@@ -18,7 +18,7 @@ class CardBase(Schema):
     type = fields.Str()
     hp = fields.Int()
     set_code = fields.Str()
-    collector_number = fields.Str()
+    collector_number = fields.Int()
     description = fields.Str()
     attacks = fields.List(fields.Nested(AttackSchema), dump_only=True)
     weakness = fields.List(fields.Str(), required=False, load_default=[])
@@ -77,3 +77,14 @@ class LoginSchema(Schema):
     email = fields.Email(required=True, load_only=True)
     password = fields.Str(required=True, load_only=True,
                           validate=Length(min=8))
+
+
+class PageArgs(Schema):
+    page = fields.Int(load_default=1)
+    pokemon_type = fields.Str(required=False, load_only=True, load_default="")
+    pokemon_name = fields.Str(required=False, load_only=True, load_default="")
+    pokemon_rarity = fields.Str(
+        required=False, load_only=True, load_default="")
+
+    class Meta:
+        title = "PageArgs"

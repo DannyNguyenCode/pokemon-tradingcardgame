@@ -6,7 +6,7 @@ def test_post_card_directly(client, monkeypatch):
                              "type": "Normal",
                              "hp": 30,
                              "set_code": "Test",
-                             "collector_number": "XXX",
+                             "collector_number": 456,
                              "description": "",
                              "attack_1_name": "Punch",
                              "attack_1_dmg": 10,

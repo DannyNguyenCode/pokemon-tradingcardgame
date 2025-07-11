@@ -1,10 +1,9 @@
+from api.db import init_db
+from api import create_app
 import pytest
 import os
 
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
-
-from api import create_app
-from api.db import init_db
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -21,6 +20,7 @@ def setup_database():
     # No teardown needed: SQLite in-memory goes away when the process ends
     yield
 
+
 @pytest.fixture(scope="session")
 def app():
     """
@@ -30,12 +30,14 @@ def app():
     app.config.update({"TESTING": True})
     return app
 
+
 @pytest.fixture()
 def client(app):
     """
     A test client for the app.
     """
     return app.test_client()
+
 
 @pytest.fixture()
 def db_session():
@@ -50,6 +52,14 @@ def db_session():
     finally:
         session.rollback()
         session.close()
+
+
+@pytest.fixture(autouse=True)
+def reset_database():
+    from api.db import engine, Base
+    Base.metadata.drop_all(bind=engine)
+    Base.metadata.create_all(bind=engine)
+
 
 @pytest.fixture(autouse=True)
 def patch_sessionlocal(monkeypatch, db_session):

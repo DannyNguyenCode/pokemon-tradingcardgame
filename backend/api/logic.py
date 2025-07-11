@@ -12,7 +12,6 @@ from api.poke_utils import (
     calculate_rarity,
     determine_set_code,
 )
-CARDS_CACHE = None
 
 
 def create_card_logic(**kwargs):
@@ -31,17 +30,14 @@ def create_card_logic(**kwargs):
         return {"error": f"{error}"}, 500
 
 
-def list_cards():
+def list_cards(page: int):
     try:
-        global CARDS_CACHE
-        if CARDS_CACHE:
-            return services.generate_response("Card List retrieved", 200, CARDS_CACHE), 200
-
+        if page < 1:
+            return {"error": "Page must be 1 or greater"}, 400
         with SessionLocal() as db:
-            cards = crud.list_cards(db)
-            CARDS_CACHE = [card.to_dict() for card in cards]
+            cards = crud.list_cards(db, page)
             response = services.generate_response(
-                message="Card List retreived", status=200, data=CARDS_CACHE)
+                message="Card List retreived", status=200, data=[card.to_dict() for card in cards])
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
@@ -109,7 +105,7 @@ def create_tcg_card(identifier: str | int):
         "type":              p.types[0] if p.types else "Colorless",
         "hp":                p.hp,
         "set_code":          set_code,
-        "collector_number":  str(p.id),
+        "collector_number":  p.id,
         "description":       None,
         "attack_1_name":     move_info["name"],
         "attack_1_dmg":      dmg,
