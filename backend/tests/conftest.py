@@ -3,7 +3,9 @@ from api import create_app
 import pytest
 import os
 
+# Use SQLite in-memory for tests (isolated, fast, no cleanup needed)
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
+print(f"Using database: {os.environ['DATABASE_URL']}")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -56,9 +58,29 @@ def db_session():
 
 @pytest.fixture(autouse=True)
 def reset_database():
-    from api.db import engine, Base
-    Base.metadata.drop_all(bind=engine)
-    Base.metadata.create_all(bind=engine)
+    """Clear data before each test"""
+    from sqlalchemy import create_engine, text
+    from api.db import Base
+
+    # Create a test-specific engine to avoid touching production database
+    test_engine = create_engine("sqlite:///:memory:", echo=False)
+
+    # Create tables in the test engine
+    Base.metadata.create_all(bind=test_engine)
+
+    with test_engine.connect() as conn:
+        # Clear all data from all tables
+        for table in reversed(Base.metadata.sorted_tables):
+            conn.execute(text(f'DELETE FROM "{table.name}";'))
+
+        # Reset auto-increment counters (SQLite only) - only if the table exists
+        try:
+            conn.execute(text("DELETE FROM sqlite_sequence;"))
+        except Exception:
+            # sqlite_sequence table doesn't exist, which is fine
+            pass
+
+        conn.commit()
 
 
 @pytest.fixture(autouse=True)

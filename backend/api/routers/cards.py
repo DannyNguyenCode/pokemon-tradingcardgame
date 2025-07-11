@@ -26,6 +26,28 @@ class CardImport(MethodView):
 
         return response, status
 
+
+@cards_blp.route("/import/range/<int:start>/<int:end>")
+class CardImportRange(MethodView):
+    """Create a TCG card by scraping data from PokeAPI."""
+    @cards_blp.doc(
+        description="Create a range of TCG cards from a Pokémon, auto-calculating stats, costs, rarity, and weaknesses"
+    )
+    def post(self, start: int, end: int):
+        try:
+            response, status = logic.create_tcg_card_range(start, end)
+        except Exception as e:
+            return {"message": f"Failed to import Pokémon '{start} to {end}': {e}"}, 500
+
+        return response, status
+
+    @cards_blp.doc(description="Create a range of Pokemon TCG cards")
+    def post_range(self, start: int, end: int):
+        try:
+            response, status = logic.create_tcg_card_range(start, end)
+        except Exception as e:
+            return {"message": f"Failed to import Pokémon '{start} to {end}': {e}"}, 500
+
 # ───────────────────────────────────────────────────────────────
 # 2) Collection endpoints
 #    POST /api/cards/     -> create from raw JSON
@@ -49,6 +71,8 @@ class CardCollection(MethodView):
     @cards_blp.arguments(PageArgs, location="query")
     def get(self, args):
         page = args.get("page")
+        if page < 1:
+            page = 1
         response, status = logic.list_cards(page)
         return response, status
 

@@ -36,6 +36,7 @@ def list_cards(page: int):
             return {"error": "Page must be 1 or greater"}, 400
         with SessionLocal() as db:
             cards = crud.list_cards(db, page)
+            print("CARDS IN LOGIC", cards)
             response = services.generate_response(
                 message="Card List retreived", status=200, data=[card.to_dict() for card in cards])
             return response, 200
@@ -121,6 +122,14 @@ def create_tcg_card(identifier: str | int):
 
     # 5) Persist
     return create_card_logic(**card_data)
+
+
+def create_tcg_card_range(start: int, end: int):
+    try:
+        cards = [create_tcg_card(i) for i in range(start, end + 1)]
+        return cards, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
 
 
 def register_user(**data):

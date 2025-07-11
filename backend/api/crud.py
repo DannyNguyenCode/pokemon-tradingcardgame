@@ -18,6 +18,7 @@ def list_cards(db: Session, page: int):
         select(Card).order_by(Card.collector_number.asc()).limit(
             10).offset((page-1)*10)
     )
+    print("STMT IN CRUD", stmt)
     return db.execute(stmt).scalars().all()
 
 
