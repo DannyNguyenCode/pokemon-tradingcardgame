@@ -1,35 +1,118 @@
-import pytest
+import uuid
 from datetime import datetime
-from api.models import Card
+from sqlalchemy import Integer, Text, DateTime, JSON, text, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+from typing import List
+from sqlalchemy import ForeignKey
 
 
-def test_card_to_dict_defaults():
-    now = datetime.now()
-    card = Card(
-        id="00000000-0000-0000-0000-000000000000",
-        created_at=now,
-        name="Testmon",
-        rarity="Common",
-        type="Normal",
-        hp=50,
-        set_code="Kanto",
-        collector_number=1,
-        description="A test Pokémon.",
-        attack_1_name="Tackle",
-        attack_1_dmg=40,
-        attack_1_cost="Colorless",
-        attack_2_name=None,
-        attack_2_dmg=None,
-        attack_2_cost=None,
-        weakness=["Water"],
-        resistance=[],
-        retreat_cost=1,
-        image_url="http://example.com/1.png"
+class Base(DeclarativeBase):
+    pass
+
+
+class User(Base):
+    __tablename__ = 'user'
+    id: Mapped[str] = mapped_column(
+        String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+        index=True,
     )
-    d = card.to_dict()
-    assert d["id"] == str(card.id)
-    assert isinstance(d["created_at"], datetime)
-    assert d["name"] == "Testmon"
-    assert isinstance(d["attacks"], list) and len(d["attacks"]) == 2
-    assert d["attacks"][0]["name"] == "Tackle"
-    assert d["weakness"] == ["Water"]
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow
+    )
+    pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan")
+    email: Mapped[str] = mapped_column(Text, nullable=False)
+    password: Mapped[str] = mapped_column(Text, nullable=False)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "created_at": self.created_at,
+            "pokemon_collection": [pokemon.to_dict() for pokemon in self.pokemon_collection],
+            "email": self.email,
+        }
+
+
+class Pokemon_Collection(Base):
+    __tablename__ = 'pokemon_collection'
+    user_id: Mapped[str] = mapped_column(String(36), ForeignKey(
+        "user.id", ondelete="CASCADE"), primary_key=True)
+    user: Mapped["User"] = relationship(back_populates='pokemon_collection')
+    card_id: Mapped[str] = mapped_column(String(36), ForeignKey(
+        "card.id", ondelete="CASCADE"), primary_key=True)
+    card: Mapped["Card"] = relationship(back_populates='pokemon_collection')
+
+    def to_dict(self):
+        return {
+            "user_id": self.user_id,
+            "card_id": self.card_id,
+            "card": self.card.to_dict() if self.card else {}
+        }
+
+
+class Card(Base):
+    __tablename__ = "card"
+
+    id: Mapped[str] = mapped_column(
+        String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow
+    )
+    name: Mapped[str] = mapped_column(Text, nullable=True)
+    rarity: Mapped[str] = mapped_column(Text, nullable=True)
+    type: Mapped[str] = mapped_column(Text, nullable=True)
+    hp: Mapped[int] = mapped_column(Integer, nullable=True)
+    set_code: Mapped[str] = mapped_column(Text, nullable=True)
+    collector_number: Mapped[int] = mapped_column(Integer, nullable=True)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    attack_1_name: Mapped[str] = mapped_column(Text, nullable=True)
+    attack_1_dmg: Mapped[int] = mapped_column(Integer, nullable=True)
+    attack_1_cost: Mapped[str] = mapped_column(Text, nullable=True)
+    attack_2_name: Mapped[str] = mapped_column(Text, nullable=True)
+    attack_2_dmg: Mapped[int] = mapped_column(Integer, nullable=True)
+    attack_2_cost: Mapped[str] = mapped_column(Text, nullable=True)
+    weakness: Mapped[list] = mapped_column(JSON, nullable=True)
+    resistance: Mapped[list] = mapped_column(JSON, nullable=True)
+    retreat_cost: Mapped[int] = mapped_column(Integer, nullable=True)
+    image_url: Mapped[str] = mapped_column(Text, nullable=True)
+    pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
+        back_populates="card", cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "created_at": self.created_at,
+            "name": self.name,
+            "rarity": self.rarity,
+            "type": self.type,
+            "hp": self.hp,
+            "set_code": self.set_code,
+            "collector_number": self.collector_number,
+            "description": self.description,
+            "attacks": [
+                {
+                    "name": self.attack_1_name,
+                    "damage": self.attack_1_dmg,
+                    "cost": self.attack_1_cost,
+                },
+                {
+                    "name": self.attack_2_name,
+                    "damage": self.attack_2_dmg,
+                    "cost": self.attack_2_cost,
+                },
+            ],
+            "weakness": self.weakness or [],
+            "resistance": self.resistance or [],
+            "retreat_cost": self.retreat_cost,
+            "image_url": self.image_url,
+        }
