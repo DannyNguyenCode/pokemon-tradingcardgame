@@ -8,7 +8,7 @@ API for pokemon trading card game, written in Python
 ### Instructions
 1. Create Python environment - python -m venv env
 2. Activate virtual environment - env/Scripts/activate
-    1. install requirements - pip install -r requirements.txt
+    1. install requirements - pip install -r requirements.txt (pip freeze > requirements.txt)
         - Run project
     2. Build and run via Docker
         - ```bash
@@ -16,4 +16,5 @@ API for pokemon trading card game, written in Python
     3. If not working, might be missing .env file
 3. Running Pytest
     - Make sure in root directory
-    - python -m pytest -q
+    - python -m pytest -q (python -m pytest -v -s)
+    - Run pytest-cov: `$env:PYTHONPATH="."; pytest --cov=api --cov-report=term-missing tests/`

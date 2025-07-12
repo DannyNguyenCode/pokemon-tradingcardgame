@@ -1,7 +1,11 @@
-from api.db import init_db
-from api import create_app
 import pytest
+from api import create_app
+from api.db import init_db
+import sys
 import os
+# Add the parent directory to Python path so we can import api
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 
 # Use SQLite in-memory for tests (isolated, fast, no cleanup needed)
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
