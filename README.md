@@ -31,7 +31,7 @@ README in frontend directory to set up and run client
 - ~~Create Redux “cards” slice with async thunks for fetchCards()~~
     - decided on a plain reducer
     - no thunk, fetch will be done in the react server component (NextJS Server Side Rendering)
-- Build /cards page: grid layout, card components, loading/error states
+- ~~Build /cards page: grid layout, card components, loading/error states~~
 - ~~Wire environment var REACT_APP_API_URL=http://localhost:8000~~
 
 #### 1.4 Infra: Docker & Compose
