@@ -7,7 +7,6 @@ import Email from "./Email"
 import LoginBtn from "./LoginBtn"
 import { useAppDispatch } from "../../lib/hooks"
 import { loadToastifyState } from "../../lib/features/toastify/toastifySlice"
-import { PASSWORD_REGEX } from '@/lib/zod'
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")

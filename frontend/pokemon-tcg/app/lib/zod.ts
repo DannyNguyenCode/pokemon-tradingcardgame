@@ -1,4 +1,4 @@
-import { object, string, minLength, maxLength, regex, refine, z } from "zod"
+import { object, string, z } from "zod"
 
 // Password validation regex for security best practices - matches backend requirements
 // Backend requires: 2 uppercase, 2 numbers, 2 special characters, 8+ length

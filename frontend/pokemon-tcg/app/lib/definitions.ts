@@ -26,6 +26,12 @@ export type Pokemon = {
     "image_url": string,
 }
 
+export type Attack = {
+    name: string | null;
+    damage: number | null;
+    cost: string | null;
+};
+
 export type RawPokemon = {
     id: string;
     name: string;
@@ -35,7 +41,7 @@ export type RawPokemon = {
     set_code: string;
     collector_number: string;
     description?: string | null;
-    attacks: any; // not allowed
+    attacks: Attack[];
     weakness?: string[];
     resistance?: string[];
     retreat_cost: number;

@@ -6,22 +6,12 @@ import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function NavBar() {
-    const { data: session, status } = useSession()
+    const { data: session } = useSession()
     const router = useRouter()
 
     const handleLogout = async () => {
         await signOut({ redirect: false })
         router.push('/')
-    }
-
-    const handleLogin = () => {
-        if (session) {
-            // If user is logged in, redirect to home instead of login page
-            router.push('/')
-        } else {
-            // If user is not logged in, go to login page
-            router.push('/login')
-        }
     }
 
     return (

@@ -35,7 +35,7 @@ const TYPE_ICON_INDEX: Record<string, number> = {
     electric: 13, psychic: 14, ice: 15, dragon: 16, dark: 17, fairy: 18
 };
 const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
-    const owned = false
+    const owned = true
     const getMatchingIcon = (key: string) => {
         const response = (typeMap as Record<string, typeof COLORLESS_META>)[key.toLowerCase()] ?? COLORLESS_META;
         return response
