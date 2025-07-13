@@ -101,10 +101,8 @@ class LoginSchema(Schema):
 
 class PageArgs(Schema):
     page = fields.Int(load_default=1)
-    pokemon_type = fields.Str(required=False, load_only=True, load_default="")
+    type_filter = fields.Str(required=False, load_only=True, load_default="")
     pokemon_name = fields.Str(required=False, load_only=True, load_default="")
-    pokemon_rarity = fields.Str(
-        required=False, load_only=True, load_default="")
 
     class Meta:
         title = "PageArgs"

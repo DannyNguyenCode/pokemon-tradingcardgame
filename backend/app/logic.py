@@ -44,15 +44,16 @@ def create_card_logic(**kwargs):
         return {"error": f"{error}"}, 500
 
 
-def list_cards(page: int):
+def list_cards(page: int, type_filter: str | None, pokemon_name: str | None):
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
         # Hardcode page size to 10
-        page_size = 6
+        page_size = 12
 
         with SessionLocal() as db:
-            cards, total_count = crud.list_cards(db, page)
+            cards, total_count = crud.list_cards(
+                db, page, type_filter, pokemon_name)
             print("CARDS", cards)
             # Calculate pagination metadata
             total_pages = (total_count + page_size - 1) // page_size

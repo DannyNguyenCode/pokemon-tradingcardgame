@@ -69,12 +69,15 @@ class CardCollection(MethodView):
     @cards_blp.doc(description="Get paginated list of pokemon cards with count and pagination metadata (10 per page)")
     @cards_blp.arguments(PageArgs, location="query")
     def get(self, args):
+        print("ARGS", args)
         page = args.get("page", 1)
-
+        type_filter = args.get("type_filter", None)
+        pokemon_name = args.get("pokemon_name", None)
+        print("TYPE FILTER", type_filter)
         if page < 1:
             page = 1
-
-        response, status = logic.list_cards(page)
+        print("POKEMON NAME CARDS", pokemon_name)
+        response, status = logic.list_cards(page, type_filter, pokemon_name)
         return response, status
 
 # ───────────────────────────────────────────────────────────────
