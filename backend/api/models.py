@@ -20,7 +20,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()")
+        server_default=text("CURRENT_TIMESTAMP")
     )
     pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
         back_populates="user", cascade="all, delete-orphan")
@@ -65,7 +65,7 @@ class Card(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()")
+        server_default=text("CURRENT_TIMESTAMP")
     )
     name: Mapped[str] = mapped_column(Text, nullable=True)
     rarity: Mapped[str] = mapped_column(Text, nullable=True)

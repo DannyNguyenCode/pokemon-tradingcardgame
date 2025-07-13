@@ -1,6 +1,6 @@
 
 from sqlalchemy.orm import Session
-from sqlalchemy import select, update, insert, delete
+from sqlalchemy import select, update, insert, delete, func
 from api.models import Card, User
 
 
@@ -14,12 +14,15 @@ def create_card(db: Session, **kwargs) -> Card:
 
 
 def list_cards(db: Session, page: int):
+    count_per_page = 10
+    count_stmt = select(func.count(Card.id))
+    total_count = db.execute(count_stmt).scalar()
     stmt = (
         select(Card).order_by(Card.collector_number.asc()).limit(
-            10).offset((page-1)*10)
+            count_per_page).offset((page-1)*count_per_page)
     )
-    print("STMT IN CRUD", stmt)
-    return db.execute(stmt).scalars().all()
+    result = db.execute(stmt).scalars().all()
+    return result, total_count
 
 
 def get_card_by_id(db: Session, id: int):

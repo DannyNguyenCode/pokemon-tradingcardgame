@@ -12,11 +12,12 @@ policy = PasswordPolicy.from_names(
 )
 
 
-def generate_response(message="", status=200, data=None):
+def generate_response(message="", status=200, data=None, pagination=None):
     return {
         "status": status,
         "message": message,
         "data": data or {},
+        "pagination": pagination or {},
     }
 
 

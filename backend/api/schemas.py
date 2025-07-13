@@ -45,6 +45,26 @@ class CardUpdate(CardIn):
         title = "CardUpdate"
 
 
+class PaginationSchema(Schema):
+    page = fields.Int(dump_only=True)
+    page_size = fields.Int(dump_only=True)
+    total_count = fields.Int(dump_only=True)
+    total_pages = fields.Int(dump_only=True)
+    has_next = fields.Bool(dump_only=True)
+    has_prev = fields.Bool(dump_only=True)
+
+    class Meta:
+        title = "Pagination"
+
+
+class PaginatedCardResponse(Schema):
+    data = fields.List(fields.Nested(CardOut))
+    pagination = fields.Nested(PaginationSchema)
+
+    class Meta:
+        title = "PaginatedCardResponse"
+
+
 class CookiesTheme(Schema):
     theme = fields.Str()
 

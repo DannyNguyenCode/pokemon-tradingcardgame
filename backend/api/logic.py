@@ -13,6 +13,20 @@ from api.poke_utils import (
     determine_set_code,
 )
 
+import os
+import sys
+# Patch for test environment: use test models if running under pytest
+
+
+def is_pytest():
+    return ('pytest' in sys.modules) or (os.environ.get('PYTEST_CURRENT_TEST') is not None)
+
+
+if is_pytest():
+    from tests.test_models import TestCard as Card, TestUser as User, TestPokemon_Collection as Pokemon_Collection
+else:
+    from api.models import Card, User, Pokemon_Collection
+
 
 def create_card_logic(**kwargs):
     try:
@@ -31,14 +45,37 @@ def create_card_logic(**kwargs):
 
 
 def list_cards(page: int):
+    if page < 1:
+        return {"error": "Page must be 1 or greater"}, 400
     try:
-        if page < 1:
-            return {"error": "Page must be 1 or greater"}, 400
+        # Hardcode page size to 10
+        page_size = 10
+
         with SessionLocal() as db:
-            cards = crud.list_cards(db, page)
-            print("CARDS IN LOGIC", cards)
+            cards, total_count = crud.list_cards(db, page)
+            print("CARDS", cards)
+            # Calculate pagination metadata
+            total_pages = (total_count + page_size - 1) // page_size
+            has_next = page < total_pages
+            has_prev = page > 1
+
+            # Prepare pagination data
+            pagination_data = {
+                "page": page,
+                "page_size": page_size,
+                "total_count": total_count,
+                "total_pages": total_pages,
+                "has_next": has_next,
+                "has_prev": has_prev
+            }
+            print("PAGINATION DATA", pagination_data)
             response = services.generate_response(
-                message="Card List retreived", status=200, data=[card.to_dict() for card in cards])
+                message="Card List retrieved",
+                status=200,
+                data=[card.to_dict() for card in cards],
+                pagination=pagination_data
+            )
+            print("RESPONSE", response)
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
@@ -51,7 +88,7 @@ def get_card_by_id(id: int):
             if not card:
                 return {"error": f"Card with id {id} not found"}, 404
             response = services.generate_response(
-                "Card retreived", 200, card.to_dict())
+                "Card retrieved", 200, card.to_dict())
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500

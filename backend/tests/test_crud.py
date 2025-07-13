@@ -1,8 +1,6 @@
 # tests/test_crud.py
 import pytest
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from tests.test_models import Base, User, Card, Pokemon_Collection
+from tests.test_models import TestBase as Base, TestUser as User, TestCard as Card, TestPokemon_Collection as Pokemon_Collection
 from datetime import datetime, UTC
 import uuid
 from unittest.mock import patch
@@ -12,17 +10,7 @@ from api.crud import (
 )
 
 
-@pytest.fixture
-def db_session():
-    """Create a test database session with SQLite"""
-    engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-    session = SessionLocal()
-    yield session
-    session.close()
-    Base.metadata.drop_all(engine)
-
+# Remove the custom db_session fixture - use the one from conftest.py
 
 class TestCRUDFunctions:
     """Test the actual CRUD functions from api.crud"""

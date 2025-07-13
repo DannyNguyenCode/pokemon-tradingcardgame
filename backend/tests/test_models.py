@@ -1,17 +1,22 @@
+"""
+Test-specific models with SQLite-compatible UUID generation.
+These models override the production models to avoid PostgreSQL-specific functions.
+"""
+
+__test__ = False  # Prevent pytest from collecting this file as a test
+
 import uuid
 from datetime import datetime
 from sqlalchemy import Integer, Text, DateTime, JSON, text, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship, DeclarativeBase
+from sqlalchemy.orm import Mapped, mapped_column, relationship, declarative_base
 from typing import List
 from sqlalchemy import ForeignKey
 
-
-class Base(DeclarativeBase):
-    pass
+TestBase = declarative_base()
 
 
-class User(Base):
-    __tablename__ = 'user'
+class TestUser(TestBase):
+    __tablename__ = 'test_user'
     id: Mapped[str] = mapped_column(
         String(36),
         primary_key=True,
@@ -19,11 +24,11 @@ class User(Base):
         index=True,
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
-        default=datetime.utcnow
+        server_default=text("CURRENT_TIMESTAMP")
     )
-    pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
+    pokemon_collection: Mapped[List["TestPokemon_Collection"]] = relationship(
         back_populates="user", cascade="all, delete-orphan")
     email: Mapped[str] = mapped_column(Text, nullable=False)
     password: Mapped[str] = mapped_column(Text, nullable=False)
@@ -37,14 +42,16 @@ class User(Base):
         }
 
 
-class Pokemon_Collection(Base):
-    __tablename__ = 'pokemon_collection'
+class TestPokemon_Collection(TestBase):
+    __tablename__ = 'test_pokemon_collection'
     user_id: Mapped[str] = mapped_column(String(36), ForeignKey(
-        "user.id", ondelete="CASCADE"), primary_key=True)
-    user: Mapped["User"] = relationship(back_populates='pokemon_collection')
+        "test_user.id", ondelete="CASCADE"), primary_key=True)
+    user: Mapped["TestUser"] = relationship(
+        back_populates='pokemon_collection')
     card_id: Mapped[str] = mapped_column(String(36), ForeignKey(
-        "card.id", ondelete="CASCADE"), primary_key=True)
-    card: Mapped["Card"] = relationship(back_populates='pokemon_collection')
+        "test_card.id", ondelete="CASCADE"), primary_key=True)
+    card: Mapped["TestCard"] = relationship(
+        back_populates='pokemon_collection')
 
     def to_dict(self):
         return {
@@ -54,9 +61,8 @@ class Pokemon_Collection(Base):
         }
 
 
-class Card(Base):
-    __tablename__ = "card"
-
+class TestCard(TestBase):
+    __tablename__ = "test_card"
     id: Mapped[str] = mapped_column(
         String(36),
         primary_key=True,
@@ -64,9 +70,9 @@ class Card(Base):
         index=True,
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime,
+        DateTime(timezone=True),
         nullable=False,
-        default=datetime.utcnow
+        server_default=text("CURRENT_TIMESTAMP")
     )
     name: Mapped[str] = mapped_column(Text, nullable=True)
     rarity: Mapped[str] = mapped_column(Text, nullable=True)
@@ -85,7 +91,7 @@ class Card(Base):
     resistance: Mapped[list] = mapped_column(JSON, nullable=True)
     retreat_cost: Mapped[int] = mapped_column(Integer, nullable=True)
     image_url: Mapped[str] = mapped_column(Text, nullable=True)
-    pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
+    pokemon_collection: Mapped[List["TestPokemon_Collection"]] = relationship(
         back_populates="card", cascade="all, delete-orphan")
 
     def to_dict(self):

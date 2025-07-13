@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker,DeclarativeBase
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from sqlalchemy.exc import OperationalError
 
 from dotenv import load_dotenv
@@ -17,8 +17,10 @@ SessionLocal = sessionmaker(
     future=True,
 )
 
+
 class Base(DeclarativeBase):
     pass
+
 
 def init_db():
     """
