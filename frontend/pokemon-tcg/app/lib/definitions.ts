@@ -39,7 +39,7 @@ export type RawPokemon = {
     type: string;
     hp: number;
     set_code: string;
-    collector_number: string;
+    collector_number: number;
     description?: string | null;
     attacks: Attack[];
     weakness?: string[];
