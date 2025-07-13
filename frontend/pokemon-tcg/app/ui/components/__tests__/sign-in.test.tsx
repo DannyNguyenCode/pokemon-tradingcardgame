@@ -18,11 +18,12 @@ jest.mock('next/navigation', () => ({
 import React from 'react'
 import { Provider } from 'react-redux';
 import { store } from '@/lib/store';
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { axe } from 'jest-axe'
 import { SignIn } from '@/ui/components/sign-in'
 import { ToastContainer } from 'react-toastify'
+import { signIn } from 'next-auth/react'
 
 const renderWithProviders = (ui: React.ReactElement) =>
     render(
@@ -33,7 +34,7 @@ const renderWithProviders = (ui: React.ReactElement) =>
     )
 
 describe('SignIn', () => {
-    const mockSignIn = require('next-auth/react').signIn;
+    const mockSignIn = signIn as jest.MockedFunction<typeof signIn>;
 
     beforeEach(() => {
         mockSignIn.mockClear();
@@ -51,7 +52,13 @@ describe('SignIn', () => {
 
     it('shows error on invalid credentials', async () => {
         // Arrange
-        mockSignIn.mockResolvedValueOnce({ error: 'Invalid credentials' });
+        mockSignIn.mockResolvedValueOnce({
+            error: 'Invalid credentials',
+            ok: false,
+            status: 401,
+            url: null,
+            code: 'CredentialsSignin'
+        });
 
         renderWithProviders(<SignIn />)
         const emailInput = screen.getByPlaceholderText(/mail@site\.com/i)
