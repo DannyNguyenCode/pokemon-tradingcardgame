@@ -51,7 +51,7 @@ downloads/
 eggs/
 .eggs/
 lib/
-!backend/api/lib/**
+!backend/app/lib/**
 !frontend/pokemon-tcg/app/lib/**
 lib64/
 parts/

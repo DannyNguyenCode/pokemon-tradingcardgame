@@ -1,0 +1,20 @@
+{
+    "normal": "colorless",
+    "fire": "fire",
+    "water": "water",
+    "electric": "lightning",
+    "grass": "grass",
+    "ice": "water",
+    "fighting": "fighting",
+    "poison": "grass",
+    "ground": "fighting",
+    "flying": "colorless",
+    "psychic": "psychic",
+    "bug": "grass",
+    "rock": "fighting",
+    "ghost": "psychic",
+    "dragon": "colorless",
+    "dark": "darkness",
+    "steel": "metal",
+    "fairy": "fairy"
+}
