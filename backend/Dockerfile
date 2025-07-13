@@ -9,9 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy your source
 COPY main.py /app/
-COPY api/ /app/api/
+COPY app/ /app/app/
 
-# Expose your app’s port
+# Expose your app's port
 EXPOSE 8000
 
 # Run your Flask app via Gunicorn

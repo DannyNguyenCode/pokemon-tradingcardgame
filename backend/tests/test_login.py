@@ -4,7 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from tests.test_models import TestBase as Base, TestUser as User
 from unittest.mock import patch, MagicMock
-from api.logic import login_user
+import bcrypt
+from app.logic import login_user
 import uuid
 
 

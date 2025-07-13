@@ -8,7 +8,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./api:/app/api
+      - ./app:/app/app
     environment:
       - PYTHONUNBUFFERED=1
     command: gunicorn --bind 0.0.0.0:8000 main:app --workers 1 --reload --log-level debug --capture-output --access-logfile -

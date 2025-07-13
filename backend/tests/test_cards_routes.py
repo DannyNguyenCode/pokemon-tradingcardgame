@@ -53,7 +53,7 @@ class _DummyCard:
 @pytest.fixture(autouse=True)
 def patch_logic(monkeypatch):
     """Redirect all logic-layer CRUD helpers to cheap fakes."""
-    import api.routers.cards as cards_module
+    import app.routers.cards as cards_module
     # list cards (keep an in-memory “DB” per test)
     storage = {}
     # create from JSON

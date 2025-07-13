@@ -1,10 +1,12 @@
 # tests/test_crud.py
 import pytest
+from sqlalchemy.orm import Session
+from sqlalchemy import select, update, delete
 from tests.test_models import TestBase as Base, TestUser as User, TestCard as Card, TestPokemon_Collection as Pokemon_Collection
 from datetime import datetime, UTC
 import uuid
 from unittest.mock import patch
-from api.crud import (
+from app.crud import (
     create_card, list_cards, get_card_by_id, update_card, delete_card,
     create_user, get_user_by_id, user_list, update_user, delete_user, get_user_by_email
 )

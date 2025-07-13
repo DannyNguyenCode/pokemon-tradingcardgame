@@ -1,9 +1,9 @@
 from flask import abort
-from api.db import SessionLocal
-from api import crud, services
-from api.pokeapi import Pokemon
+from app.db import SessionLocal
+from app import crud, services
+from app.pokeapi import Pokemon
 
-from api.poke_utils import (
+from app.poke_utils import (
     select_best_levelup_move,
     map_power_to_damage,
     map_damage_to_cost,
@@ -25,7 +25,7 @@ def is_pytest():
 if is_pytest():
     from tests.test_models import TestCard as Card, TestUser as User, TestPokemon_Collection as Pokemon_Collection
 else:
-    from api.models import Card, User, Pokemon_Collection
+    from app.models import Card, User, Pokemon_Collection
 
 
 def create_card_logic(**kwargs):

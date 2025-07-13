@@ -1,13 +1,13 @@
 import pytest
-from api import create_app
-from api.db import init_db, SessionLocal
+from app.db import init_db, SessionLocal
 import sys
 import os
 from sqlalchemy import create_engine, text
-from api.db import Base
+from app.db import Base
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-# Add the parent directory to Python path so we can import api
+# Add the parent directory to Python path so we can import app
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Use SQLite in-memory for tests (isolated, fast, no cleanup needed)
@@ -64,11 +64,11 @@ def setup_database():
     from tests.test_models import TestCard, TestUser, TestPokemon_Collection, TestBase
 
     # Import and monkeypatch production model names to test models
-    import api.models
-    api.models.User = TestUser
-    api.models.Card = TestCard
-    api.models.Pokemon_Collection = TestPokemon_Collection
-    api.models.Base = TestBase
+    import app.models
+    app.models.User = TestUser
+    app.models.Card = TestCard
+    app.models.Pokemon_Collection = TestPokemon_Collection
+    app.models.Base = TestBase
 
     # Create tables in the shared in-memory engine
     TestBase.metadata.create_all(bind=test_engine)
@@ -85,7 +85,7 @@ def app():
     # Safety check
     check_production_database_access()
 
-    app = create_app()
+    app = create_engine(TEST_SQLITE_URL)
     app.config.update({"TESTING": True})
     return app
 

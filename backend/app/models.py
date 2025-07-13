@@ -1,12 +1,11 @@
 # models.py
 import uuid
 from datetime import datetime
-from sqlalchemy import Integer, Text, DateTime, JSON, text
+from sqlalchemy import Integer, Text, DateTime, JSON, text, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from api.db import Base
 from typing import List
-from sqlalchemy import ForeignKey
+from app.db import Base
 
 
 class User(Base):

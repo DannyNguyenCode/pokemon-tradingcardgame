@@ -2,7 +2,7 @@ import json
 from math import ceil
 from pathlib import Path
 import requests
-from api.pokeapi import Pokemon
+from app.pokeapi import Pokemon
 
 
 BASE = Path(__file__).parent
@@ -12,6 +12,7 @@ ENERGY_MAP = json.loads((BASE / "lib/data/energyMap.json").read_text())
 
 def get_override_move(species: str) -> str | None:
     return _MOVE_OVERRIDES.get(species.lower())
+
 
 def determine_set_code(p: Pokemon) -> str:
     """
@@ -27,6 +28,7 @@ def determine_set_code(p: Pokemon) -> str:
     region = resp.json().get("main_region", {}).get("name", "")
     return region.title() or "Unknown"
 
+
 def get_move_info(move_url: str) -> dict:
     resp = requests.get(move_url)
     resp.raise_for_status()
@@ -37,8 +39,10 @@ def get_move_info(move_url: str) -> dict:
         "type":  data["type"]["name"].title(),
     }
 
+
 def map_power_to_damage(power: int) -> int:
     return power
+
 
 def map_damage_to_cost(damage: int, energy_per_symbol: int = 20) -> int:
     return max(1, ceil(damage / energy_per_symbol))
@@ -50,8 +54,10 @@ def format_cost_symbols(count: int, poke_type: str) -> str:
     symbols = [energy_key] * (count - 1)
     return symbols
 
+
 def map_hp_to_retreat(hp: int, hp_per_retreat: int = 60) -> int:
     return max(1, ceil(hp / hp_per_retreat))
+
 
 def calculate_rarity(p: Pokemon) -> str:
     species = p.fetch_species_info()
@@ -65,6 +71,7 @@ def calculate_rarity(p: Pokemon) -> str:
     if total >= 400:
         return "Uncommon"
     return "Common"
+
 
 def select_best_levelup_move(p: Pokemon) -> dict:
     """
@@ -83,7 +90,7 @@ def select_best_levelup_move(p: Pokemon) -> dict:
     # filter level-up moves
     level_moves = [
         e for e in p.raw_data["moves"]
-        if any(v["move_learn_method"]["name"]=="level-up"
+        if any(v["move_learn_method"]["name"] == "level-up"
                for v in e["version_group_details"])
     ] or p.raw_data["moves"]
 

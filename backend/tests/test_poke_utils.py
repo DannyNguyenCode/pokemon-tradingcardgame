@@ -1,7 +1,8 @@
 # tests/test_poke_utils.py
 # type: ignore
 import pytest
-from api.poke_utils import (
+from unittest.mock import patch, Mock
+from app.poke_utils import (
     select_best_levelup_move,
     map_power_to_damage,
     map_damage_to_cost,

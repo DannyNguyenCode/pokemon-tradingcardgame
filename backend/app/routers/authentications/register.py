@@ -1,6 +1,6 @@
 from flask.views import MethodView
-from api.schemas import User
-from api import logic
+from app.schemas import User
+from app import logic
 from . import auth_blp
 
 

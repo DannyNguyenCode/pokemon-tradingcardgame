@@ -1,8 +1,7 @@
-from flask_smorest import Blueprint
 from flask.views import MethodView
-from flask import request
-from api.schemas import CardIn, CardUpdate, PageArgs
-from api import logic
+from flask_smorest import Blueprint
+from app.schemas import CardIn, CardUpdate, PageArgs
+from app import logic
 cards_blp = Blueprint("cards", __name__, url_prefix="/api/cards",
                       description="Pokémon-TCG card operations")
 

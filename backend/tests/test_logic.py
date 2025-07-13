@@ -1,7 +1,7 @@
 # tests/test_logic.py
 import pytest
 from datetime import datetime, UTC
-from api.logic import create_tcg_card, Pokemon
+from app.logic import create_tcg_card, Pokemon
 import uuid
 from math import ceil
 from tests.test_poke_utils import MockPokemon
@@ -51,7 +51,7 @@ class _DummyCard:
 @pytest.fixture(autouse=True)
 def patch_logic(monkeypatch):
     """Redirect all logic-layer CRUD helpers to cheap fakes."""
-    import api.routers.cards as cards_module
+    import app.routers.cards as cards_module
     # Clear storage at the start of each test
     global _test_storage
     _test_storage.clear()
@@ -130,7 +130,7 @@ def patch_logic(monkeypatch):
 @pytest.fixture
 def create_test_cards(patch_logic, monkeypatch):
     """Create exactly N test cards for testing"""
-    import api.routers.cards as cards_module
+    import app.routers.cards as cards_module
 
     def _create_card_logic(**kw):
         card = _DummyCard(kw).to_dict()
@@ -248,12 +248,12 @@ class TestLogic:
             return {"id": "123", **card_data}, 201
 
         # 3. Apply mocks
-        monkeypatch.setattr("api.logic.Pokemon.fetch", mock_pokemon_fetch)
-        monkeypatch.setattr("api.logic.create_card_logic",
+        monkeypatch.setattr("app.logic.Pokemon.fetch", mock_pokemon_fetch)
+        monkeypatch.setattr("app.logic.create_card_logic",
                             mock_create_card_logic)
 
         # 4. Test real function
-        from api.logic import create_tcg_card
+        from app.logic import create_tcg_card
         result = create_tcg_card("pikachu")
 
         # 5. Assert business logic worked correctly
@@ -292,12 +292,12 @@ class TestLogic:
             return {"id": "123", **card_data}, 201
 
         # 3. Apply mocks
-        monkeypatch.setattr("api.logic.Pokemon.fetch", mock_pokemon_fetch)
-        monkeypatch.setattr("api.logic.create_card_logic",
+        monkeypatch.setattr("app.logic.Pokemon.fetch", mock_pokemon_fetch)
+        monkeypatch.setattr("app.logic.create_card_logic",
                             mock_create_card_logic)
 
         # 4. Test real function
-        from api.logic import create_tcg_card
+        from app.logic import create_tcg_card
         result = create_tcg_card("pikachu")
 
         # 5. Assert all required fields are present
@@ -329,12 +329,12 @@ class TestLogic:
             return {"id": "123", **card_data}, 201
 
         # 3. Apply mocks
-        monkeypatch.setattr("api.logic.Pokemon.fetch", mock_pokemon_fetch)
-        monkeypatch.setattr("api.logic.create_card_logic",
+        monkeypatch.setattr("app.logic.Pokemon.fetch", mock_pokemon_fetch)
+        monkeypatch.setattr("app.logic.create_card_logic",
                             mock_create_card_logic)
 
         # 4. Test real function twice
-        from api.logic import create_tcg_card
+        from app.logic import create_tcg_card
         result1 = create_tcg_card("pikachu")
         result2 = create_tcg_card("pikachu")
 

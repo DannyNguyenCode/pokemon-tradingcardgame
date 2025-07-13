@@ -1,6 +1,6 @@
 from flask.views import MethodView
-from api.schemas import LoginSchema
-from api import logic
+from app.schemas import LoginSchema
+from app import logic
 from . import auth_blp
 from flask_smorest import abort
 

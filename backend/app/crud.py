@@ -1,7 +1,7 @@
 
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update, insert, delete, func
-from api.models import Card, User
+from app.models import Card, User
 
 
 def create_card(db: Session, **kwargs) -> Card:

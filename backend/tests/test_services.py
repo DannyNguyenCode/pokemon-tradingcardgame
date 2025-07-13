@@ -1,7 +1,8 @@
 # tests/test_services.py
 import pytest
 import bcrypt
-from api.services import (
+from unittest.mock import patch
+from app.services import (
     generate_response,
     hash_password,
     check_password,

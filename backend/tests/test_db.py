@@ -1,5 +1,5 @@
 from sqlalchemy import inspect
-from api.db import engine
+from app.db import engine
 
 
 def test_tables_created(setup_database):
