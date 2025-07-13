@@ -42,29 +42,6 @@ const PokemonDetails = ({ pokemon }: { pokemon: Pokemon }) => {
         return response
 
     }
-    const costToSymbolWithMultiplier = (cost: string, attribute: string) => {
-        if (!cost) return { symbol: null, multiplier: 0 };
-        const tokens = cost.replace(/^\{|\}$/g, '').split(/[,\s]+/).filter(Boolean).map((t) => t.toLowerCase());
-        const filtered = attribute === 'attack' ? tokens : tokens.filter((t) => t !== 'colorless');
-
-        if (filtered.length === 0) return { symbol: null, multiplier: 0 };
-
-        // Count occurrences of each symbol type
-        const symbolCounts: Record<string, number> = {};
-        filtered.forEach(token => {
-            symbolCounts[token] = (symbolCounts[token] || 0) + 1;
-        });
-
-        // Get the most common symbol (or first if all equal)
-        const mostCommonSymbol = Object.keys(symbolCounts).reduce((a, b) =>
-            symbolCounts[a] > symbolCounts[b] ? a : b
-        );
-
-        const multiplier = symbolCounts[mostCommonSymbol];
-        const symbol = getMatchingIcon(mostCommonSymbol);
-
-        return { symbol, multiplier };
-    }
     const pokemonTypeIconUrl = (type: string) => {
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vi/x-y/${TYPE_ICON_INDEX[type.toLowerCase()]}.png`;
     }
@@ -72,7 +49,6 @@ const PokemonDetails = ({ pokemon }: { pokemon: Pokemon }) => {
         return Array.from({ length: cost }, (_, i) => <span key={i}><Image width={20} height={20} src={`/icons/colorless.png`} alt={COLORLESS_META.color} /></span>)
     }
     const firstAttack = pokemon.attacks[0];
-    const costInfo = costToSymbolWithMultiplier(firstAttack.cost, "attack");
 
 
     return (
