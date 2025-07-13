@@ -42,3 +42,12 @@ export type RawPokemon = {
     image_url: string;
     created_at: Date;
 };
+
+export type Pagination = {
+    page: number;
+    total_pages: number;
+    has_next: boolean;
+    has_prev: boolean;
+    total_count: number;
+    pageSize: number;
+}

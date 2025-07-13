@@ -39,7 +39,6 @@ export default function NavBar() {
                         <li><Link href={'/collection'}>Collection</Link></li>
                         {session ? (
                             <>
-                                <li><span className="text-sm opacity-70">Welcome, {session.user?.email?.split('@')[0]}</span></li>
                                 <li><button onClick={handleLogout}>Logout</button></li>
                             </>
                         ) : (
@@ -68,9 +67,6 @@ export default function NavBar() {
                     {session ? (
                         <>
                             <li><button onClick={handleLogout}>Logout</button></li>
-                            <li className="menu-title pt-1.5">
-                                <span className="text-sm font-bold text-neutral">Logged in as {session.user?.email?.split('@')[0]}</span>
-                            </li>
                         </>
                     ) : (
                         <>

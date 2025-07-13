@@ -1,8 +1,9 @@
+import NoCards from '@/ui/components/NoCards'
 import React from 'react'
 
 const CollectionPage = () => {
     return (
-        <div>CollectionPage</div>
+        <NoCards />
     )
 }
 

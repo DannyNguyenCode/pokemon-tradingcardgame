@@ -35,7 +35,7 @@ const TYPE_ICON_INDEX: Record<string, number> = {
     electric: 13, psychic: 14, ice: 15, dragon: 16, dark: 17, fairy: 18
 };
 const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
-    const owned = true
+    const owned = false
     const getMatchingIcon = (key: string) => {
         const response = (typeMap as Record<string, typeof COLORLESS_META>)[key.toLowerCase()] ?? COLORLESS_META;
         return response
@@ -59,7 +59,7 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
 
     return (
         <div className='flex'>
-            <div className={`card bg-base-100 w-200 min-h-110 shadow-sm`} style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}>
+            <div className={`card bg-base-100 w-200 min-h-100 shadow-sm`} style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}>
                 <div className="card-body">
                     <h2 className="card-title justify-between">
                         <span >{pokemon.name}</span>
