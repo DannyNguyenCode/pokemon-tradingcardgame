@@ -7,7 +7,6 @@ Web Browser Pokemon trading card game, where users can collect, trade, and battl
 3. npm run dev
 4. If not working, might be missing .env file
 
-
 ## Folder Structure
 ```bash
 .
