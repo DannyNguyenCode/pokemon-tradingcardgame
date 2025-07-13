@@ -7,7 +7,8 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
     const page = await searchParams
     const pageNumber = Math.max(1, Number(page.page ?? '1'));
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?page=${pageNumber}`).then((res) => {
-
+        console.log('[cards] fetch', `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?page=${pageNumber}`, res.status, res.headers.get('content-type'));
+        if (!res.ok) throw new Error(`API ${res.status} ${`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?page=${pageNumber}`}`);
         return res.json()
     }).then((data) => {
         console.log("data", data)
