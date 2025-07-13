@@ -18,23 +18,23 @@ export default function NavBar() {
         <div className="navbar h-16 bg-base-100 shadow-sm">
             <div className="navbar-start">
                 <div className="dropdown">
-                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+                    <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden" aria-label="open menu in mobile view">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"> <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /> </svg>
                     </div>
                     <ul
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-                        <li><Link href={'/'}>Home</Link></li>
-                        <li><Link href={'/catalogue'}>Catalogue</Link></li>
-                        <li><Link href={'/collection'}>Collection</Link></li>
+                        <li><Link role="link" href={'/'} aria-label="redicrect to home page">Home</Link></li>
+                        <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
+                        <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                         {session ? (
                             <>
-                                <li><button onClick={handleLogout}>Logout</button></li>
+                                <li><button aria-label="logout" onClick={handleLogout}>Logout</button></li>
                             </>
                         ) : (
                             <>
-                                <li><Link href={'/login'}>Login</Link></li>
-                                <li><Link href={'/register'}>Register</Link></li>
+                                <li><Link role="link" href={'/login'} aria-label="redicrect to login page">Login</Link></li>
+                                <li><Link role="link" href={'/register'} aria-label="redicrect to register page">Register</Link></li>
                             </>
                         )}
                     </ul>
@@ -52,16 +52,16 @@ export default function NavBar() {
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
 
-                    <li><Link href={'/catalogue'}>Catalogue</Link></li>
-                    <li><Link href={'/collection'}>Collection</Link></li>
+                    <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
+                    <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                     {session ? (
                         <>
-                            <li><button onClick={handleLogout}>Logout</button></li>
+                            <li><button aria-label="logout" onClick={handleLogout}>Logout</button></li>
                         </>
                     ) : (
                         <>
-                            <li><Link href={'/register'}>Register</Link></li>
-                            <li><Link href={'/login'}>Login</Link></li>
+                            <li><Link role="link" href={'/register'} aria-label="redicrect to register page">Register</Link></li>
+                            <li><Link role="link" href={'/login'} aria-label="redicrect to login page">Login</Link></li>
 
                         </>
                     )}
