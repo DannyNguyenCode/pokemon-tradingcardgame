@@ -14,7 +14,7 @@ def create_card(db: Session, **kwargs) -> Card:
 
 
 def list_cards(db: Session, page: int):
-    count_per_page = 10
+    count_per_page = 6
     count_stmt = select(func.count(Card.id))
     total_count = db.execute(count_stmt).scalar()
     stmt = (

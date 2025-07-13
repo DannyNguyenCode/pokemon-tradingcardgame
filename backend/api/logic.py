@@ -49,7 +49,7 @@ def list_cards(page: int):
         return {"error": "Page must be 1 or greater"}, 400
     try:
         # Hardcode page size to 10
-        page_size = 10
+        page_size = 6
 
         with SessionLocal() as db:
             cards, total_count = crud.list_cards(db, page)
