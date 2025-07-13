@@ -1,6 +1,6 @@
-from api.routers.authentications import auth_blp
-from api.routers.authentications.cookies import cookies_blp
-from api.routers.cards import cards_blp
+from .routers.authentications import auth_blp
+from .routers.authentications.cookies import cookies_blp
+from .routers.cards import cards_blp
 
 from flask import Flask
 from flask_smorest import Api
