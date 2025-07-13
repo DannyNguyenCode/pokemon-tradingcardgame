@@ -27,7 +27,6 @@ import { ToastContainer } from 'react-toastify'
 global.fetch = jest.fn();
 
 // Mock environment variable
-process.env.NEXT_PUBLIC_API_URL = 'http://localhost:8000';
 
 const renderWithProviders = (ui: React.ReactElement) =>
     render(
