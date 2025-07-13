@@ -27,9 +27,9 @@ export type Pokemon = {
 }
 
 export type Attack = {
-    name: string | null;
-    damage: number | null;
-    cost: string | null;
+    name: string | null | undefined;
+    damage: number | null | undefined;
+    cost: string | null | undefined;
 };
 
 export type RawPokemon = {
