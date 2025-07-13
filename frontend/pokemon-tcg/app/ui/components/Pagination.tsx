@@ -111,25 +111,30 @@ const Pagination = ({
 
     return (
         <div className="join">
-            {/* Previous button */}
-            <button
-                className={`join-item btn ${currentPage <= 1 ? 'btn-disabled' : ''}`}
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage <= 1}
-            >
-                «
+            {/* Previous button - only show if not on first page */}
+            {currentPage > 1 && (
+                <button
+                    className="join-item btn"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                >
+                    «
+                </button>
+            )}
+
+            {/* Current page in the middle */}
+            <button className="join-item btn">
+                Page {currentPage}
             </button>
 
-            {renderPageButtons()}
-
-            {/* Next button */}
-            <button
-                className={`join-item btn ${currentPage >= pagination.total_pages ? 'btn-disabled' : ''}`}
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage >= pagination.total_pages}
-            >
-                »
-            </button>
+            {/* Next button - only show if not on last page */}
+            {currentPage < pagination.total_pages && (
+                <button
+                    className="join-item btn"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                >
+                    »
+                </button>
+            )}
         </div>
     )
 }

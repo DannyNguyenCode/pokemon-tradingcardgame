@@ -3,6 +3,8 @@ import { Pokemon } from '@/lib/definitions'
 import typeMap from '@/lib/data/typeMap.json';
 import Image from 'next/image';
 import PokemonAddBtn from './PokemonAddBtn'
+import OpenModalBtn from './OpenModalBtn'
+import PokemonDetails from './PokemonDetails';
 type TypeMeta = (typeof typeMap)[keyof typeof typeMap];
 
 const COLORLESS_META: TypeMeta = {
@@ -36,17 +38,34 @@ const TYPE_ICON_INDEX: Record<string, number> = {
 };
 const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
     const owned = true
+
     const getMatchingIcon = (key: string) => {
         const response = (typeMap as Record<string, typeof COLORLESS_META>)[key.toLowerCase()] ?? COLORLESS_META;
         return response
 
     }
-    const costToSymbols = (cost: string, attribute: string) => {
-        if (!cost) return [];
+    const costToSymbolWithMultiplier = (cost: string, attribute: string) => {
+        if (!cost) return { symbol: null, multiplier: 0 };
         const tokens = cost.replace(/^\{|\}$/g, '').split(/[,\s]+/).filter(Boolean).map((t) => t.toLowerCase());
         const filtered = attribute === 'attack' ? tokens : tokens.filter((t) => t !== 'colorless');
-        return filtered.map((tok) => getMatchingIcon(tok));
 
+        if (filtered.length === 0) return { symbol: null, multiplier: 0 };
+
+        // Count occurrences of each symbol type
+        const symbolCounts: Record<string, number> = {};
+        filtered.forEach(token => {
+            symbolCounts[token] = (symbolCounts[token] || 0) + 1;
+        });
+
+        // Get the most common symbol (or first if all equal)
+        const mostCommonSymbol = Object.keys(symbolCounts).reduce((a, b) =>
+            symbolCounts[a] > symbolCounts[b] ? a : b
+        );
+
+        const multiplier = symbolCounts[mostCommonSymbol];
+        const symbol = getMatchingIcon(mostCommonSymbol);
+
+        return { symbol, multiplier };
     }
     const pokemonTypeIconUrl = (type: string) => {
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vi/x-y/${TYPE_ICON_INDEX[type.toLowerCase()]}.png`;
@@ -55,11 +74,11 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
         return Array.from({ length: cost }, (_, i) => <span key={i}><Image width={20} height={20} src={`/icons/colorless.png`} alt={COLORLESS_META.color} /></span>)
     }
     const firstAttack = pokemon.attacks[0];
-    const symbols = costToSymbols(firstAttack.cost, "attack");
+    const costInfo = costToSymbolWithMultiplier(firstAttack.cost, "attack");
 
     return (
         <div className='flex'>
-            <div className={`card bg-base-100 w-200 min-h-100 shadow-sm`} style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}>
+            <div className={`card bg-base-100 w-200 max-h-200 shadow-lg hover:shadow-xl transition-shadow duration-300`} style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}>
                 <div className="card-body">
                     <h2 className="card-title justify-between">
                         <span >{pokemon.name}</span>
@@ -81,67 +100,45 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
                     </figure>
 
                     <div className="flex justify-between items-center h-11">
-                        <span className="flex gap-1">
-                            <div className="grid grid-cols-4 gap-1">
-                                {symbols?.map((s, i) => {
-                                    return (
-                                        <div key={i} className="">
-                                            <Image loading='lazy' src={s.icon} alt={''} width={20} height={20} style={{ borderRadius: '50%', width: '20px', height: '20px' }} />
-                                        </div>
-                                    )
-                                }
-                                )}
-
+                        <span className="flex items-center gap-1">
+                            <div className='flex gap-1'>
+                                <div className='grid grid-cols-4 gap-1'>
+                                    {firstAttack.cost && (
+                                        <>
+                                            {firstAttack.cost.replace(/^\{|\}$/g, '').split(/[,\s]+/).filter(Boolean).map((token, index) => {
+                                                const cleanToken = token.toLowerCase();
+                                                const symbol = getMatchingIcon(cleanToken);
+                                                return (
+                                                    <Image
+                                                        key={index}
+                                                        loading='lazy'
+                                                        src={symbol.icon}
+                                                        alt={cleanToken}
+                                                        width={20}
+                                                        height={20}
+                                                        style={{ borderRadius: '50%', width: '20px', height: '20px' }}
+                                                    />
+                                                );
+                                            })}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </span>
                         <span>
                             {firstAttack.name}&nbsp;&nbsp;&nbsp;{firstAttack.damage}
                         </span>
                     </div>
-                    <div className='flex items-center justify-between h-11'>
-                        <span>weakness</span>
-                        <span className="flex gap-1">
-                            <div className="grid grid-cols-3 gap-1">
-                                {pokemon.weakness?.map((s, i) => {
 
-                                    return (
-                                        <Image loading='lazy' className='object-over' key={i} src={pokemonTypeIconUrl(s)} alt="" width={50} height={20} style={{ borderRadius: '50%', width: '50px', height: '20px' }} />
-                                    )
-
-
-                                }
-                                )}
-                            </div>
-                        </span>
-                    </div>
-                    <div className='flex items-center justify-between h-11'>
-                        <span>resistance </span>
-                        <span className="flex gap-1">
-                            <div className="grid grid-cols-3 gap-1">
-                                {pokemon.resistance?.map((s, i) => {
-
-                                    return (
-                                        <Image loading='lazy' className='object-over' key={i} src={pokemonTypeIconUrl(s)} alt="" width={50} height={20} style={{ borderRadius: '50%', width: '50px', height: '20px' }} />
-                                    )
-                                }
-                                )}
-                            </div>
-                        </span>
-                    </div>
-                    <div className='flex items-center justify-between h-11'>
-                        <h3>Retreat Cost</h3>
-                        <div className="grid grid-cols-10 gap-1">{pokemonRetreatCostToSymbol(pokemon.retreat_cost)}</div>
-                    </div>
 
                     {owned &&
                         <div className="card-actions flex-1 items-end justify-center">
-                            <PokemonAddBtn pokemonData={pokemon} />
-
+                            <OpenModalBtn pokemon_collector_number={pokemon.collector_number} />
                         </div>
                     }
                 </div>
 
-
+                <PokemonDetails pokemon={pokemon} />
             </div >
         </div>
     )
