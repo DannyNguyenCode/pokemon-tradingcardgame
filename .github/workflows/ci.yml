@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  ### ─────────────────────────── Backend (Python) ───────────────────────────
+  backend:
+    name: Backend • Py${{ matrix.python }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.11']
+    defaults:
+      run:
+        working-directory: app          # <─ your backend folder
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: 'pip'
+
+      - name: Install deps
+        run: |
+          pip install -r requirements.txt
+          pip install flake8 pytest pytest-cov
+
+      - name: Lint (flake8)
+        run: flake8 .
+
+      - name: Tests (pytest)
+        run: pytest --cov --cov-report=xml
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-coverage
+          path: app/coverage.xml
+
+      - name: Build Docker image
+        run: docker build -t poketcg-api:ci ./
+
+  ### ─────────────────────────── Front-end (Node) ───────────────────────────
+  frontend:
+    name: Frontend • Node${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['20']
+    defaults:
+      run:
+        working-directory: frontend/pokemon-tcg          # <─ your frontend folder
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'npm'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint (eslint)
+        run: npx eslint --max-warnings 0 .
+
+      - name: Tests (jest)
+        env:
+          CI: 'true'                    # makes CRA/Next/Jest fail on console.error
+        run: npm test -- --ci --coverage --passWithNoTests
+
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-coverage
+          path: web/coverage
+
+  ### ───────────────────────────── Merge results ────────────────────────────
+  # Blocks PR until both jobs pass
+  status:
+    needs: [backend, frontend]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "✅ All checks passed!"
