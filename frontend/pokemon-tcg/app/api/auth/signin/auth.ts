@@ -78,15 +78,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
         }),
         Google({
-            clientId: process.env.GOOGLE_CLIENT_ID || "fallback-client-id",
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "fallback-client-secret",
-            authorization: {
-                params: {
-                    prompt: "consent",
-                    access_type: "offline",
-                    response_type: "code",
-                },
-            },
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
             // Use a custom profile function to handle Google user data
             profile: (profile) => {
                 return {
