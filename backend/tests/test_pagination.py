@@ -110,7 +110,7 @@ def db_session():
 
 @pytest.fixture(autouse=True)
 def patch_logic(monkeypatch):
-            import app.logic as logic_module
+    import app.logic as logic_module
     _test_storage.clear()
     monkeypatch.setattr(logic_module, "create_card_logic", _create_card_logic)
     monkeypatch.setattr(logic_module, "list_cards", _list_cards)
@@ -119,7 +119,7 @@ def patch_logic(monkeypatch):
 @pytest.fixture
 def create_test_cards(patch_logic, monkeypatch):
     """Create exactly N test cards for testing"""
-            import app.routers.cards as cards_module
+    import app.routers.cards as cards_module
 
     storage = {}
 
