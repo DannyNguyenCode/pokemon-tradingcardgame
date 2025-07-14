@@ -24,9 +24,9 @@ def db_session():
 class TestLoginEndpoint:
     """Test login user functionality"""
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.check_password')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.check_password')
     def test_login_success_200(self, mock_check_password, mock_get_user, mock_session):
         """Test successful login returns 200 status"""
         # Mock setup
@@ -57,8 +57,8 @@ class TestLoginEndpoint:
         assert response["data"]["email"] == "test@example.com"
         assert "id" in response["data"]
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
     def test_login_user_not_found_401(self, mock_get_user, mock_session):
         """Test login with non-existent user returns 401"""
         # Mock setup
@@ -78,9 +78,9 @@ class TestLoginEndpoint:
         assert status == 401
         assert response["error"] == "Invalid credentials"
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.check_password')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.check_password')
     def test_login_wrong_password_401(self, mock_check_password, mock_get_user, mock_session):
         """Test login with wrong password returns 401"""
         # Mock setup
@@ -107,7 +107,7 @@ class TestLoginEndpoint:
         assert status == 401
         assert response["error"] == "Invalid credentials"
 
-    @patch('api.logic.SessionLocal')
+    @patch('app.logic.SessionLocal')
     def test_login_exception_500(self, mock_session):
         """Test login when exception occurs returns 500"""
         # Mock setup to raise exception
@@ -171,8 +171,8 @@ class TestLoginEndpoint:
 class TestLoginEdgeCases:
     """Test edge cases and security considerations for login"""
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
     def test_login_sql_injection_attempt(self, mock_get_user, mock_session):
         """Test login with SQL injection attempt"""
         mock_session.return_value.__enter__.return_value = MagicMock()
@@ -229,9 +229,9 @@ class TestLoginEdgeCases:
         response, status = login_user(**login_data)
         assert status == 500  # Should fail validation (unicode not in regex)
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.check_password')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.check_password')
     def test_login_case_sensitive_email(self, mock_check_password, mock_get_user, mock_session):
         """Test login with case-sensitive email handling"""
         # Mock setup
@@ -258,9 +258,9 @@ class TestLoginEdgeCases:
         # or fail if case-sensitive (depends on implementation)
         assert status in [200, 401]
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.check_password')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.check_password')
     def test_login_whitespace_handling(self, mock_check_password, mock_get_user, mock_session):
         """Test login with whitespace in email and password"""
         # Mock setup

@@ -25,11 +25,11 @@ def db_session():
 class TestRegisterEndpoint:
     """Test register user functionality"""
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.crud.create_user')
-    @patch('api.logic.services.validate_password_strength')
-    @patch('api.logic.services.hash_password')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.crud.create_user')
+    @patch('app.logic.services.validate_password_strength')
+    @patch('app.logic.services.hash_password')
     def test_register_success_201(self, mock_hash, mock_validate, mock_create_user, mock_get_user, mock_session):
         """Test successful user registration returns 201 status"""
         # Mock setup
@@ -65,8 +65,8 @@ class TestRegisterEndpoint:
         assert "data" in response
         assert response["data"]["email"] == "test@example.com"
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
     def test_register_duplicate_email_400(self, mock_get_user, mock_session):
         """Test registration with existing email returns 400"""
         # Mock setup
@@ -87,9 +87,9 @@ class TestRegisterEndpoint:
         assert status == 400
         assert response["error"] == "Registration failed"
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.validate_password_strength')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.validate_password_strength')
     def test_register_weak_password_400(self, mock_validate, mock_get_user, mock_session):
         """Test registration with weak password returns 400"""
         # Mock setup
@@ -110,10 +110,10 @@ class TestRegisterEndpoint:
         assert status == 400
         assert response["error"] == "Password is too weak"
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
-    @patch('api.logic.services.validate_password_strength')
-    @patch('api.logic.crud.create_user')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
+    @patch('app.logic.services.validate_password_strength')
+    @patch('app.logic.crud.create_user')
     def test_register_user_creation_fails_500(self, mock_create_user, mock_validate, mock_get_user, mock_session):
         """Test registration when user creation fails returns 500"""
         # Mock setup
@@ -135,7 +135,7 @@ class TestRegisterEndpoint:
         assert status == 500
         assert response["error"] == "User registration failed"
 
-    @patch('api.logic.SessionLocal')
+    @patch('app.logic.SessionLocal')
     def test_register_exception_500(self, mock_session):
         """Test registration when exception occurs returns 500"""
         # Mock setup to raise exception
@@ -224,8 +224,8 @@ class TestPasswordValidation:
 class TestRegisterEdgeCases:
     """Test edge cases and security considerations for registration"""
 
-    @patch('api.logic.SessionLocal')
-    @patch('api.logic.crud.get_user_by_email')
+    @patch('app.logic.SessionLocal')
+    @patch('app.logic.crud.get_user_by_email')
     def test_register_sql_injection_attempt(self, mock_get_user, mock_session):
         """Test registration with SQL injection attempt"""
         mock_session.return_value.__enter__.return_value = MagicMock()

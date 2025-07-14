@@ -60,7 +60,7 @@ def _create_card_logic(**kw):
     return card, 201
 
 
-def _list_cards(page=1):
+def _list_cards(page=1, type_filter=None, pokemon_name=None):
     cards = list(_test_storage.values())
     cards.sort(key=lambda x: x.get("collector_number", 0))
     page_size = 10
@@ -128,7 +128,7 @@ def create_test_cards(patch_logic, monkeypatch):
         storage[card["id"]] = card
         return card, 201
 
-    def _list_cards(page=1):
+    def _list_cards(page=1, type_filter=None, pokemon_name=None):
         cards = list(storage.values())
         # Sort by collector_number for consistent pagination
         cards.sort(key=lambda x: x.get("collector_number", 0))
@@ -194,6 +194,8 @@ class TestPaginationSpecificData:
         create_test_cards(50)
 
         response = client.get("/api/cards/?page=5")
+        print("Status code:", response.status_code)
+        print("Response data (raw):", response.data)
         data = response.get_json()
 
         assert len(data["data"]) == 10

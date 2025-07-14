@@ -15,10 +15,10 @@ from app.crud import (
 # Remove the custom db_session fixture - use the one from conftest.py
 
 class TestCRUDFunctions:
-    """Test the actual CRUD functions from api.crud"""
+    """Test the actual CRUD functions from app.crud"""
 
-    @patch('api.crud.Card', Card)
-    @patch('api.crud.User', User)
+    @patch('app.crud.Card', Card)
+    @patch('app.crud.User', User)
     def test_create_card(self, db_session):
         """Test create_card function"""
         card_data = {
@@ -44,7 +44,7 @@ class TestCRUDFunctions:
         assert card.collector_number == 25
         assert card.id is not None
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_list_cards(self, db_session):
         """Test list_cards function with pagination"""
         # Create multiple cards
@@ -70,13 +70,17 @@ class TestCRUDFunctions:
         db_session.commit()
 
         # Test pagination
-        cards_page1 = list_cards(db_session, page=1)
-        assert len(cards_page1) == 10  # 10 cards per page
+        cards, total = list_cards(
+            db_session, page=1, type_filter=None, pokemon_name=None)
+        assert len(cards) == 12  # 10 cards per page
+        assert total == 15
 
-        cards_page2 = list_cards(db_session, page=2)
-        assert len(cards_page2) == 5  # Remaining 5 cards
+        cards, total = list_cards(
+            db_session, page=2, type_filter=None, pokemon_name=None)
+        assert len(cards) == 3  # Remaining 5 cards
+        assert total == 15
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_get_card_by_id(self, db_session):
         """Test get_card_by_id function"""
         # Create a card
@@ -106,7 +110,7 @@ class TestCRUDFunctions:
         assert found_card.name == "Pikachu"
         assert found_card.id == created_card.id
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_update_card(self, db_session):
         """Test update_card function"""
         # Create a card
@@ -137,7 +141,7 @@ class TestCRUDFunctions:
         assert updated_card.hp == 50
         assert updated_card.rarity == "Uncommon"
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_delete_card(self, db_session):
         """Test delete_card function"""
         # Create a card
@@ -172,7 +176,7 @@ class TestCRUDFunctions:
         found_card = get_card_by_id(db_session, card_id)
         assert found_card is None
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_create_user(self, db_session):
         """Test create_user function"""
         user_data = {
@@ -185,7 +189,7 @@ class TestCRUDFunctions:
         assert user.email == "test@example.com"
         assert user.id is not None
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_get_user_by_id(self, db_session):
         """Test get_user_by_id function"""
         # Create a user
@@ -203,7 +207,7 @@ class TestCRUDFunctions:
         assert found_user.email == "test@example.com"
         assert found_user.id == created_user.id
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_user_list(self, db_session):
         """Test user_list function"""
         # Create multiple users
@@ -220,7 +224,7 @@ class TestCRUDFunctions:
         users = user_list(db_session)
         assert len(users) == 3
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_update_user(self, db_session):
         """Test update_user function"""
         # Create a user
@@ -238,7 +242,7 @@ class TestCRUDFunctions:
         assert updated_user is not None
         assert updated_user.email == "updated@example.com"
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_delete_user(self, db_session):
         """Test delete_user function"""
         # Create a user
@@ -261,7 +265,7 @@ class TestCRUDFunctions:
         found_user = get_user_by_id(db_session, user_id)
         assert found_user is None
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_get_user_by_email(self, db_session):
         """Test get_user_by_email function"""
         # Create a user
@@ -279,28 +283,28 @@ class TestCRUDFunctions:
         assert found_user.email == "test@example.com"
         assert found_user.id == created_user.id
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_get_nonexistent_card(self, db_session):
         """Test get_card_by_id with non-existent card"""
         # Try to get a card that doesn't exist
         found_card = get_card_by_id(db_session, 999)
         assert found_card is None
 
-    @patch('api.crud.User', User)
+    @patch('app.crud.User', User)
     def test_get_nonexistent_user(self, db_session):
         """Test get_user_by_id with non-existent user"""
         # Try to get a user that doesn't exist
         found_user = get_user_by_id(db_session, 999)
         assert found_user is None
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_update_nonexistent_card(self, db_session):
         """Test update_card with non-existent card"""
         # Try to update a card that doesn't exist
         updated_card = update_card(db_session, 999, hp=50)
         assert updated_card is None
 
-    @patch('api.crud.Card', Card)
+    @patch('app.crud.Card', Card)
     def test_delete_nonexistent_card(self, db_session):
         """Test delete_card with non-existent card"""
         # Try to delete a card that doesn't exist

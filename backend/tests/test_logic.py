@@ -67,7 +67,7 @@ def patch_logic(monkeypatch):
         }
         return response, 201
 
-    def _list_cards(page=1):
+    def _list_cards(page=1, type_filter=None, pokemon_name=None):
         cards = list(_test_storage.values())
         # Sort by collector_number for consistent pagination
         cards.sort(key=lambda x: x.get("collector_number", 0))

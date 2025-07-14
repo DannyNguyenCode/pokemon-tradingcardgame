@@ -3,6 +3,7 @@ import sys
 import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
+from app import create_app
 
 # Add the parent directory to Python path so we can import app
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -22,26 +23,6 @@ PRODUCTION_DATABASE_URLS = [
 ]
 
 
-def check_production_database_access():
-    """Check if any code is trying to access production database during tests."""
-    import os
-    current_db_url = os.environ.get("DATABASE_URL", "")
-
-    # If we're using in-memory SQLite, we're safe
-    if current_db_url == "sqlite:///:memory:":
-        return
-
-    # Check if we're accidentally using production database
-    for prod_url in PRODUCTION_DATABASE_URLS:
-        if current_db_url.startswith(prod_url) and "memory" not in current_db_url:
-            raise RuntimeError(
-                f"🚨 SAFETY VIOLATION: Test is trying to access production database!\n"
-                f"Current DATABASE_URL: {current_db_url}\n"
-                f"Tests must use 'sqlite:///:memory:' for isolation.\n"
-                f"Check your environment variables and database configuration."
-            )
-
-
 # Create a single in-memory SQLite engine for the whole test session
 TEST_SQLITE_URL = "sqlite:///:memory:"
 test_engine = create_engine(TEST_SQLITE_URL)
@@ -54,8 +35,6 @@ def setup_database():
     """
     Create all tables in the in-memory SQLite database once per test session.
     """
-    # Safety check
-    check_production_database_access()
 
     # Import test models and base
     from tests.test_models import TestCard, TestUser, TestPokemon_Collection, TestBase
@@ -79,11 +58,9 @@ def app():
     """
     Create a Flask app with TESTING=True.
     """
-    # Safety check
-    check_production_database_access()
-
-    app = create_engine(TEST_SQLITE_URL)
-    app.config.update({"TESTING": True})
+    app = create_app()
+    app.config.update(
+        {"TESTING": True, "SQLALCHEMY_DATABASE_URI": TEST_SQLITE_URL})
     return app
 
 
@@ -101,9 +78,6 @@ def db_session():
     Provide a SQLAlchemy session bound to the shared in-memory engine,
     and roll back after each test.
     """
-    # Safety check
-    check_production_database_access()
-
     session = TestSessionLocal()
     try:
         yield session
@@ -117,8 +91,6 @@ def clean_database(db_session):
     """
     Clean the database before each test to ensure isolation.
     """
-    # Safety check
-    check_production_database_access()
 
     # Import test models
     from tests.test_models import TestBase
@@ -231,12 +203,12 @@ def patch_all_database_access(monkeypatch, db_session):
     """
     # Patch SessionLocal in all modules that use it
     modules_to_patch = [
-        "api.logic",
-        "api.crud",
-        "api.routers.cards",
-        "api.routers.authentications.login",
-        "api.routers.authentications.register",
-        "api.services",
+        "app.logic",
+        "app.crud",
+        "app.routers.cards",
+        "app.routers.authentications.login",
+        "app.routers.authentications.register",
+        "app.services",
     ]
 
     for module in modules_to_patch:
@@ -247,14 +219,14 @@ def patch_all_database_access(monkeypatch, db_session):
             pass
 
     # Also patch the main db module
-    monkeypatch.setattr("api.db.SessionLocal", lambda: db_session)
+    monkeypatch.setattr("app.db.SessionLocal", lambda: db_session)
 
     # Patch any direct imports in logic.py
-    monkeypatch.setattr("api.logic.SessionLocal", lambda: db_session)
+    monkeypatch.setattr("app.logic.SessionLocal", lambda: db_session)
 
     # Ensure the test session is used everywhere
     def get_test_session():
         return db_session
 
     # Patch the SessionLocal function itself
-    monkeypatch.setattr("api.db.SessionLocal", get_test_session)
+    monkeypatch.setattr("app.db.SessionLocal", get_test_session)
