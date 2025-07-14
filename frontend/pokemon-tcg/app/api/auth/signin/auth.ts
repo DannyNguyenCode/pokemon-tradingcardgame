@@ -80,14 +80,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            // Use a custom profile function to handle Google user data
             profile: (profile) => {
                 return {
                     id: profile.id,
                     email: profile.email,
-                    name: profile.name || profile.email.split('@')[0], // Fallback to email prefix if name is not available
-                    image: profile.picture || null, // Use picture if available
-                    message: "Logged in with Google" // Custom message for Google login
+                    name: profile.name || profile.email.split('@')[0],
+                    image: profile.picture || null,
+                    message: "Logged in with Google"
                 }
             }
 
