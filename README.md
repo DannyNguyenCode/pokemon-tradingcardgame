@@ -18,7 +18,7 @@ README in frontend directory to set up and run client
 - ~~Scaffold: api/ folder with main.py, routers/cards.py, models.py, schemas.py~~
 - ~~Connect to Supabase Postgres via asyncpg or Supabase SDK~~
 - Implement endpoints:
-    - GET /cards (list, paging, basic filters)
+    - ~~GET /cards (list, paging, basic filters)~~
     - ~~GET /cards/{id}~~
     - ~~POST /cards (admin only)~~
     - ~~PUT /cards/{id}, DELETE /cards/{id}~~
