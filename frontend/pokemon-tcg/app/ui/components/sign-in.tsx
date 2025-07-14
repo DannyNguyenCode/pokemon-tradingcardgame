@@ -7,7 +7,7 @@ import Email from "./Email"
 import LoginBtn from "./LoginBtn"
 import { useAppDispatch } from "../../lib/hooks"
 import { loadToastifyState } from "../../lib/features/toastify/toastifySlice"
-import Googlesignin from "./googlesignin"
+import SigninGoogleAuth from "./SigninGoogleAuth"
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -122,7 +122,7 @@ export const SignIn = () => {
 
             </form>
             <div className="flex justify-center">
-                <Googlesignin />
+                <SigninGoogleAuth />
             </div>
         </>
     )

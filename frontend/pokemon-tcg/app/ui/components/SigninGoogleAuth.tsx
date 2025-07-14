@@ -1,7 +1,6 @@
-'use client'
 import React from 'react'
 import { signIn } from 'next-auth/react'
-const Googlesignin = () => {
+const SigninGoogleAuth = () => {
     return (
         <form
             action={async () => {
@@ -16,4 +15,4 @@ const Googlesignin = () => {
     )
 }
 
-export default Googlesignin
+export default SigninGoogleAuth
