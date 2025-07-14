@@ -42,13 +42,13 @@ README in frontend directory to set up and run client
 #### 1.5 Testing & CI
 - ~~Add pytest tests for the card catalog routes (CRUD & validation)~~
 - ~~Add Jest + React Testing Library tests for the /cards page~~
-- Create GitHub Actions workflow:
-    -Lint Python (flake8) & JS (eslint), run tests, build Docker image
+- ~~Create GitHub Actions workflow:~~
+    - ~~JS (eslint), run tests, build Docker image~~
 
 ### Milestone 2 (M2): Auth, Profiles & Deck Builder
 
 #### 2.1 Back-end: Auth & User Service
-- Deploy Supabase Auth or implement Auth.js proxy:
+- ~~Deploy Supabase Auth or implement Auth.js proxy:~~
 - For custom, create api/routers/auth.py with /signup, /login, /refresh using JWT
 - Middleware: enforce JWT on protected routes
 
@@ -61,7 +61,7 @@ README in frontend directory to set up and run client
 - Business rule: max 4 copies per card, deck size rules
 
 #### 2.3 Front-end: Auth Integration
-- Install Auth.js in React; configure providers (email/password + OAuth)
+- ~~Install Auth.js in React; configure providers (email/password + OAuth)~
 - Build /login, /signup, /profile pages; Redux “auth” slice for tokens/user
 
 #### 2.4 Front-end: Deck Builder Page
