@@ -1,11 +1,8 @@
 import pytest
-from app.db import init_db, SessionLocal
 import sys
 import os
 from sqlalchemy import create_engine, text
-from app.db import Base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.pool import StaticPool
 
 # Add the parent directory to Python path so we can import app
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
