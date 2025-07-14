@@ -1,16 +1,16 @@
 // Minimal TransformStream polyfill for Jest (Node)
 if (typeof global.TransformStream === 'undefined') {
-  // @ts-ignore
+  // @ts-expect-error
   global.TransformStream = class {
     constructor() { }
   };
 }
 
 if (typeof global.BroadcastChannel === 'undefined') {
-  // @ts-ignore
-  global.BroadcastChannel = class {
+  // @ts-expect-error
+  global.BroadcastChannel = class <T = unknown> {
     name: string;
-    onmessage: ((event: any) => void) | null = null;
+    onmessage: ((event: MessageEvent<T>) => void) | null = null;
     constructor(name: string) {
       this.name = name;
     }
