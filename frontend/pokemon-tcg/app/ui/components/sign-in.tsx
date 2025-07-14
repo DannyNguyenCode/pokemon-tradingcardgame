@@ -8,6 +8,7 @@ import LoginBtn from "./LoginBtn"
 import { useAppDispatch } from "../../lib/hooks"
 import { loadToastifyState } from "../../lib/features/toastify/toastifySlice"
 import SigninGoogleAuth from "./SigninGoogleAuth"
+import Link from "next/link"
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -112,10 +113,10 @@ export const SignIn = () => {
                 </div>
                 <div>
                     <p className="text-sm text-gray-500">
-                        Don't have an account?{" "}
-                        <a href="/register" className="text-blue-600 hover:underline">
+                        Don't have an account?&nbsp;
+                        <Link href="/register" aria-label="link to redirect to registration page" className="text-blue-600 hover:underline">
                             Register here
-                        </a>
+                        </Link>
                     </p>
                 </div>
                 <div className="divider">OR</div>

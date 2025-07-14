@@ -128,8 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return session
         },
-        async signIn({ user, account, profile, credentials }: { account?: any, profile?: any, user?: any, credentials?: any }) {
-            // Log sign-in event for debugging
+        async signIn({ user, account, profile }: { account?: any, profile?: any, user?: any, credentials?: any }) {
             console.log("User signed in:", user, "Account:", account, "Profile:", profile)
             return true // Allow sign-in
         }
