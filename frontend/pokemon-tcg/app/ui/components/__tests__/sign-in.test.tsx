@@ -47,7 +47,7 @@ describe('SignIn', () => {
         // Assert
         expect(screen.getByPlaceholderText(/mail@site\.com/i)).toBeInTheDocument()
         expect(screen.getByPlaceholderText(/^password$/i)).toBeInTheDocument()
-        expect(screen.getByRole('button', { name: /sign in/i })).toBeInTheDocument()
+        expect(screen.getByRole('button', { name: /Sign in/i })).toBeInTheDocument()
     })
 
     it('shows error on invalid credentials', async () => {
@@ -63,12 +63,14 @@ describe('SignIn', () => {
         renderWithProviders(<SignIn />)
         const emailInput = screen.getByPlaceholderText(/mail@site\.com/i)
         const passwordInput = screen.getByPlaceholderText(/^password$/i)
-        const submitBtn = screen.getByRole('button', { name: /sign in/i })
+        const buttons = screen.getAllByRole('button', { name: /sign in/i });
+        const submitBtn = buttons.find(btn => btn.getAttribute('type') === 'submit');
+        expect(buttons).toHaveLength(1);
 
         // Act
         await userEvent.type(emailInput, 'fail@example.com')
         await userEvent.type(passwordInput, 'Password123!!') // Valid password format
-        await userEvent.click(submitBtn)
+        await userEvent.click(submitBtn!)
 
         // Assert
         expect(await screen.findByText(/Invalid credentials/i)).toBeInTheDocument()

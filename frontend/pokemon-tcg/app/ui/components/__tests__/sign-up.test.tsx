@@ -63,7 +63,7 @@ describe('SignUp', () => {
         const emailInput = screen.getByPlaceholderText(/mail@site\.com/i)
         const passwordInput = screen.getByPlaceholderText(/^password$/i)
         const confirmPasswordInput = screen.getByPlaceholderText(/confirm your password/i)
-        const submitBtn = screen.getByRole('button', { name: /create account/i })
+        const submitBtn = screen.getByRole('button', { name: /create account/i });
 
         // Act - Use fireEvent for controlled inputs
         fireEvent.change(emailInput, { target: { value: 'fail@example.com' } })

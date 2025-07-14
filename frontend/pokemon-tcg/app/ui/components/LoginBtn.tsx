@@ -10,6 +10,7 @@ const LoginBtn = ({ disabled = false }: LoginBtnProps) => {
             className="btn btn-success"
             type="submit"
             disabled={disabled}
+            aria-label="Sign in"
         >
             {disabled ? "Signing In..." : "Sign In"}
         </button>

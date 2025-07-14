@@ -180,6 +180,7 @@ export const SignUp = () => {
                     type="submit"
                     disabled={isLoading || showPasswordMismatch}
                     className="btn btn-primary w-full"
+                    aria-label="Create account"
                 >
                     {isLoading ? (
                         <>
