@@ -54,7 +54,7 @@ jobs:
         node: ['20']
     defaults:
       run:
-        working-directory: /pokemon-tradingcardgame/frontend/pokemon-tcg          # <─ your frontend folder
+        working-directory: ${{ github.workspace }}/frontend/pokemon-tcg          # <─ your frontend folder
     steps:
       - uses: actions/checkout@v4
 
