@@ -1,4 +1,4 @@
-import NextAuth from "next-auth"
+import NextAuth, { type NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/zod"
 import Google from "next-auth/providers/google"
@@ -128,7 +128,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return session
         },
-        async signIn({ user, account, profile }: { account?: any, profile?: any, user?: any, credentials?: any }) {
+        async signIn({ user, account, profile }) {
             console.log("User signed in:", user, "Account:", account, "Profile:", profile)
             return true // Allow sign-in
         }
@@ -136,4 +136,4 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // Add SSR optimizations
     debug: process.env.NODE_ENV === 'development',
     trustHost: true,
-})
+} satisfies NextAuthConfig);

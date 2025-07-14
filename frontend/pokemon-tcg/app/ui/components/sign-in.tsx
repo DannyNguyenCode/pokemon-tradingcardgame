@@ -1,5 +1,4 @@
 "use client"
-
 import { signIn, useSession } from "next-auth/react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
@@ -113,7 +112,7 @@ export const SignIn = () => {
                 </div>
                 <div>
                     <p className="text-sm text-gray-500">
-                        Don't have an account?&nbsp;
+                        Don&apos;t have an account?&nbsp;
                         <Link href="/register" aria-label="link to redirect to registration page" className="text-blue-600 hover:underline">
                             Register here
                         </Link>
