@@ -4,13 +4,15 @@ import ThemeToggleBtn from './ThemeToggleBtn'
 import Link from 'next/link'
 import { useSession, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-
+import { useAppDispatch } from '@/lib/hooks'
+import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
 export default function NavBar() {
     const { data: session } = useSession()
     const router = useRouter()
-
+    const dispatch = useAppDispatch()
     const handleLogout = async () => {
         await signOut({ redirect: false })
+        dispatch(loadToastifyState('You have been logged out successfully.'))
         router.push('/')
     }
 

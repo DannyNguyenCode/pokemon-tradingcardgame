@@ -7,6 +7,10 @@ Web Browser Pokemon trading card game, where users can collect, trade, and battl
 3. npm run dev
 4. If not working, might be missing .env file
 
+### Instructions to run tests
+1. cd into pokemon-tcg
+2. npm test or npm test -- --coverage
+
 ## Folder Structure
 ```bash
 .

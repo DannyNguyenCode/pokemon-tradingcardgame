@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/zod"
+import Google from "next-auth/providers/google"
 
 // Check for required environment variables with better error handling
 const requiredEnvVars = {
@@ -76,6 +77,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
             },
         }),
+        Google({
+            clientId: process.env.GOOGLE_CLIENT_ID || "fallback-client-id",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET || "fallback-client-secret",
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code",
+                },
+            },
+            // Use a custom profile function to handle Google user data
+            profile: (profile) => {
+                return {
+                    id: profile.id,
+                    email: profile.email,
+                    name: profile.name || profile.email.split('@')[0], // Fallback to email prefix if name is not available
+                    image: profile.picture || null, // Use picture if available
+                    message: "Logged in with Google" // Custom message for Google login
+                }
+            }
+
+        },
+        ),
     ],
     session: {
         strategy: "jwt",
@@ -103,6 +127,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.message = token.message as string // Pass message to session
             }
             return session
+        },
+        async signIn({ user, account, profile, credentials }: { account?: any, profile?: any, user?: any, credentials?: any }) {
+            // Log sign-in event for debugging
+            console.log("User signed in:", user, "Account:", account, "Profile:", profile)
+            return true // Allow sign-in
         }
     },
     // Add SSR optimizations

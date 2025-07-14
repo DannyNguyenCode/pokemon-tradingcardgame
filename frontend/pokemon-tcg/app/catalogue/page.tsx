@@ -30,13 +30,16 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
     })
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-center min-h-0 gap-4">
-            <div className='w-full px-4'>
-                <Filters />
+        <div className="flex-1 flex flex-col items-center justify-between min-h-0 pt-4">
+            <div className="flex flex-col items-center gap-4 w-full">
+                <div className='w-full px-4'>
+                    <Filters />
+                </div>
+                <CardList data={response.data} />
             </div>
-            <CardList data={response.data} />
-            <Pagination pagination={response.pagination} />
-
+            <div className="w-full flex justify-center">
+                <Pagination pagination={response.pagination} />
+            </div>
         </div>
     )
 }

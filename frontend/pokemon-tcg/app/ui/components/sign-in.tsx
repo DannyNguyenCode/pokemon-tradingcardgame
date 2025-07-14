@@ -7,6 +7,7 @@ import Email from "./Email"
 import LoginBtn from "./LoginBtn"
 import { useAppDispatch } from "../../lib/hooks"
 import { loadToastifyState } from "../../lib/features/toastify/toastifySlice"
+import Googlesignin from "./googlesignin"
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
@@ -61,53 +62,68 @@ export const SignIn = () => {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-6">
-            {error && (
-                <div className="alert alert-error">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span className="break-words">{error}</span>
-                </div>
-            )}
-            <div>
-                <Email />
-            </div>
-            <div>
+        <>
+            <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                    <div className="alert alert-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <span className="break-words">{error}</span>
+                    </div>
+                )}
                 <div>
-                    <label htmlFor="password" className="input validator">
-                        <span className="sr-only">Password</span>
-                        <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                            <g
-                                strokeLinejoin="round"
-                                strokeLinecap="round"
-                                strokeWidth="2.5"
-                                fill="none"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                ></path>
-                                <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                            </g>
-                        </svg>
-                        <input
-                            id="password"
-                            type={isPasswordFocused ? "text" : "password"}
-                            name="password"
-                            required
-                            value={password}
-                            onChange={(e) => handlePasswordChange(e)}
-                            onFocus={() => setIsPasswordFocused(true)}
-                            onBlur={() => setIsPasswordFocused(false)}
-                            placeholder="Password"
-                            className=""
-                        />
-                    </label>
-
+                    <Email />
                 </div>
+                <div>
+                    <div>
+                        <label htmlFor="password" className="input validator">
+                            <span className="sr-only">Password</span>
+                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <g
+                                    strokeLinejoin="round"
+                                    strokeLinecap="round"
+                                    strokeWidth="2.5"
+                                    fill="none"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+                                    ></path>
+                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+                                </g>
+                            </svg>
+                            <input
+                                id="password"
+                                type={isPasswordFocused ? "text" : "password"}
+                                name="password"
+                                required
+                                value={password}
+                                onChange={(e) => handlePasswordChange(e)}
+                                onFocus={() => setIsPasswordFocused(true)}
+                                onBlur={() => setIsPasswordFocused(false)}
+                                placeholder="Password"
+                                className=""
+                            />
+                        </label>
+
+                    </div>
+                </div>
+                <div>
+                    <LoginBtn disabled={isLoading} />
+                </div>
+                <div>
+                    <p className="text-sm text-gray-500">
+                        Don't have an account?{" "}
+                        <a href="/register" className="text-blue-600 hover:underline">
+                            Register here
+                        </a>
+                    </p>
+                </div>
+                <div className="divider">OR</div>
+
+            </form>
+            <div className="flex justify-center">
+                <Googlesignin />
             </div>
-            <div>
-                <LoginBtn disabled={isLoading} />
-            </div>
-        </form>
+        </>
     )
 }

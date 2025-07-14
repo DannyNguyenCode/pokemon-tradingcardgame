@@ -8,7 +8,7 @@ import { clearToastifyState } from '@/lib/features/toastify/toastifySlice';
 import { useTheme } from '@/ui/theme/ThemeProvider';
 export default function ToastManager() {
     const dispatch = useAppDispatch();
-    const message = useAppSelector((s) => s.toasify.message);
+    const message = useAppSelector((s) => s.toastify.message);
     const { theme } = useTheme();
     useEffect(() => {
         if (message) {
@@ -16,5 +16,5 @@ export default function ToastManager() {
         }
     }, [message, dispatch]);
 
-    return <ToastContainer position="top-left" theme={theme} newestOnTop />;
+    return <ToastContainer position="top-right" theme={theme} newestOnTop />;
 }
