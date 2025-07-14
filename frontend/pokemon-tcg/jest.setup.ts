@@ -36,11 +36,8 @@ if (typeof global.TextDecoder === 'undefined') {
   global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveNoViolations(): R;
-    }
+declare module 'expect' {
+  interface Matchers<R> {
+    toHaveNoViolations(): R;
   }
 }
