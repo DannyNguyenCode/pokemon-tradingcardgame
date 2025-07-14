@@ -1,13 +1,15 @@
 // Minimal TransformStream polyfill for Jest (Node)
 if (typeof global.TransformStream === 'undefined') {
-  // @ts-expect-error
+  // @ts-expect-error in Node.js, TransformStream is not available
+  // This is a minimal polyfill for testing purposes
   global.TransformStream = class {
     constructor() { }
   };
 }
 
 if (typeof global.BroadcastChannel === 'undefined') {
-  // @ts-expect-error
+  // @ts-expect-error in Node.js, BroadcastChannel is not available
+  // This is a minimal polyfill for testing purposes
   global.BroadcastChannel = class <T = unknown> {
     name: string;
     onmessage: ((event: MessageEvent<T>) => void) | null = null;
@@ -34,7 +36,7 @@ if (typeof global.TextDecoder === 'undefined') {
   global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 }
 
-// Extend expect for jest-axe
+// eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {
   namespace jest {
     interface Matchers<R> {

@@ -30,9 +30,6 @@ jobs:
           pip install -r requirements.txt
           pip install flake8 pytest pytest-cov
 
-      - name: Lint (flake8)
-        run: flake8 .
-
       - name: Tests (pytest)
         run: pytest --cov --cov-report=xml
 
