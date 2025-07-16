@@ -49,8 +49,8 @@ README in frontend directory to set up and run client
 
 #### 2.1 Back-end: Auth & User Service
 - ~~Deploy Supabase Auth or implement Auth.js proxy:~~
-- For custom, create api/routers/auth.py with /signup, /login, /refresh using JWT
-- Middleware: enforce JWT on protected routes
+- ~~For custom, create api/routers/auth.py with /signup, /login, /refresh using JWT~~
+- ~~Middleware: enforce JWT on protected routes~~
 
 #### 2.2 Back-end: Deck Service
 - Models: Deck { id, name, user_id }, DeckCard { deck_id, card_id, count }
