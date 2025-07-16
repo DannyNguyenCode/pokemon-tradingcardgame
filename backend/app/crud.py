@@ -16,7 +16,6 @@ def create_card(db: Session, **kwargs) -> Card:
 def list_cards(db: Session, page: int, type_filter: str | None, pokemon_name: str | None):
     filters = []
     count_per_page = 12
-    print("POKEMON NAME", pokemon_name)
     if type_filter:
         filters.append(Card.type == type_filter.capitalize())
     if pokemon_name:
@@ -24,7 +23,6 @@ def list_cards(db: Session, page: int, type_filter: str | None, pokemon_name: st
 
     count_stmt = select(func.count(Card.id).filter(*filters))
     total_count = db.execute(count_stmt).scalar()
-    print("FILTERS", *filters)
     stmt = (
         select(Card).where(*filters).order_by(Card.collector_number.asc()).limit(
             count_per_page).offset((page-1)*count_per_page)

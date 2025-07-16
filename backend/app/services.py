@@ -44,13 +44,11 @@ def validate_password_strength(password: str):
 
     try:
         policy_test = policy.test(password)
-        print("POLICY TEST", policy_test)
         message = ""
         status = ''
         # Check if there are any policy violations
         if policy_test:
             if any(type(v).__name__.lower() == "Length".lower() for v in policy_test):
-                print("LENGTH")
                 message = "Password must be at least 8 characters long"
                 status = 'violation'
             elif any(type(v).__name__.lower() == "Nonletters".lower() for v in policy_test):
@@ -94,15 +92,12 @@ def jwt_required(allowed_roles):
         def decorated_function(*args, **kwargs):
 
             auth_header = request.headers.get('Authorization', "")
-            print("AUTH HEADER", auth_header)
             if not auth_header.startswith('Bearer '):
                 return jsonify({"error": "Missing or invalid token"}), 401
             token = auth_header.split(" ")[1]
-            print("TOKEN", token)
             try:
                 payload = jwt.decode(token, SECRET, algorithms=['HS256'])
                 g.user = payload
-                print("JWT Payload:", payload)
             except jwt.ExpiredSignatureError:
                 return jsonify({"error": "Token has expired"}), 401
             except jwt.InvalidTokenError:

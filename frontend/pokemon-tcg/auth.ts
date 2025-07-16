@@ -2,7 +2,7 @@ import NextAuth, { type NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/zod"
 import Google from "next-auth/providers/google"
-
+import { SignJWT } from 'jose'
 // Check for required environment variables with better error handling
 const requiredEnvVars = {
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
@@ -42,7 +42,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         console.error("NEXT_PUBLIC_API_URL is not set")
                         return null
                     }
-
                     // Call backend API
                     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/authentications/login`, {
                         method: "POST",
@@ -104,11 +103,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: "/login",
     },
     callbacks: {
-        jwt: ({ token, user }) => {
+        jwt: async ({ token, user, account }) => {
+            if (account?.provider === 'google') {
+                token.accessToken = await new SignJWT({
+                    sub: token.sub,
+                    role: user.role as string
+
+                }).setIssuedAt()
+                    .setExpirationTime('15m').setProtectedHeader({ alg: 'HS256' })
+                    .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET))
+            }
             if (user) {
                 token.id = user.id
                 token.email = user.email
                 token.message = user.message // Pass message through JWT
+                token.role = user.role
+                token.loginMsg = user.message
             }
             return token
         },
@@ -117,11 +127,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 session.user.id = token.id as string
                 session.user.email = token.email as string
                 session.user.message = token.message as string // Pass message to session
+                session.accessToken = token.accessToken as string
+                session.user.role = token.role as string
+                session.user.message = token.loginMsg as string
             }
             return session
         },
-        async signIn({ user, account, profile }) {
-            console.log("User signed in:", user, "Account:", account, "Profile:", profile)
+        async signIn({ user, profile, account }) {
+            if (account?.provider === 'google' && profile) {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/authentications/google-sync`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ id: profile.sub, email: profile.email, name: user.name, picture: profile.picture, email_verified: profile.email_verified, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+                })
+                const data = await res.json()
+                user.message = data.message
+                user.role = data.data.role
+                return true // Allow sign-in
+            }
             return true // Allow sign-in
         }
     },

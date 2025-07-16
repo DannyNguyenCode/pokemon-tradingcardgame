@@ -144,17 +144,16 @@ def create_test_cards(patch_logic, monkeypatch):
             # Ensure unique collector numbers
             payload["collector_number"] = i + 1
             _create_card_logic(**payload)
-        print("STORAGE", _test_storage)
     monkeypatch.setattr(cards_module.logic,
                         "create_card_logic", _create_card_logic)
     return create_test_cards
 
 
 class TestLogic:
-    def test_create_card_logic(self, client):
-        response = client.post("/api/cards/", json=_dummy_card_payload())
+    def test_create_card_logic(self, client, auth_headers_admin):
+        response = client.post(
+            "/api/cards/", json=_dummy_card_payload(), headers=auth_headers_admin)
         assert response.status_code == 201
-        print("RESPONSE", response.get_json())
         assert response.get_json(
         )["message"] == "Card created", "should return a success message"
         assert response.get_json(
@@ -164,7 +163,6 @@ class TestLogic:
         response = client.post(
             "/api/cards/", json=_dummy_card_payload(name=None))
         assert response.status_code == 422, "should return an error status code"
-        print("RESPONSE ERROR", response.get_json())
         # The error structure is nested under errors.json.name
         assert "name" in response.get_json(
         )["errors"]["json"], "should return a name field error"
@@ -174,7 +172,6 @@ class TestLogic:
     def test_list_cards(self, client, create_test_cards):
         create_test_cards(12)
         response = client.get("/api/cards/")
-        print("RESPONSE LIST", response.get_json())
         assert response.status_code == 200
         assert response.get_json(
         )["message"] == "Card List retrieved", "should return a success message"
@@ -198,12 +195,12 @@ class TestLogic:
         )["error"] == "Card with id 100 not found", "should return an error message"
         assert "data" not in response.get_json(), "error response should not have data key"
 
-    def test_update_card(self, client, create_test_cards):
+    def test_update_card(self, client, create_test_cards, auth_headers_admin):
         create_test_cards(1)
         # Get the actual card ID from storage
         card_id = list(_test_storage.keys())[0]
         response = client.put(
-            f"/api/cards/{card_id}", json=_dummy_card_payload(name="UpdatedCard"))
+            f"/api/cards/{card_id}", json=_dummy_card_payload(name="UpdatedCard"), headers=auth_headers_admin)
         assert response.status_code == 200
         assert response.get_json(
         )["message"] == "Card updated", "should return a success message"
@@ -218,16 +215,17 @@ class TestLogic:
         )["errors"]["json"], "should return a name field error"
         assert "data" not in response.get_json(), "error response should not have data key"
 
-    def test_delete_card(self, client, create_test_cards):
+    def test_delete_card(self, client, create_test_cards, auth_headers_admin):
         create_test_cards(1)
         # Get the actual card ID from storage
         card_id = list(_test_storage.keys())[0]
-        response = client.delete(f"/api/cards/{card_id}")
+        response = client.delete(
+            f"/api/cards/{card_id}", headers=auth_headers_admin)
         assert response.status_code == 200
         assert not response.get_json()["data"], "should not return a card"
 
-    def test_delete_card_error(self, client):
-        response = client.delete("/api/cards/100")
+    def test_delete_card_error(self, client, auth_headers_admin):
+        response = client.delete("/api/cards/100", headers=auth_headers_admin)
         assert response.status_code == 404, "should return an error status code"
         assert response.get_json(
         )["error"] == "Card with id 100 not found", "should return an error message"

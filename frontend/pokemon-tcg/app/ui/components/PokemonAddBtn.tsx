@@ -22,8 +22,6 @@ const PokemonAddBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
                 throw new Error('Network response was not ok')
             }
             const response = await res.json()
-            console.log('API Response:', response)
-
             dispatch(loadToastifyState(`${response.data.name} has been added to your collection`))
         } catch (error) {
             console.error(error)

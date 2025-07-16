@@ -102,8 +102,7 @@ class TestPasswordValidation:
         # Test a password that should pass
         password = "StrongPass123!"
         violations = policy.test(password)
-        print(f"Password: {password}")
-        print(f"Violations: {violations}")
+
         for violation in violations:
             print(f"Violation type: {type(violation)}")
             print(f"Violation str: {str(violation)}")

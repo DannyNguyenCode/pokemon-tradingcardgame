@@ -15,7 +15,7 @@ export const toastifySlice = createSlice({
             state.message = payload
         },
         clearToastifyState(state) {
-            state.message = ''
+            state = initialState
         }
     }
 

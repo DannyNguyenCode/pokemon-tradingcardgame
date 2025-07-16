@@ -25,7 +25,6 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
         if (!res.ok) throw new Error(`API ${res.status} ${`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?${queryParams.toString()}`}`);
         return res.json()
     }).then((data) => {
-        console.log("data", data)
         return data
     })
 

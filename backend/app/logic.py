@@ -54,7 +54,6 @@ def list_cards(page: int, type_filter: str | None, pokemon_name: str | None):
         with SessionLocal() as db:
             cards, total_count = crud.list_cards(
                 db, page, type_filter, pokemon_name)
-            print("CARDS", cards)
             # Calculate pagination metadata
             total_pages = (total_count + page_size - 1) // page_size
             has_next = page < total_pages
@@ -69,14 +68,12 @@ def list_cards(page: int, type_filter: str | None, pokemon_name: str | None):
                 "has_next": has_next,
                 "has_prev": has_prev
             }
-            print("PAGINATION DATA", pagination_data)
             response = services.generate_response(
                 message="Card List retrieved",
                 status=200,
                 data=[card.to_dict() for card in cards],
                 pagination=pagination_data
             )
-            print("RESPONSE", response)
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500

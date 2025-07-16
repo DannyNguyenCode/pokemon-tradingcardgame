@@ -166,13 +166,8 @@ class TestPaginationSpecificData:
         """Test: 12 cards total, page 1 should return 10"""
         # Create exactly 12 cards using helper function
         create_test_cards(12)
-
         response = client.get("/api/cards/?page=1")
-        print("RESPONSE", response)
-        print("RESPONSE DATA", response.data)
-        print("RESPONSE JSON", response.get_json())
         data = response.get_json()
-        print("DATA", data)
 
         assert len(data["data"]) == 10
         assert data["data"][0]["collector_number"] == 1

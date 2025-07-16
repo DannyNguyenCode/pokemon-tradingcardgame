@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { redirect } from 'next/navigation'
-import { auth } from '@/api/auth/signin/auth'
+import { auth } from 'auth'
 import { SignUp } from '@/ui/components/sign-up'
 import { AuthErrorBoundary } from '@/ui/components/auth-error-boundary'
 

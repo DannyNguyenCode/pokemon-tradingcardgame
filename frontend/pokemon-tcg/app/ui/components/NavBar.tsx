@@ -1,21 +1,9 @@
-"use client"
-
 import ThemeToggleBtn from './ThemeToggleBtn'
 import Link from 'next/link'
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { useAppDispatch } from '@/lib/hooks'
-import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
-export default function NavBar() {
-    const { data: session } = useSession()
-    const router = useRouter()
-    const dispatch = useAppDispatch()
-    const handleLogout = async () => {
-        await signOut({ redirect: false })
-        dispatch(loadToastifyState('You have been logged out successfully.'))
-        router.push('/')
-    }
-
+import { auth } from 'auth'
+import LogoutBtn from './LogoutBtn'
+export default async function NavBar() {
+    const session = await auth()
     return (
         <div className="navbar h-16 bg-base-100 shadow-sm">
             <div className="navbar-start">
@@ -31,7 +19,7 @@ export default function NavBar() {
                         <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                         {session ? (
                             <>
-                                <li><button aria-label="logout" onClick={handleLogout}>Logout</button></li>
+                                <LogoutBtn />
                             </>
                         ) : (
                             <>
@@ -53,12 +41,14 @@ export default function NavBar() {
             </div>
             <div className="navbar-center hidden lg:flex">
                 <ul className="menu menu-horizontal px-1">
-
+                    {session && session.user.role === 'admin' && (
+                        <li><Link role="link" href={'/admin'} aria-label="redicrect to admin panel page">AdminPanel</Link></li>
+                    )}
                     <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
                     <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                     {session ? (
                         <>
-                            <li><button aria-label="logout" onClick={handleLogout}>Logout</button></li>
+                            <LogoutBtn />
                         </>
                     ) : (
                         <>

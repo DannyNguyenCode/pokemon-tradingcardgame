@@ -7,7 +7,10 @@ declare module "next-auth" {
             email: string
             name?: string
             message?: string
-        }
+            role?: string
+
+        },
+        accessToken?: string
     }
 
     interface User extends DefaultUser {
@@ -15,6 +18,7 @@ declare module "next-auth" {
         email: string
         name?: string
         message?: string
+        role?: string
     }
 }
 
@@ -23,5 +27,7 @@ declare module "next-auth/jwt" {
         id: string
         email: string
         message?: string
+        role?: string
+        accessToken?: string
     }
 } 

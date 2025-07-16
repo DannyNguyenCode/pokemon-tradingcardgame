@@ -4,6 +4,8 @@ import os
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from app import create_app
+import jwt
+from unittest.mock import patch
 
 # Add the parent directory to Python path so we can import app
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -230,3 +232,55 @@ def patch_all_database_access(monkeypatch, db_session):
 
     # Patch the SessionLocal function itself
     monkeypatch.setattr("app.db.SessionLocal", get_test_session)
+
+
+# JWT Authentication Fixtures
+@pytest.fixture
+def jwt_secret():
+    """Provide a test JWT secret for token generation."""
+    return "test-secret-key-for-jwt"
+
+
+@pytest.fixture
+def admin_jwt_token(jwt_secret):
+    """Generate a JWT token for an admin user."""
+    payload = {
+        "sub": "test-admin-id",
+        "email": "admin@test.com",
+        "role": "admin",
+        "exp": 9999999999  # Far future expiration
+    }
+    return jwt.encode(payload, jwt_secret, algorithm="HS256")
+
+
+@pytest.fixture
+def user_jwt_token(jwt_secret):
+    """Generate a JWT token for a regular user."""
+    payload = {
+        "sub": "test-user-id",
+        "email": "user@test.com",
+        "role": "user",
+        "exp": 9999999999  # Far future expiration
+    }
+    return jwt.encode(payload, jwt_secret, algorithm="HS256")
+
+
+@pytest.fixture
+def auth_headers_admin(admin_jwt_token):
+    """Provide headers with admin JWT token."""
+    return {"Authorization": f"Bearer {admin_jwt_token}"}
+
+
+@pytest.fixture
+def auth_headers_user(user_jwt_token):
+    """Provide headers with user JWT token."""
+    return {"Authorization": f"Bearer {user_jwt_token}"}
+
+
+@pytest.fixture(autouse=True)
+def patch_jwt_secret(monkeypatch, jwt_secret):
+    """
+    Patch the JWT secret in the services module to use our test secret.
+    This ensures JWT tokens are generated and validated with the same secret.
+    """
+    monkeypatch.setattr("app.services.SECRET", jwt_secret)
