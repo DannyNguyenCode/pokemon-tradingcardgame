@@ -1,3 +1,4 @@
+
 from flask_smorest import Blueprint
 
 auth_blp = Blueprint(
@@ -7,7 +8,8 @@ auth_blp = Blueprint(
     description="Auth endpoints",
 )
 
-from . import register       
-from . import login             
-
+from . import login
+from . import register
+from . import google_sync
+from . import auth_test
 __all__ = ["auth_blp"]

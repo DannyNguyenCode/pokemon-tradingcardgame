@@ -2,6 +2,7 @@ from flask.views import MethodView
 from flask_smorest import Blueprint
 from app.schemas import CardIn, CardUpdate, PageArgs
 from app import logic
+from app.services import jwt_required
 cards_blp = Blueprint("cards", __name__, url_prefix="/api/cards",
                       description="Pokémon-TCG card operations")
 
@@ -15,23 +16,26 @@ cards_blp = Blueprint("cards", __name__, url_prefix="/api/cards",
 class CardImport(MethodView):
     """Create a TCG card by scraping data from PokeAPI."""
     @cards_blp.doc(
+        security=[{"Bearer": []}],
         description="Create a TCG card from a Pokémon, auto-calculating stats, costs, rarity, and weaknesses"
     )
+    @jwt_required(["admin"])
     def post(self, identifier):
         try:
             response, status = logic.create_tcg_card(identifier)
         except Exception as e:
             return {"message": f"Failed to import Pokémon '{identifier}': {e}"}, 500
-
         return response, status
 
 
 @cards_blp.route("/import/range/<int:start>/<int:end>")
 class CardImportRange(MethodView):
-    """Create a TCG card by scraping data from PokeAPI."""
+    """Create a range of TCG cards by scraping data from PokeAPI."""
     @cards_blp.doc(
+        security=[{"Bearer": []}],
         description="Create a range of TCG cards from a Pokémon, auto-calculating stats, costs, rarity, and weaknesses"
     )
+    @jwt_required(["admin"])
     def post(self, start: int, end: int):
         try:
             response, status = logic.create_tcg_card_range(start, end)
@@ -39,13 +43,6 @@ class CardImportRange(MethodView):
             return {"message": f"Failed to import Pokémon '{start} to {end}': {e}"}, 500
 
         return response, status
-
-    @cards_blp.doc(description="Create a range of Pokemon TCG cards")
-    def post_range(self, start: int, end: int):
-        try:
-            response, status = logic.create_tcg_card_range(start, end)
-        except Exception as e:
-            return {"message": f"Failed to import Pokémon '{start} to {end}': {e}"}, 500
 
 # ───────────────────────────────────────────────────────────────
 # 2) Collection endpoints
@@ -60,7 +57,11 @@ class CardCollection(MethodView):
 
     # CREATE
     @cards_blp.arguments(CardIn)
-    @cards_blp.doc(description="Create a pokemon card")
+    @cards_blp.doc(
+        security=[{"Bearer": []}],
+        description="Create a pokemon card"
+    )
+    @jwt_required(["admin"])
     def post(self, data):
         response, status = logic.create_card_logic(**data)
         return response, status
@@ -101,13 +102,21 @@ class CardItem(MethodView):
     # UPDATE (partial=True lets clients patch one field or full replace)
 
     @cards_blp.arguments(CardUpdate(partial=True))
-    @cards_blp.doc(description="Update a single pokemon card by identifier")
+    @cards_blp.doc(
+        security=[{"Bearer": []}],
+        description="Update a single pokemon card by identifier"
+    )
+    @jwt_required(["admin"])
     def put(self, data, id):
         response, status = logic.update_card(id, **data)
         return response, status
 
     # DELETE
-    @cards_blp.doc(description="Delete a single pokemon card by identifier")
+    @cards_blp.doc(
+        security=[{"Bearer": []}],
+        description="Delete a single pokemon card by identifier"
+    )
+    @jwt_required(["admin"])
     def delete(self, id):
         response, status = logic.delete_card(id)
         return response, status

@@ -72,6 +72,7 @@ class CookiesTheme(Schema):
 class User(Schema):
     id = fields.UUID(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
+    role = fields.Str(load_default="user")
     email = fields.Email(required=True)
     password = fields.Str(
         required=True,
@@ -85,6 +86,16 @@ class User(Schema):
             )
         ]
     )
+
+
+class GoogleAuthUser(Schema):
+    email = fields.Email(required=True)
+    name = fields.Str(required=True)
+    picture = fields.Str(required=True)
+    created_at = fields.DateTime(required=True)
+    id = fields.Str(required=True)
+    email_verified = fields.Bool(required=True)
+    updated_at = fields.DateTime(required=True)
 
 
 class Pokemon_Collection(Schema):

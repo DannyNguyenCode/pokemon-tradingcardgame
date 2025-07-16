@@ -212,3 +212,36 @@ def login_user(**data):
             }, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
+
+
+def google_sync(**data):
+    try:
+        with SessionLocal() as db:
+            # Check if Google user exists, else create
+            google_user = crud.get_google_user_by_email(db, data['email'])
+            if not google_user:
+                google_user = crud.add_google_user(db, **data)
+
+            # Check if main user exists, else create
+            user = crud.get_user_by_email(db, data['email'])
+            if not user:
+                user_data = {
+                    "email": data['email'],
+                    "password": None,
+                    "role": "user"
+                }
+                user = crud.create_user(db, **user_data)
+            # Check if link exists, else create
+            link = crud.get_link_google_by_user_id(db, user.id)
+            if not link:
+                link = crud.add_link_google(
+                    db, user_id=user.id, google_sub=google_user.id)
+            return {
+                "message": f"User has logged in with Google",
+                "status": 200,
+                "data": user.to_dict()
+            }, 200
+
+    except Exception as error:
+        # Optionally log the error here
+        return {"error": f"{error}"}, 500

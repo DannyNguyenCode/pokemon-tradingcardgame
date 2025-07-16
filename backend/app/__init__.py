@@ -19,11 +19,15 @@ def create_app():
     app.config["OPENAPI_VERSION"] = "3.0.2"
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/docs"
-    app.config["OPENAPI_SWAGGER_UI_URL"]= "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+    app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
 
     # Initialize API
     api = Api(app)
-
+    api.spec.components.security_scheme("Bearer", {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+    })
     # Import and register blueprints
     from app.routers.cards import cards_blp
     from app.routers.authentications.cookies import cookies_blp

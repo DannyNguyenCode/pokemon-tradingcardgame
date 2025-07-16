@@ -1,5 +1,11 @@
+import os
 import bcrypt
 from password_strength import PasswordPolicy, PasswordStats
+import jwt
+from dotenv import load_dotenv
+from functools import wraps
+from flask import request, jsonify, g
+
 
 policy = PasswordPolicy.from_names(
     length=8,  # min length: 8
@@ -63,8 +69,6 @@ def validate_password_strength(password: str):
             elif any(type(v).__name__.lower() == "Special".lower() for v in policy_test):
                 message = "Password must contain at least 2 special characters"
                 status = 'violation'
-        print("MESSAGE", message)
-        print("STATUS", status)
         # Check password strength if no policy violations
         if not message and status == 'info':
             stats = PasswordStats(password)
@@ -79,3 +83,39 @@ def validate_password_strength(password: str):
     except Exception as e:
         # Fallback error handling
         return f"Password validation error: {str(e)}", 'error'
+
+
+SECRET = os.environ.get('NEXTAUTH_SECRET')
+
+
+def jwt_required(allowed_roles):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+
+            auth_header = request.headers.get('Authorization', "")
+            print("AUTH HEADER", auth_header)
+            if not auth_header.startswith('Bearer '):
+                return jsonify({"error": "Missing or invalid token"}), 401
+            token = auth_header.split(" ")[1]
+            print("TOKEN", token)
+            try:
+                payload = jwt.decode(token, SECRET, algorithms=['HS256'])
+                g.user = payload
+                print("JWT Payload:", payload)
+            except jwt.ExpiredSignatureError:
+                return jsonify({"error": "Token has expired"}), 401
+            except jwt.InvalidTokenError:
+                return jsonify({"error": "Invalid token"}), 401
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
+
+            user_role = payload.get('role')
+            if not user_role:
+                return jsonify({"error": "User role not found"}), 401
+            if user_role not in allowed_roles:
+                return jsonify({"error": "Invalid role"}), 403
+
+            return f(*args, **kwargs)
+        return decorated_function
+    return decorator

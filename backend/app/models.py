@@ -25,6 +25,9 @@ class User(Base):
         back_populates="user", cascade="all, delete-orphan")
     email: Mapped[str] = mapped_column(Text, nullable=False)
     password: Mapped[str] = mapped_column(Text, nullable=False)
+    role: Mapped[str] = mapped_column(Text, nullable=False, default="user")
+    link_google: Mapped["LinkGoogle"] = relationship(
+        back_populates='user', cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -32,6 +35,7 @@ class User(Base):
             "created_at": self.created_at,
             "pokemon_collection": [pokemon.to_dict() for pokemon in self.pokemon_collection],
             "email": self.email,
+            "role": self.role,
         }
 
 
@@ -114,3 +118,40 @@ class Card(Base):
             "retreat_cost": self.retreat_cost,
             "image_url": self.image_url,
         }
+
+
+class GoogleUser(Base):
+    __tablename__ = "googleauth"
+    id: Mapped[str] = mapped_column(Text, primary_key=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+    name: Mapped[str] = mapped_column(Text, nullable=True)
+    email: Mapped[str] = mapped_column(Text, nullable=False)
+    picture: Mapped[str] = mapped_column(Text, nullable=True)
+    email_verified: Mapped[bool] = mapped_column(nullable=True)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+    link_google: Mapped["LinkGoogle"] = relationship(
+        back_populates='googleauth', cascade="all, delete-orphan")
+
+
+class LinkGoogle(Base):
+    __tablename__ = "link_google"
+    linked_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
+        "user.id", ondelete="CASCADE"), primary_key=True)
+    user: Mapped["User"] = relationship(back_populates='link_google')
+    google_sub: Mapped[str] = mapped_column(Text, ForeignKey(
+        "googleauth.id", ondelete="CASCADE"), primary_key=True)
+    googleauth: Mapped["GoogleUser"] = relationship(
+        back_populates='link_google')
