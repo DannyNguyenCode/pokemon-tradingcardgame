@@ -101,11 +101,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         maxAge: 15 * 60, // 15 minutes
     },
     pages: {
-        signIn: "/login",
+        signIn: "/",
     },
     callbacks: {
         jwt: async ({ token, user, account }) => {
-            if (account?.provider === 'google') {
+            if (account?.provider === 'google' || account?.provider === 'credentials') {
                 token.accessToken = await new SignJWT({
                     sub: token.sub,
                     role: user.role as string

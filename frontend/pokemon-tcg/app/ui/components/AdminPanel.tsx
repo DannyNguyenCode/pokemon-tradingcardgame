@@ -36,6 +36,7 @@ const AdminPanel = () => {
         setIdentifier(e.target.value);
     }
     const handleTestJWTAdmin = async () => {
+        console.log("Session:", session);
         // Logic to test JWT authentication
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/authentications/test-auth-admin`, {
             method: 'POST',
