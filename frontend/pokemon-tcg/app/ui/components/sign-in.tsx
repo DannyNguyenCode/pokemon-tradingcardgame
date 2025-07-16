@@ -30,6 +30,7 @@ export const SignIn = () => {
 
             // Redirect to dashboard or home page immediately
             router.push("/")
+            router.refresh()
         }
     }, [session, dispatch, router])
 

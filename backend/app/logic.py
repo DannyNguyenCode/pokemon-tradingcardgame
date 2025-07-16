@@ -204,7 +204,8 @@ def login_user(**data):
                 "status": 200,
                 "data": {
                     "id": user.id,
-                    "email": user.email
+                    "email": user.email,
+                    "role": user.role,
                 }
             }, 200
     except Exception as error:

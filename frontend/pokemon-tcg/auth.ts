@@ -67,7 +67,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         id: user.data.id,
                         email: user.data.email,
                         name: user.data.email.split('@')[0], // Fallback name
-                        message: user.message // Include the message from backend response
+                        message: user.message, // Include the message from backend response
+                        role: user.data.role, // Default to 'user' if role is not provided
                     }
                 } catch (error) {
                     // Log error for debugging but don't expose details
@@ -145,7 +146,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 const data = await res.json()
                 user.message = data.message
                 user.role = data.data.role
-                return true // Allow sign-in
             }
             return true // Allow sign-in
         }
