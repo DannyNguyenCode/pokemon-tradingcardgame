@@ -9,7 +9,7 @@ const LogoutBtn = () => {
     const router = useRouter()
     const pathname = usePathname()
     const handleLogout = async () => {
-        const response = await signOut({ redirect: false })
+        await signOut({ redirect: false })
         dispatch(loadToastifyState('You have been logged out successfully.'))
         if (pathname === '/') {
             router.refresh()
