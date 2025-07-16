@@ -11,7 +11,7 @@ const AdminPanel = () => {
             // Redirect to login if not authenticated
             router.push('/login')
         }
-    }, [])
+    }, [router, session])
     const handleImportCard = () => {
         // Logic to handle card import
 

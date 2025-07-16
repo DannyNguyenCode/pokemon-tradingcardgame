@@ -14,7 +14,7 @@ const ToastifyComponent = () => {
             // Clear the toastify state when the component unmounts or session changes
             dispatch(clearToastifyState())
         }
-    }, [session])
+    }, [session, dispatch])
 
     return (
         <></>
