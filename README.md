@@ -61,8 +61,8 @@ README in frontend directory to set up and run client
 - Business rule: max 4 copies per card, deck size rules
 
 #### 2.3 Front-end: Auth Integration
-- ~~Install Auth.js in React; configure providers (email/password + OAuth)~
-- Build /login, /signup, /profile pages; Redux “auth” slice for tokens/user
+- ~~Install Auth.js in React; configure providers (email/password + OAuth)~~
+- ~~Build /login, /signup, /profile pages; Redux “auth” slice for tokens/user~~
 
 #### 2.4 Front-end: Deck Builder Page
 - Create /decks and /decks/[id] routes
@@ -72,8 +72,8 @@ README in frontend directory to set up and run client
 
 #### 2.5 Infra & CI/CD
 - Update docker-compose.yml to include Redis (for rate-limiting or session store) if needed
-- Add GitHub Actions step to build and push API Docker image to registry
-- Add Vercel integration: on merge to main, deploy web/ folder
+- ~~Add GitHub Actions step to build and push API Docker image to registry~~
+- ~~Add Vercel integration: on merge to main, deploy web/ folder~~
 
 ### Milestone 3 (M3): Real-Time Play & Trade
 

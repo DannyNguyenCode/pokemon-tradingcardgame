@@ -28,6 +28,8 @@ class User(Base):
     role: Mapped[str] = mapped_column(Text, nullable=False, default="user")
     link_google: Mapped["LinkGoogle"] = relationship(
         back_populates='user', cascade="all, delete-orphan")
+    decks: Mapped[List["Deck"]] = relationship(
+        back_populates='user', cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -88,6 +90,8 @@ class Card(Base):
     retreat_cost: Mapped[int] = mapped_column(Integer, nullable=True)
     image_url: Mapped[str] = mapped_column(Text, nullable=True)
     pokemon_collection: Mapped[List["Pokemon_Collection"]] = relationship(
+        back_populates="card", cascade="all, delete-orphan")
+    deck_cards: Mapped[List["DeckCard"]] = relationship(
         back_populates="card", cascade="all, delete-orphan")
 
     def to_dict(self):
@@ -155,3 +159,47 @@ class LinkGoogle(Base):
         "googleauth.id", ondelete="CASCADE"), primary_key=True)
     googleauth: Mapped["GoogleUser"] = relationship(
         back_populates='link_google')
+
+
+class Deck(Base):
+    __tablename__ = "deck"
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        server_default=text("gen_random_uuid()"),
+        index=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("CURRENT_TIMESTAMP")
+    )
+    name: Mapped[str] = mapped_column(Text, nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
+        "user.id", ondelete="CASCADE"), nullable=False)
+    user: Mapped["User"] = relationship(back_populates='decks')
+    deckCards: Mapped[List["DeckCard"]] = relationship(
+        back_populates="deck", cascade="all, delete-orphan")
+
+    def to_dict(self):
+        return {
+            "id": str(self.id),
+            "created_at": self.created_at,
+            "name": self.name,
+            "cards": [card.to_dict() for card in self.deckCards],
+        }
+class DeckCard(Base):
+    __tablename__ = "deck_card"
+    deck_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
+        "deck.id", ondelete="CASCADE"), primary_key=True)
+    deck: Mapped["Deck"] = relationship(back_populates='deckCards')
+    card_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
+        "card.id", ondelete="CASCADE"), primary_key=True)
+    card: Mapped["Card"] = relationship(back_populates='deck_cards')
+
+    def to_dict(self):
+        return {
+            "deck_id": str(self.deck_id),
+            "card_id": str(self.card_id),
+            "card": self.card.to_dict() if self.card else {}
+        }

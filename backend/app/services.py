@@ -105,7 +105,7 @@ def jwt_required(allowed_roles):
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
 
-            user_role = payload.get('role')
+            user_role = g.user.get('role')
             if not user_role:
                 return jsonify({"error": "User role not found"}), 401
             if user_role not in allowed_roles:
@@ -114,3 +114,24 @@ def jwt_required(allowed_roles):
             return f(*args, **kwargs)
         return decorated_function
     return decorator
+
+
+def get_jwt_identity():
+    return g.user.get('sub')
+
+
+def generate_pagination(page, total_count):
+    page_size = 12
+    total_pages = (total_count + page_size - 1) // page_size
+    has_next = page < total_pages
+    has_prev = page > 1
+    # Prepare pagination data
+    pagination_data = {
+        "page": page,
+        "page_size": page_size,
+        "total_count": total_count,
+        "total_pages": total_pages,
+        "has_next": has_next,
+        "has_prev": has_prev
+    }
+    return pagination_data

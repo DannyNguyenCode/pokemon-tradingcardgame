@@ -1,8 +1,9 @@
-from flask import abort
+from flask_smorest import abort
 from app.db import SessionLocal
 from app import crud, services
 from app.pokeapi import Pokemon
-
+import uuid
+import time
 from app.poke_utils import (
     select_best_levelup_move,
     map_power_to_damage,
@@ -48,31 +49,15 @@ def list_cards(page: int, type_filter: str | None, pokemon_name: str | None):
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
-        # Hardcode page size to 10
-        page_size = 12
 
         with SessionLocal() as db:
             cards, total_count = crud.list_cards(
                 db, page, type_filter, pokemon_name)
-            # Calculate pagination metadata
-            total_pages = (total_count + page_size - 1) // page_size
-            has_next = page < total_pages
-            has_prev = page > 1
-
-            # Prepare pagination data
-            pagination_data = {
-                "page": page,
-                "page_size": page_size,
-                "total_count": total_count,
-                "total_pages": total_pages,
-                "has_next": has_next,
-                "has_prev": has_prev
-            }
             response = services.generate_response(
                 message="Card List retrieved",
                 status=200,
                 data=[card.to_dict() for card in cards],
-                pagination=pagination_data
+                pagination=services.generate_pagination(page, total_count)
             )
             return response, 200
     except Exception as error:
@@ -154,14 +139,19 @@ def create_tcg_card(identifier: str | int):
         "retreat_cost":      retreat,
         "image_url":         p.sprite,
     }
-
+    print(f"Creating card with data: {card_data}")
     # 5) Persist
     return create_card_logic(**card_data)
 
 
 def create_tcg_card_range(start: int, end: int):
     try:
-        cards = [create_tcg_card(i) for i in range(start, end + 1)]
+        cards = []
+        for i in range(start,end+1):
+            print(f"Creating card for Pokémon ID: {i}")
+            card = create_tcg_card(i)
+            cards.append(card)  # Append the response data, not the status code
+            time.sleep(1)  # Optional: Throttle requests to avoid rate limits
         return cards, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
@@ -242,4 +232,151 @@ def google_sync(**data):
 
     except Exception as error:
         # Optionally log the error here
+        return {"error": f"{error}"}, 500
+
+def create_deck_logic(**kwargs):
+    try:
+        with SessionLocal() as db:
+            deck = crud.create_deck(db, **kwargs)
+            if not deck:
+                return {"error": "Deck creation failed"}, 500
+            response = services.generate_response(
+                message="Deck created",
+                status=201,
+                data=deck.to_dict()
+            )
+            return response, 201
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def list_decks(page: int, user_id: uuid.UUID | None):
+    if page < 1:
+        return {"error": "Page must be 1 or greater"}, 400
+    try:
+
+
+        with SessionLocal() as db:
+            decks, total_count = crud.list_decks(db, user_id, page)
+
+            response = services.generate_response(
+                message="Deck List retrieved",
+                status=200,
+                data=[deck.to_dict() for deck in decks],
+                pagination=services.generate_pagination(page, total_count)
+            )
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def get_deck_by_id(id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck = crud.get_deck_by_id(db, id)
+            if not deck:
+                return {"error": f"Deck with id {id} not found"}, 404
+            response = services.generate_response(
+                "Deck retrieved", 200, deck.to_dict())
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+def update_deck(id: uuid.UUID, **kwargs):
+    try:
+        with SessionLocal() as db:
+            deck = crud.update_deck(db, id, **kwargs)
+            response = services.generate_response(
+                "Deck updated", 200, deck.to_dict())
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def delete_deck(id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck = crud.delete_deck(db, id)
+            if not deck:
+                return {"error": f"Deck with id {id} not found"}, 404
+            response = services.generate_response("Deck deleted", 200)
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck_card = crud.add_deck_card(db, deck_id, card_id)
+            if not deck_card:
+                return {"error": "Failed to add card to deck"}, 500
+            response = services.generate_response(
+                message="Card added to deck",
+                status=201,
+                data={
+                    "deck_id": str(deck_card.deck_id),
+                    "card_id": str(deck_card.card_id)
+                }
+            )
+            return response, 201
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+
+def list_deck_cards(deck_id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck_cards = crud.list_deck_cards(db, deck_id)
+            if not deck_cards:
+                return {"error": f"No cards found for deck {deck_id}"}, 404
+            response = services.generate_response(
+                message="Deck Cards retrieved",
+                status=200,
+                data=[deck_card.to_dict() for deck_card in deck_cards]
+            )
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+
+def get_deck_card_by_id(deck_id: uuid.UUID, card_id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck_card = crud.get_deck_card_by_id(db, deck_id, card_id)
+            if not deck_card:
+                return {"error": f"Deck Card with deck_id {deck_id} and card_id {card_id} not found"}, 404
+            response = services.generate_response(
+                message="Deck Card retrieved",
+                status=200,
+                data=deck_card.to_dict()
+            )
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+
+def update_deck_card(deck_id: uuid.UUID, card_id: uuid.UUID, **kwargs):
+    try:
+        with SessionLocal() as db:
+            deck_card = crud.update_deck_card(db, deck_id, card_id, **kwargs)
+            if not deck_card:
+                return {"error": f"Deck Card with deck_id {deck_id} and card_id {card_id} not found"}, 404
+            response = services.generate_response(
+                message="Deck Card updated",
+                status=200,
+                data=deck_card.to_dict()
+            )
+            return response, 200
+    except Exception as error:
+        return {"error": f"{error}"}, 500
+    
+def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
+    try:
+        with SessionLocal() as db:
+            deck_card = crud.remove_deck_card(db, deck_id, card_id)
+            if not deck_card:
+                return {"error": f"Deck Card with deck_id {deck_id} and card_id {card_id} not found"}, 404
+            response = services.generate_response(
+                message="Deck Card removed from deck",
+                status=200,
+                data={
+                    "deck_id": str(deck_card.deck_id),
+                    "card_id": str(deck_card.card_id)
+                }
+            )
+            return response, 200
+    except Exception as error:
         return {"error": f"{error}"}, 500

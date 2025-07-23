@@ -86,6 +86,7 @@ class User(Schema):
             )
         ]
     )
+    decks = fields.List(fields.Nested("DeckSchema"), dump_only=True)
 
 
 class GoogleAuthUser(Schema):
@@ -117,3 +118,57 @@ class PageArgs(Schema):
 
     class Meta:
         title = "PageArgs"
+
+
+class DeckSchema(Schema):
+    id = fields.UUID(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
+    name = fields.Str(required=True, validate=Length(min=1, max=100))
+    user_id = fields.UUID(required=True)
+    # cards comes from DeckCard relationship
+    cards = fields.List(fields.Nested(CardOut), dump_only=True)
+
+    class Meta:
+        title = "DeckSchema"
+
+
+class DeckIn(DeckSchema):
+    class Meta:
+        title = "DeckIn"
+
+
+class DeckUpdate(DeckIn):
+    class Meta:
+        title = "DeckUpdate"
+
+
+class DeckOut(DeckSchema):
+    class Meta:
+        title = "DeckOut"
+
+
+class DeckCardCreateSchema(Schema):
+    deck_id = fields.UUID(required=True)
+    card_id = fields.UUID(required=True)
+
+    class Meta:
+        title = "DeckCardCreateSchema"
+
+
+class DeckCardIn(DeckCardCreateSchema):
+    class Meta:
+        title = "DeckCardIn"
+
+
+class DeckCardOut(DeckCardCreateSchema):
+    class Meta:
+        title = "DeckCardOut"
+
+
+class CardDeckResponseSchema(Schema):
+    deck_id = fields.UUID(required=True)
+    card_id = fields.UUID(required=True)
+    card = fields.Nested(CardOut, dump_only=True)
+
+    class Meta:
+        title = "CardDeckResponseSchema"

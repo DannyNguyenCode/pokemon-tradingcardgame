@@ -81,8 +81,8 @@ def select_best_levelup_move(p: Pokemon) -> dict:
     override = get_override_move(p.name)
     if override:
         for entry in p.raw_data["moves"]:
-            nm = entry["move"]["name"].replace("-", " ").title()
-            if nm.lower() == override.lower():
+            move_name = entry["move"]["name"]
+            if move_name.lower() == override.lower():
                 return get_move_info(entry["move"]["url"])
         # override specified but not found
         raise ValueError(f"Override move '{override}' not found for {p.name}")
