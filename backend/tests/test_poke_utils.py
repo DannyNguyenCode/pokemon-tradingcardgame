@@ -264,7 +264,7 @@ class TestPokeUtils:
         # Test Pokemon with level-up moves
         pokemon = MockPokemon("pikachu")
         move_info = select_best_levelup_move(pokemon)
-
+        print(f"Best move for {pokemon.name}: {move_info}")
         assert "name" in move_info
         assert "power" in move_info
         assert "type" in move_info
@@ -273,8 +273,8 @@ class TestPokeUtils:
     def test_get_override_move(self):
         """Test move override functionality"""
         # Test Pokemon with override
-        assert get_override_move("pikachu") == ""
-        assert get_override_move("charizard") == ""
+        assert get_override_move("pikachu") == "thunder-shock"
+        assert get_override_move("charizard") == "fire-spin"
 
         # Test Pokemon without override
         assert get_override_move("unknown") is None
