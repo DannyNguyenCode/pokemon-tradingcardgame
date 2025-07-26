@@ -265,7 +265,8 @@ def list_decks(page: int, user_id: uuid.UUID | None, count_per_page):
         with SessionLocal() as db:
             decks, total_count = crud.list_decks(db, page, user_id)
             logger.info("DEBUG user_id:", user_id, type(user_id))
-            if not decks:
+            logger.info(f"total_count {total_count}")
+            if not decks or total_count < 1:
                 return {"error": "No Decks could be retreived"}, 401
             response = services.generate_response(
                 message="Deck List retrieved",
