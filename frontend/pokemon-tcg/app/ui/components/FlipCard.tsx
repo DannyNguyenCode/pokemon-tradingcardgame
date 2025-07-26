@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { Pokemon } from '@/lib/definitions'
 import TypeBadge from './TypeBadge'
+import { useState } from 'react'
 const colorTypes: Record<string, string> = {
     normal: '#A8A77A',
     fire: '#EE8130',
@@ -26,11 +27,14 @@ const colorTypes: Record<string, string> = {
 const FlipCard = (
     { pokemon, isAvailable = false, isInteractive = false, handleAdd, handleRemove }:
         { pokemon: Pokemon, isAvailable?: boolean, isInteractive?: boolean, handleAdd?: (pokemon: Pokemon) => void, handleRemove?: (pokemon: Pokemon) => void }) => {
+    const [flipped, setFlipped] = useState<boolean>(false)
     const officialArtworkUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.collector_number}.png`
 
     return (
         <div className="group perspective w-52 h-72">
-            <div className="relative w-full h-full transition-transform duration-700 transform-style preserve-3d group-hover:rotate-y-180">
+            <div className={`relative w-full h-full transition-transform duration-700 transform-style preserve-3d ${flipped ? 'rotate-y-180' : ''} md:group-hover:rotate-y-180`}
+                onClick={() => setFlipped(!flipped)}
+            >
                 {/* Front */}
                 <motion.div
                     className="absolute w-full h-full backface-hidden rounded-lg shadow-lg p-4 flex flex-col items-center justify-center"

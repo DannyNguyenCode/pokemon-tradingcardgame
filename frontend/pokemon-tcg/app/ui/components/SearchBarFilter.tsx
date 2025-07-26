@@ -11,7 +11,7 @@ const SearchBarFilter = () => {
         router.push(`?${currentParams.toString()}`)
     }, 1000)
     return (
-        <label className="input mr-2">
+        <label className="input mr-2 mb-2 md:mb-0">
             <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g
                     strokeLinejoin="round"

@@ -7,7 +7,7 @@ interface LoginBtnProps {
 const LoginBtn = ({ disabled = false }: LoginBtnProps) => {
     return (
         <button
-            className="btn btn-success"
+            className="btn btn-primary btn-md w-6/12"
             type="submit"
             disabled={disabled}
             aria-label="Sign in"

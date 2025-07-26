@@ -5,6 +5,7 @@ import TransferList from './TransferList'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '@/lib/hooks'
 import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
+import TransferListSkeleton from './TransferListSkeleton'
 type Cards = {
     card: Pokemon
     card_id: string
@@ -27,7 +28,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     const dispatch = useAppDispatch()
     const [selectDeck, setSelectDeck] = useState<string>('')
     const [deckPokemon, setDeckPokemon] = useState<Pokemon[]>([])
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
     const [available, setAvailable] = useState<Pokemon[]>(
         allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
     )
@@ -47,15 +48,19 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     });
 
     useEffect(() => {
-        setSelected(deckPokemon)
-        setAvailable(
-            allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
-        )
-    }, [deckPokemon, allPokemonList])
+        if (status === 'authenticated') {
+            setSelected(deckPokemon)
+            setAvailable(
+                allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
+            )
+            fetchDecks()
+        }
+
+
+    }, [deckPokemon, allPokemonList, status])
 
 
     const fetchDecks = async () => {
-        console.log("session?.accessToken", session?.accessToken)
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
@@ -66,6 +71,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
             })
             if (!response.ok) throw new Error("Failed to fetch decks")
             const res = await response.json()
+            console.log("Decks Fetched in function", res)
             setDeckCardResponse(res)
         } catch (error) {
             console.error("Deck fetch error:", error)
@@ -112,8 +118,10 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     return (
         <>
-            <select
-                className="select select-sm w-4/12"
+            {status === 'loading' ? <div className="w-4/12 m-2 md:m-0">
+                <div className="skeleton h-10 w-full rounded"></div>
+            </div> : <select
+                className="select select-sm w-4/12 m-2 md:m-0"
                 value={selectDeck}
                 onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onDeckSelect(e)}
             >
@@ -126,14 +134,20 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                     </option>
                 ))}
             </select>
-            <TransferList
-                key={selectDeck}
-                available={available}
-                selected={selected}
-                setAvailable={setAvailable}
-                setSelected={setSelected}
-                onSave={onSave}
-                onCancel={onCancel} />
+            }
+
+            {status === 'loading' ?
+                <TransferListSkeleton /> : <TransferList
+                    key={selectDeck}
+                    available={available}
+                    selected={selected}
+                    setAvailable={setAvailable}
+                    setSelected={setSelected}
+                    deckName={deckCardResponse.data.find(deck => deck.id === selectDeck)?.name}
+                    onSave={onSave}
+                    onCancel={onCancel} />
+            }
+
         </>
     )
 }

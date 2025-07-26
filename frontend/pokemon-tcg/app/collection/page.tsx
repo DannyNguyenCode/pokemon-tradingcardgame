@@ -35,7 +35,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
 
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-between min-h-0 pt-4 m-4">
+        <div className="flex-1 flex flex-col items-center justify-start md:justify-between min-h-0 pt-4 m-4">
             <DeckComponent allPokemonList={response.data} />
 
         </div>

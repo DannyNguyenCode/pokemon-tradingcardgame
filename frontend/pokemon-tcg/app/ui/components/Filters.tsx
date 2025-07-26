@@ -43,7 +43,7 @@ const Filters = () => {
     }
 
     return (
-        <div className="filter flex flex-row justify-center items-center">
+        <div className="filter flex flex-row justify-start md:justify-center items-center mb-2 md:mb-0">
 
             <input onClick={() => handleFilterChange('')} className="btn filter-reset" type="radio" name="metaframeworks" aria-label="All" />
             <input className="btn" onClick={() => handleFilterChange('fire')} style={{ backgroundColor: colorTypes['fire'] }} type="radio" name="metaframeworks" aria-label="Fire" />
