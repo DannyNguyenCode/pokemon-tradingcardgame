@@ -250,6 +250,7 @@ def create_deck_logic(**kwargs):
         return {"error": f"{error}"}, 500
     
 def list_decks(page: int, user_id: uuid.UUID | None,count_per_page):
+    print("DEBUG FIRST user_id:", user_id, type(user_id))
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
