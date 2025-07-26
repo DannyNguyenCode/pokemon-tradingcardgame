@@ -46,27 +46,28 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         },
         status: 0
     });
-    const fetchDecks = useCallback(async () => {
-        try {
-            console.log("session?.accessToken", session?.accessToken)
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session?.accessToken}`
-                }
-            })
-            console.log("response", response)
-            if (!response.ok) throw new Error("Failed to fetch decks")
-            const res = await response.json()
-            console.log("Decks Fetched in function", res)
-            setDeckCardResponse(res)
-        } catch (error) {
-            console.error("Deck fetch error:", error)
-        }
-    }, [session])
+
     useEffect(() => {
         if (status === 'authenticated') {
+            const fetchDecks = async () => {
+                try {
+                    console.log("session?.accessToken", session?.accessToken)
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${session?.accessToken}`
+                        }
+                    })
+                    console.log("response", response)
+                    if (!response.ok) throw new Error("Failed to fetch decks")
+                    const res = await response.json()
+                    console.log("Decks Fetched in function", res)
+                    setDeckCardResponse(res)
+                } catch (error) {
+                    console.error("Deck fetch error:", error)
+                }
+            }
             setSelected(deckPokemon)
             setAvailable(
                 allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
@@ -75,7 +76,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         }
 
 
-    }, [deckPokemon, allPokemonList, status, fetchDecks])
+    }, [deckPokemon, allPokemonList, status])
 
 
 
@@ -106,7 +107,6 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         }).then((data) => {
             console.log('update deck success:', data);
             dispatch(loadToastifyState(data.message))
-            fetchDecks()
             return data
         }).catch((error) => {
             console.error('Error updating decks decks:', error);
