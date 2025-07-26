@@ -181,17 +181,20 @@ def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int =
             user_id = uuid.UUID(user_id)
     except ValueError:
         raise ValueError("Invalid UUID format for user_id")
-    filters = []
-    logger.info(f"Listing decks for user ID: {user_id} in crud")
-    filters.append(Deck.user_id == user_id)
-    logger.info(f"Filters applied: {filters[0]}")
-    count_stmt = select(func.count(Deck.id).filter(*filters))
-    total_count = db.execute(count_stmt).scalar()
-    stmt = (select(Deck).where(Deck.user_id == user_id).order_by(
-        Deck.name.desc()).limit(count_per_page).offset((page-1)*count_per_page))
-    result = db.execute(stmt).scalars().all()
+    try:
+        filters = []
+        logger.info(f"Listing decks for user ID: {user_id} in crud")
+        filters.append(Deck.user_id == user_id)
+        logger.info(f"Filters applied: {filters[0]}")
+        count_stmt = select(func.count(Deck.id).filter(*filters))
+        total_count = db.execute(count_stmt).scalar()
+        stmt = (select(Deck).where(Deck.user_id == user_id).order_by(
+            Deck.name.desc()).limit(count_per_page).offset((page-1)*count_per_page))
+        result = db.execute(stmt).scalars().all()
 
-    return result, total_count
+        return result, total_count
+    except Exception:
+        return {"Error":"Database error"}
 
 
 def update_deck(db: Session, id: uuid.UUID, **kwargs):

@@ -30,14 +30,22 @@ class DeckCollection(MethodView):
     @decks_blp.arguments(PageArgs, location="query")
     @jwt_required(["admin", "user"])
     def get(self, args):
-        page = args.get("page", 1)
-        count_per_page = args.get("count_per_page", 12)
+        try:
+            page = args.get("page", 1)
+            count_per_page = args.get("count_per_page", 12)
+        except Exception:
+            return {"error":"args error"}
+        try:
+            user_id = get_jwt_identity()
+            logger.info("user_id GET JWT", user_id)
+        except Exception:
+            return {"error":"get_jwt_indentity error"}
 
-        user_id = get_jwt_identity()
-        logger.info("user_id GET JWT", user_id)
-
-        response, status = logic.list_decks(page, user_id, count_per_page)
-        return response, status
+        try:
+            response, status = logic.list_decks(page, user_id, count_per_page)
+            return response, status
+        except Exception:
+            return {"error":"endpoint response error"}
 
 
 @decks_blp.route("/<uuid:id>")

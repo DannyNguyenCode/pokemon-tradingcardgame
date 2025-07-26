@@ -256,26 +256,33 @@ def create_deck_logic(**kwargs):
         return {"error": f"{error}"}, 500
 
 
-def list_decks(page: int, user_id: uuid.UUID | None, count_per_page):
+def list_decks(page: int, user_id: uuid.UUID, count_per_page):
     logger.info("DEBUG FIRST user_id:", user_id, type(user_id))
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
 
         with SessionLocal() as db:
-            decks, total_count = crud.list_decks(db, page, user_id)
-            logger.info("DEBUG user_id:", user_id, type(user_id))
-            logger.info(f"total_count {total_count}")
-            if not decks or total_count < 1:
-                return {"error": "No Decks could be retreived"}, 401
-            response = services.generate_response(
-                message="Deck List retrieved",
-                status=200,
-                data=[deck.to_dict() for deck in decks],
-                pagination=services.generate_pagination(
-                    page, total_count, count_per_page)
-            )
-            return response, 200
+            try:
+                decks, total_count = crud.list_decks(db, page, user_id)
+                logger.info("DEBUG user_id:", user_id, type(user_id))
+                logger.info(f"total_count {total_count}")
+                if not decks or total_count < 1:
+                    return {"error": "No Decks could be retreived"}, 401
+            except Exception:
+                return {"error":"logic error"}
+            try:
+
+                response = services.generate_response(
+                    message="Deck List retrieved",
+                    status=200,
+                    data=[deck.to_dict() for deck in decks],
+                    pagination=services.generate_pagination(
+                        page, total_count, count_per_page)
+                )
+                return response, 200
+            except Exception:
+                return {"error":"response error"}
     except Exception as error:
         logger.info(f"[ERROR] While listing decks: {error}")
         return {"error fetching decks": f"{error}"}, 500
