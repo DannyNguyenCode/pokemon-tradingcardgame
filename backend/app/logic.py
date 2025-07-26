@@ -267,7 +267,7 @@ def list_decks(page: int, user_id: uuid.UUID | None,count_per_page):
             return response, 200
     except Exception as error:
         print(f"[ERROR] While listing decks: {error}")
-        return {"error": f"{error}"}, 500
+        return {"error fetching decks": f"{error}"}, 500
     
 def get_deck_by_id(id: uuid.UUID):
     try:

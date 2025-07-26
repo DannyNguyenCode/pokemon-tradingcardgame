@@ -114,6 +114,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     .setExpirationTime('30d').setProtectedHeader({ alg: 'HS256' })
                     .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET))
             }
+            console.log("accessToken", token.accessToken)
             if (user) {
                 token.id = user.id
                 token.email = user.email
