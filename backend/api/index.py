@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 # CORS SET UP with proper origin restrictions
 allowed_origins = os.getenv(
-    'ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
+    'ALLOWED_ORIGINS', 'http://localhost:3000').split(','),'https://pokemon-tradingcardgame.vercel.app/'
 CORS(app,
      origins=allowed_origins,
      supports_credentials=True,
