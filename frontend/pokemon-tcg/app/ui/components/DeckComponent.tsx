@@ -76,7 +76,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         }
 
 
-    }, [deckPokemon, allPokemonList, status])
+    }, [deckPokemon, allPokemonList, status, session])
 
 
 
