@@ -10,7 +10,7 @@ def create_app():
     app = Flask(__name__)
 
     # Configure CORS
-    CORS(app, origins=["http://localhost:3000",
+    CORS(app,supports_credentials=True, origins=["http://localhost:3000",
          "https://pokemon-tradingcardgame.vercel.app"])
 
     # Configure Flask-Smorest

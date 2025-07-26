@@ -30,11 +30,18 @@ app.config.update({
 
 # 2) Initialize extensions
 api = Api(app)
-# 3) Register blueprints
+
+# Import and register blueprints
+from app.routers.cards import cards_blp
+from app.routers.authentications.cookies import cookies_blp
+from app.routers.authentications import auth_blp
+from app.routers.decks import decks_blp
+from app.routers.deck_card import deck_cards_blp
 api.register_blueprint(cards_blp)
 api.register_blueprint(cookies_blp)
 api.register_blueprint(auth_blp)
-
+api.register_blueprint(decks_blp)
+api.register_blueprint(deck_cards_blp)
 
 if __name__ == "__main__":
     # only used if you run "python main.py" locally
