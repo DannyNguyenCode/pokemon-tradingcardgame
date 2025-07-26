@@ -33,11 +33,12 @@ def create_app():
     from app.routers.authentications.cookies import cookies_blp
     from app.routers.authentications import auth_blp
     from app.routers.decks import decks_blp
-
+    from app.routers.deck_card import deck_cards_blp
     api.register_blueprint(cards_blp)
     api.register_blueprint(cookies_blp)
     api.register_blueprint(auth_blp)
     api.register_blueprint(decks_blp)
+    api.register_blueprint(deck_cards_blp)
 
     # Initialize database
     with app.app_context():

@@ -115,6 +115,7 @@ class PageArgs(Schema):
     page = fields.Int(load_default=1)
     type_filter = fields.Str(required=False, load_only=True, load_default="")
     pokemon_name = fields.Str(required=False, load_only=True, load_default="")
+    count_per_page = fields.Int(load_default=12)
 
     class Meta:
         title = "PageArgs"
@@ -165,10 +166,13 @@ class DeckCardOut(DeckCardCreateSchema):
         title = "DeckCardOut"
 
 
-class CardDeckResponseSchema(Schema):
+class DeckCardResponseSchema(Schema):
     deck_id = fields.UUID(required=True)
     card_id = fields.UUID(required=True)
     card = fields.Nested(CardOut, dump_only=True)
 
     class Meta:
-        title = "CardDeckResponseSchema"
+        title = "DeckCardResponseSchema"
+        
+class BulkDeckCardCreateSchema(Schema):
+    card_ids = fields.List(fields.UUID(), required=True)

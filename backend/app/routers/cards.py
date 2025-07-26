@@ -71,11 +71,13 @@ class CardCollection(MethodView):
     @cards_blp.arguments(PageArgs, location="query")
     def get(self, args):
         page = args.get("page", 1)
+        count_per_page = args.get("count_per_page", 12)
         type_filter = args.get("type_filter", None)
         pokemon_name = args.get("pokemon_name", None)
+        print(f"Listing cards with page={page}, type_filter={type_filter}, pokemon_name={pokemon_name}, count_per_page={count_per_page}")
         if page < 1:
             page = 1
-        response, status = logic.list_cards(page, type_filter, pokemon_name)
+        response, status = logic.list_cards(page, type_filter, pokemon_name, count_per_page)
         return response, status
 
 # ───────────────────────────────────────────────────────────────

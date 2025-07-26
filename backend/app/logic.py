@@ -45,19 +45,19 @@ def create_card_logic(**kwargs):
         return {"error": f"{error}"}, 500
 
 
-def list_cards(page: int, type_filter: str | None, pokemon_name: str | None):
+def list_cards(page: int, type_filter: str | None, pokemon_name: str | None, count_per_page: int = 12):
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
 
         with SessionLocal() as db:
             cards, total_count = crud.list_cards(
-                db, page, type_filter, pokemon_name)
+                db, page, type_filter, pokemon_name, count_per_page)
             response = services.generate_response(
                 message="Card List retrieved",
                 status=200,
                 data=[card.to_dict() for card in cards],
-                pagination=services.generate_pagination(page, total_count)
+                pagination=services.generate_pagination(page, total_count,count_per_page)
             )
             return response, 200
     except Exception as error:
@@ -181,7 +181,6 @@ def register_user(**data):
 def login_user(**data):
     try:
         with SessionLocal() as db:
-
             user = crud.get_user_by_email(db, data['email'])
             if not user:
                 # Use generic error message to prevent user enumeration
@@ -233,7 +232,8 @@ def google_sync(**data):
     except Exception as error:
         # Optionally log the error here
         return {"error": f"{error}"}, 500
-
+    
+# Deck Logic
 def create_deck_logic(**kwargs):
     try:
         with SessionLocal() as db:
@@ -249,23 +249,24 @@ def create_deck_logic(**kwargs):
     except Exception as error:
         return {"error": f"{error}"}, 500
     
-def list_decks(page: int, user_id: uuid.UUID | None):
+def list_decks(page: int, user_id: uuid.UUID | None,count_per_page):
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
 
-
+        
         with SessionLocal() as db:
-            decks, total_count = crud.list_decks(db, user_id, page)
+            decks, total_count = crud.list_decks(db, page,user_id)
 
             response = services.generate_response(
                 message="Deck List retrieved",
                 status=200,
                 data=[deck.to_dict() for deck in decks],
-                pagination=services.generate_pagination(page, total_count)
+                pagination=services.generate_pagination(page, total_count,count_per_page)
             )
             return response, 200
     except Exception as error:
+        print(f"[ERROR] While listing decks: {error}")
         return {"error": f"{error}"}, 500
     
 def get_deck_by_id(id: uuid.UUID):
@@ -300,6 +301,7 @@ def delete_deck(id: uuid.UUID):
     except Exception as error:
         return {"error": f"{error}"}, 500
     
+# Deck Card Logic
 def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -321,7 +323,8 @@ def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
 def list_deck_cards(deck_id: uuid.UUID):
     try:
         with SessionLocal() as db:
-            deck_cards = crud.list_deck_cards(db, deck_id)
+
+            deck_cards, total_count = crud.list_deck_cards(db, deck_id)
             if not deck_cards:
                 return {"error": f"No cards found for deck {deck_id}"}, 404
             response = services.generate_response(
@@ -380,3 +383,19 @@ def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
+    
+def replace_deck_cards(deck_id, card_ids):
+    try:
+        with SessionLocal() as db:
+
+            deck_card = crud.replace_deck_cards(db,deck_id,card_ids)
+
+            response = services.generate_response(
+                message="Deck is now empty" if not deck_card else "Deck has been saved with changes",
+                status=200,
+                data=[dc.to_dict() for dc in deck_card]
+            )
+            return response,200
+    except Exception as e:
+
+        return {"error": str(e)}, 500

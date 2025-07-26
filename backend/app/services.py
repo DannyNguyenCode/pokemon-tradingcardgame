@@ -120,8 +120,8 @@ def get_jwt_identity():
     return g.user.get('sub')
 
 
-def generate_pagination(page, total_count):
-    page_size = 12
+def generate_pagination(page, total_count,count_per_page):
+    page_size = count_per_page
     total_pages = (total_count + page_size - 1) // page_size
     has_next = page < total_pages
     has_prev = page > 1

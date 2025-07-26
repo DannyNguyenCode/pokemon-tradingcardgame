@@ -35,8 +35,7 @@ const TYPE_ICON_INDEX: Record<string, number> = {
     bug: 7, ghost: 8, steel: 9, fire: 10, water: 11, grass: 12,
     electric: 13, psychic: 14, ice: 15, dragon: 16, dark: 17, fairy: 18
 };
-const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
-    const owned = true
+const PokemonCard = ({ pokemon, owned }: { pokemon: Pokemon, owned: boolean }) => {
 
     const getMatchingIcon = (key: string) => {
         const response = (typeMap as Record<string, typeof COLORLESS_META>)[key.toLowerCase()] ?? COLORLESS_META;
@@ -53,7 +52,7 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
     return (
         <div className='flex'>
             <div className={`card bg-base-100 w-200 max-h-200 shadow-lg hover:shadow-xl transition-shadow duration-300`} style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}>
-                <div className="card-body">
+                <div className="card-body p-3">
                     <h2 className="card-title justify-between">
                         <span >{pokemon.name}</span>
                         <span>{pokemon.hp} HP</span>
@@ -105,14 +104,14 @@ const PokemonCard = ({ pokemon }: { pokemon: Pokemon }) => {
                     </div>
 
 
-                    {owned &&
-                        <div className="card-actions flex-1 items-end justify-center">
-                            <OpenModalBtn pokemon_collector_number={pokemon.collector_number} />
-                        </div>
-                    }
+
+                    <div className="card-actions flex-1 items-end justify-center">
+                        <OpenModalBtn buttonColor='soft' pokemon_collector_number={pokemon.collector_number} />
+                    </div>
+
                 </div>
 
-                <PokemonDetails pokemon={pokemon} />
+                <PokemonDetails pokemon={pokemon} owned={owned} />
             </div >
         </div>
     )

@@ -23,6 +23,16 @@ const Pagination = ({
         <div className="join">
             {/* Previous button - only show if not on first page */}
             {currentPage > 1 && (
+
+                <button
+                    className="join-item btn"
+                    onClick={() => handlePageChange(1)}
+                >
+                    1
+                </button>
+            )}
+            {currentPage > 1 && (
+
                 <button
                     className="join-item btn"
                     onClick={() => handlePageChange(currentPage - 1)}
@@ -32,8 +42,8 @@ const Pagination = ({
             )}
 
             {/* Current page in the middle */}
-            <button className="join-item btn">
-                Page {currentPage}
+            <button className="join-item btn" disabled>
+                {currentPage}
             </button>
 
             {/* Next button - only show if not on last page */}
@@ -43,6 +53,14 @@ const Pagination = ({
                     onClick={() => handlePageChange(currentPage + 1)}
                 >
                     »
+                </button>
+            )}
+            {currentPage < pagination.total_pages && (
+                <button
+                    className="join-item btn"
+                    onClick={() => handlePageChange(pagination.total_pages)}
+                >
+                    {pagination.total_pages}
                 </button>
             )}
         </div>

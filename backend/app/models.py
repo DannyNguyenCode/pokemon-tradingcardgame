@@ -178,7 +178,7 @@ class Deck(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
         "user.id", ondelete="CASCADE"), nullable=False)
     user: Mapped["User"] = relationship(back_populates='decks')
-    deckCards: Mapped[List["DeckCard"]] = relationship(
+    deck_cards: Mapped[List["DeckCard"]] = relationship(
         back_populates="deck", cascade="all, delete-orphan")
 
     def to_dict(self):
@@ -186,13 +186,13 @@ class Deck(Base):
             "id": str(self.id),
             "created_at": self.created_at,
             "name": self.name,
-            "cards": [card.to_dict() for card in self.deckCards],
+            "cards": [card.to_dict() for card in self.deck_cards],
         }
 class DeckCard(Base):
     __tablename__ = "deck_card"
     deck_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
         "deck.id", ondelete="CASCADE"), primary_key=True)
-    deck: Mapped["Deck"] = relationship(back_populates='deckCards')
+    deck: Mapped["Deck"] = relationship(back_populates='deck_cards')
     card_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(
         "card.id", ondelete="CASCADE"), primary_key=True)
     card: Mapped["Card"] = relationship(back_populates='deck_cards')

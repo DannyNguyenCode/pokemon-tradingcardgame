@@ -48,7 +48,7 @@ const Filters = () => {
     }
 
     return (
-        <div className="filter pt-4 flex flex-start items-start">
+        <div className="filter flex flex-start items-start">
             <input onClick={() => handleFilterChange('')} className="btn filter-reset" type="radio" name="metaframeworks" aria-label="All" />
             <label className="input mr-2">
                 <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

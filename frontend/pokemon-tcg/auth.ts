@@ -95,10 +95,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     ],
     session: {
         strategy: "jwt",
-        maxAge: 15 * 60, // 15 minutes
+        maxAge: 30 * 24 * 60 * 60,
     },
     jwt: {
-        maxAge: 15 * 60, // 15 minutes
+        maxAge: 30 * 24 * 60 * 60,
     },
     pages: {
         signIn: "/",
@@ -111,7 +111,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     role: user.role as string
 
                 }).setIssuedAt()
-                    .setExpirationTime('15m').setProtectedHeader({ alg: 'HS256' })
+                    .setExpirationTime('30d').setProtectedHeader({ alg: 'HS256' })
                     .sign(new TextEncoder().encode(process.env.NEXTAUTH_SECRET))
             }
             if (user) {

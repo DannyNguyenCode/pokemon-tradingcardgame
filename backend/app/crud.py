@@ -14,9 +14,8 @@ def create_card(db: Session, **kwargs) -> Card:
     return result
 
 
-def list_cards(db: Session, page: int, type_filter: str | None, pokemon_name: str | None):
+def list_cards(db: Session, page: int, type_filter: str | None, pokemon_name: str | None, count_per_page: int = 12):
     filters = []
-    count_per_page = 12
     if type_filter:
         filters.append(Card.type == type_filter.capitalize())
     if pokemon_name:
@@ -84,7 +83,8 @@ def delete_user(db: Session, id: int):
 
 def get_user_by_email(db: Session, email: str):
     stmt = (select(User).where(User.email == email))
-    return db.execute(stmt).scalar_one_or_none()
+    result =  db.execute(stmt).scalar_one_or_none()
+    return result
 
 
 def add_google_user(db: Session, **kwargs):
@@ -172,9 +172,12 @@ def get_deck_by_id(db: Session, id: uuid.UUID):
     return db.execute(stmt).scalar_one_or_none()
 
 
-def list_decks(db: Session, page: int, user_id: uuid.UUID):
-    count_per_page = 12
-    count_stmt = select(func.count(Deck.id).filter(Deck.user_id == user_id))
+def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int = 12):
+    filters = []
+    print(f"Listing decks for user ID: {user_id} in crud")
+    filters.append(Deck.user_id == user_id)
+    print(f"Filters applied: {filters[0]}")
+    count_stmt = select(func.count(Deck.id).filter(*filters))
     total_count = db.execute(count_stmt).scalar()
     stmt = (select(Deck).where(Deck.user_id == user_id).order_by(
         Deck.created_at.desc()).limit(count_per_page).offset((page-1)*count_per_page))
@@ -211,13 +214,13 @@ def get_deck_card_by_id(db: Session, deck_id: uuid.UUID, card_id: uuid.UUID):
     return db.execute(stmt).scalar_one_or_none()
 
 
-def list_deck_cards(db: Session, page: int, deck_id: uuid.UUID):
+def list_deck_cards(db: Session, deck_id: uuid.UUID,page:int = 1, ):
     count_per_page = 12
-    count_stmt = select(func.count(DeckCard.id).filter(
+    count_stmt = select(func.count(DeckCard.deck_id).filter(
         DeckCard.deck_id == deck_id))
     total_count = db.execute(count_stmt).scalar()
     stmt = (select(DeckCard).where(DeckCard.deck_id == deck_id).order_by(
-        DeckCard.created_at.desc()).limit(count_per_page).offset((page-1)*count_per_page))
+        DeckCard.card_id.desc()).limit(count_per_page).offset((page-1)*count_per_page))
     result = db.execute(stmt).scalars().all()
     return result, total_count
 
@@ -235,4 +238,30 @@ def delete_deck_card(db: Session, deck_id: uuid.UUID, card_id: uuid.UUID):
             DeckCard.card_id == card_id).returning(DeckCard))
     result = db.execute(stmt).scalar_one_or_none()
     db.commit()
+    return result
+
+def replace_deck_cards(db: Session, deck_id: uuid.UUID, card_ids: list[uuid.UUID]):
+    # Delete all existing cards for this deck
+    delete_stmt = (
+        delete(DeckCard)
+        .where(DeckCard.deck_id == deck_id)
+        .returning(DeckCard)
+    )
+    db.execute(delete_stmt)
+
+    # Insert new cards if card_ids list is not empty
+    if card_ids:
+        insert_stmt = insert(DeckCard).values([
+            {"deck_id": deck_id, "card_id": card_id} for card_id in card_ids
+        ]).returning(DeckCard)
+        db.execute(insert_stmt)
+    db.commit()
+
+    # Re-query to load full DeckCard + joined Card data
+    stmt = (
+        select(DeckCard)
+        .where(DeckCard.deck_id == deck_id)
+        .order_by(DeckCard.card_id)
+    )
+    result = db.execute(stmt).scalars().all()
     return result

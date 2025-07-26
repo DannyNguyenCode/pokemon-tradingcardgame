@@ -4,7 +4,7 @@ import { Pokemon } from '@/lib/definitions'
 import { useAppDispatch } from '@/lib/hooks'
 import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
 import { mapPokemonToCardBase } from '@/lib/mappers/pokemonCreateMapper'
-const PokemonAddBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
+const PokemonRemoveBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
     const payload = mapPokemonToCardBase(pokemonData)
     const dispatch = useAppDispatch()
 
@@ -22,7 +22,7 @@ const PokemonAddBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
                 throw new Error('Network response was not ok')
             }
             const response = await res.json()
-            dispatch(loadToastifyState(`${response.data.name} has been added to your collection`))
+            dispatch(loadToastifyState(`${response.data.name} has been removed to your deck`))
         } catch (error) {
             console.error(error)
             dispatch(loadToastifyState(`Something went wrong!`))
@@ -30,8 +30,8 @@ const PokemonAddBtn = ({ pokemonData }: { pokemonData: Pokemon }) => {
 
     }
     return (
-        <button className="btn btn-success" onClick={handleAddClick}>Add</button>
+        <button className="btn btn-error" onClick={handleAddClick}>Remove</button>
     )
 }
 
-export default PokemonAddBtn
+export default PokemonRemoveBtn
