@@ -30,7 +30,11 @@ app.config.update({
 
 # 2) Initialize extensions
 api = Api(app)
-
+api.spec.components.security_scheme("Bearer", {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+})
 # Import and register blueprints
 from app.routers.cards import cards_blp
 from app.routers.authentications.cookies import cookies_blp
