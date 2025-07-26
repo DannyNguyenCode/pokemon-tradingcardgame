@@ -186,7 +186,7 @@ def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int =
     count_stmt = select(func.count(Deck.id).filter(*filters))
     total_count = db.execute(count_stmt).scalar()
     stmt = (select(Deck).where(Deck.user_id == user_id).order_by(
-        Deck.created_at.desc()).limit(count_per_page).offset((page-1)*count_per_page))
+        Deck.name.desc()).limit(count_per_page).offset((page-1)*count_per_page))
     result = db.execute(stmt).scalars().all()
 
     return result, total_count

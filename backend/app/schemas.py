@@ -120,6 +120,10 @@ class PageArgs(Schema):
     class Meta:
         title = "PageArgs"
 
+class DeckPageArgs(PageArgs):
+    user_id = fields.UUID(required=False)
+    class Meta:
+        title="DeckPageArgs"
 
 class DeckSchema(Schema):
     id = fields.UUID(dump_only=True)
