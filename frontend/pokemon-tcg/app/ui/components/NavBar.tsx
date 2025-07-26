@@ -16,9 +16,10 @@ export default async function NavBar() {
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li><Link role="link" href={'/'} aria-label="redicrect to home page">Home</Link></li>
                         <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
-                        <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
+
                         {session ? (
                             <>
+                                <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                                 <LogoutBtn />
                             </>
                         ) : (
@@ -45,9 +46,10 @@ export default async function NavBar() {
                         <li><Link role="link" href={'/admin'} aria-label="redicrect to admin panel page">AdminPanel</Link></li>
                     )}
                     <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
-                    <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
+
                     {session ? (
                         <>
+                            <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
                             <LogoutBtn />
                         </>
                     ) : (
