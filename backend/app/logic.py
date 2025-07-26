@@ -257,15 +257,16 @@ def create_deck_logic(**kwargs):
 
 
 def list_decks(page: int, user_id: uuid.UUID | None, count_per_page):
-    print("DEBUG FIRST user_id:", user_id, type(user_id))
+    logger.info("DEBUG FIRST user_id:", user_id, type(user_id))
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
 
         with SessionLocal() as db:
             decks, total_count = crud.list_decks(db, page, user_id)
-            print("DEBUG user_id:", user_id, type(user_id))
-
+            logger.info("DEBUG user_id:", user_id, type(user_id))
+            if not decks:
+                return {"error": "No Decks could be retreived"}, 401
             response = services.generate_response(
                 message="Deck List retrieved",
                 status=200,
@@ -275,7 +276,7 @@ def list_decks(page: int, user_id: uuid.UUID | None, count_per_page):
             )
             return response, 200
     except Exception as error:
-        print(f"[ERROR] While listing decks: {error}")
+        logger.info(f"[ERROR] While listing decks: {error}")
         return {"error fetching decks": f"{error}"}, 500
 
 
