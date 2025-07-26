@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Pagination as PaginationType, Pokemon } from '@/lib/definitions'
 import TransferList from './TransferList'
 import { useSession } from 'next-auth/react'
@@ -46,21 +46,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         },
         status: 0
     });
-
-    useEffect(() => {
-        if (status === 'authenticated') {
-            setSelected(deckPokemon)
-            setAvailable(
-                allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
-            )
-            fetchDecks()
-        }
-
-
-    }, [deckPokemon, allPokemonList, status])
-
-
-    const fetchDecks = async () => {
+    const fetchDecks = useCallback(async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
@@ -76,7 +62,21 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         } catch (error) {
             console.error("Deck fetch error:", error)
         }
-    }
+    }, [session])
+    useEffect(() => {
+        if (status === 'authenticated') {
+            setSelected(deckPokemon)
+            setAvailable(
+                allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
+            )
+            fetchDecks()
+        }
+
+
+    }, [deckPokemon, allPokemonList, status, fetchDecks])
+
+
+
     const onDeckSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deck_id = e.target.value
         setSelectDeck(deck_id)
