@@ -1,7 +1,7 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React from 'react'
-import { useDebouncedCallback } from 'use-debounce'
+
 const colorTypes: Record<string, string> = {
     normal: '#A8A77A',
     fire: '#EE8130',
@@ -25,14 +25,9 @@ const colorTypes: Record<string, string> = {
 const Filters = () => {
     const params = useSearchParams()
     const router = useRouter()
-    const debouncedSearch = useDebouncedCallback((value: string) => {
-        const currentParams = new URLSearchParams(params)
-        currentParams.set('pokemon_name', value)
-        router.push(`?${currentParams.toString()}`)
-    }, 1000)
+
     const handleFilterChange = (filter: string) => {
         const currentParams = new URLSearchParams(params)
-
         if (filter === '') {
             // Remove the type_filter parameter entirely when clearing
             currentParams.delete('type_filter')
@@ -48,23 +43,9 @@ const Filters = () => {
     }
 
     return (
-        <div className="filter flex flex-start items-start">
+        <div className="filter flex flex-row justify-center items-center">
+
             <input onClick={() => handleFilterChange('')} className="btn filter-reset" type="radio" name="metaframeworks" aria-label="All" />
-            <label className="input mr-2">
-                <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <g
-                        strokeLinejoin="round"
-                        strokeLinecap="round"
-                        strokeWidth="2.5"
-                        fill="none"
-                        stroke="currentColor"
-                    >
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.3-4.3"></path>
-                    </g>
-                </svg>
-                <input onChange={(e) => debouncedSearch(e.target.value)} type="search" className="grow" placeholder="Search Pokemon Name" />
-            </label>
             <input className="btn" onClick={() => handleFilterChange('fire')} style={{ backgroundColor: colorTypes['fire'] }} type="radio" name="metaframeworks" aria-label="Fire" />
             <input className="btn" onClick={() => handleFilterChange('water')} style={{ backgroundColor: colorTypes['water'] }} type="radio" name="metaframeworks" aria-label="Water" />
             <input className="btn" onClick={() => handleFilterChange('grass')} style={{ backgroundColor: colorTypes['grass'] }} type="radio" name="metaframeworks" aria-label="Grass" />
