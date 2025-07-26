@@ -26,8 +26,6 @@ type DeckCardsResponse = {
 
 const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     const dispatch = useAppDispatch()
-
-
     const [selectDeck, setSelectDeck] = useState<string>('')
     const [deckPokemon, setDeckPokemon] = useState<Pokemon[]>([])
     const { data: session, status } = useSession()
@@ -51,7 +49,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     const fetchDecks = useCallback(async () => {
         try {
             console.log("session?.accessToken", session?.accessToken)
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/?user_id=${session?.user.id}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,7 +57,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                 }
             })
             console.log("response", response)
-            if (!response.ok) throw new Error()
+            if (!response.ok) throw new Error("Failed to fetch decks")
             const res = await response.json()
             console.log("Decks Fetched in function", res)
             setDeckCardResponse(res)

@@ -1,6 +1,6 @@
 from flask.views import MethodView
 from flask_smorest import Blueprint
-from app.schemas import DeckIn, DeckUpdate, DeckPageArgs
+from app.schemas import DeckIn, DeckUpdate, PageArgs
 from app import logic
 from app.services import jwt_required, get_jwt_identity
 
@@ -25,14 +25,13 @@ class DeckCollection(MethodView):
 
     # LIST
     @decks_blp.doc(security=[{"Bearer": []}], description="Get paginated list of decks with count and pagination metadata (10 per page)")
-    @decks_blp.arguments(DeckPageArgs, location="query")
+    @decks_blp.arguments(PageArgs, location="query")
     @jwt_required(["admin", "user"])
     def get(self, args):
-        print(f"inside decks list endpoint {args}")
         page = args.get("page", 1)
         count_per_page = args.get("count_per_page", 12)
 
-        user_id = args.get("user_id")
+        user_id = get_jwt_identity()
         print("user_id GET JWT", user_id)
 
         response, status = logic.list_decks(page, user_id, count_per_page)
