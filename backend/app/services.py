@@ -117,7 +117,9 @@ def jwt_required(allowed_roles):
 
 
 def get_jwt_identity():
-    return g.user.get('sub')
+    if hasattr(g, "user") and isinstance(g.user, dict):
+        return g.user.get("sub")
+    return None
 
 
 def generate_pagination(page, total_count,count_per_page):
