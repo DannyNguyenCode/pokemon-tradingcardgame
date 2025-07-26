@@ -83,7 +83,7 @@ def delete_user(db: Session, id: int):
 
 def get_user_by_email(db: Session, email: str):
     stmt = (select(User).where(User.email == email))
-    result =  db.execute(stmt).scalar_one_or_none()
+    result = db.execute(stmt).scalar_one_or_none()
     return result
 
 
@@ -220,7 +220,7 @@ def get_deck_card_by_id(db: Session, deck_id: uuid.UUID, card_id: uuid.UUID):
     return db.execute(stmt).scalar_one_or_none()
 
 
-def list_deck_cards(db: Session, deck_id: uuid.UUID,page:int = 1, ):
+def list_deck_cards(db: Session, deck_id: uuid.UUID, page: int = 1, ):
     count_per_page = 12
     count_stmt = select(func.count(DeckCard.deck_id).filter(
         DeckCard.deck_id == deck_id))
@@ -245,6 +245,7 @@ def delete_deck_card(db: Session, deck_id: uuid.UUID, card_id: uuid.UUID):
     result = db.execute(stmt).scalar_one_or_none()
     db.commit()
     return result
+
 
 def replace_deck_cards(db: Session, deck_id: uuid.UUID, card_ids: list[uuid.UUID]):
     # Delete all existing cards for this deck

@@ -188,6 +188,8 @@ class Deck(Base):
             "name": self.name,
             "cards": [card.to_dict() for card in self.deck_cards],
         }
+
+
 class DeckCard(Base):
     __tablename__ = "deck_card"
     deck_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey(

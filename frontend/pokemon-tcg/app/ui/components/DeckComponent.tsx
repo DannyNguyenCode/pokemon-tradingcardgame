@@ -48,6 +48,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     });
     const fetchDecks = useCallback(async () => {
         try {
+            console.log("session?.accessToken", session?.accessToken)
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
                 headers: {
@@ -55,6 +56,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                     'Authorization': `Bearer ${session?.accessToken}`
                 }
             })
+            console.log("response", response)
             if (!response.ok) throw new Error("Failed to fetch decks")
             const res = await response.json()
             console.log("Decks Fetched in function", res)

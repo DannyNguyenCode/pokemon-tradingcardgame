@@ -18,13 +18,13 @@ class DeckCollection(MethodView):
         security=[{"Bearer": []}],
         description="Create a deck"
     )
-    @jwt_required(["admin","user"])
+    @jwt_required(["admin", "user"])
     def post(self, data):
         response, status = logic.create_deck_logic(**data)
         return response, status
 
     # LIST
-    @decks_blp.doc(security=[{"Bearer": []}],description="Get paginated list of decks with count and pagination metadata (10 per page)")
+    @decks_blp.doc(security=[{"Bearer": []}], description="Get paginated list of decks with count and pagination metadata (10 per page)")
     @decks_blp.arguments(PageArgs, location="query")
     @jwt_required(["admin", "user"])
     def get(self, args):
@@ -32,10 +32,11 @@ class DeckCollection(MethodView):
         count_per_page = args.get("count_per_page", 12)
 
         user_id = get_jwt_identity()
-        print("user_id GET JWT",user_id)
+        print("user_id GET JWT", user_id)
 
-        response, status = logic.list_decks(page, user_id,count_per_page)
+        response, status = logic.list_decks(page, user_id, count_per_page)
         return response, status
+
 
 @decks_blp.route("/<uuid:id>")
 class DeckItem(MethodView):

@@ -57,7 +57,8 @@ def list_cards(page: int, type_filter: str | None, pokemon_name: str | None, cou
                 message="Card List retrieved",
                 status=200,
                 data=[card.to_dict() for card in cards],
-                pagination=services.generate_pagination(page, total_count,count_per_page)
+                pagination=services.generate_pagination(
+                    page, total_count, count_per_page)
             )
             return response, 200
     except Exception as error:
@@ -147,7 +148,7 @@ def create_tcg_card(identifier: str | int):
 def create_tcg_card_range(start: int, end: int):
     try:
         cards = []
-        for i in range(start,end+1):
+        for i in range(start, end+1):
             print(f"Creating card for Pokémon ID: {i}")
             card = create_tcg_card(i)
             cards.append(card)  # Append the response data, not the status code
@@ -232,8 +233,10 @@ def google_sync(**data):
     except Exception as error:
         # Optionally log the error here
         return {"error": f"{error}"}, 500
-    
+
 # Deck Logic
+
+
 def create_deck_logic(**kwargs):
     try:
         with SessionLocal() as db:
@@ -248,29 +251,31 @@ def create_deck_logic(**kwargs):
             return response, 201
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
-def list_decks(page: int, user_id: uuid.UUID | None,count_per_page):
+
+
+def list_decks(page: int, user_id: uuid.UUID | None, count_per_page):
     print("DEBUG FIRST user_id:", user_id, type(user_id))
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
 
-        
         with SessionLocal() as db:
-            decks, total_count = crud.list_decks(db, page,user_id)
+            decks, total_count = crud.list_decks(db, page, user_id)
             print("DEBUG user_id:", user_id, type(user_id))
-            
+
             response = services.generate_response(
                 message="Deck List retrieved",
                 status=200,
                 data=[deck.to_dict() for deck in decks],
-                pagination=services.generate_pagination(page, total_count,count_per_page)
+                pagination=services.generate_pagination(
+                    page, total_count, count_per_page)
             )
             return response, 200
     except Exception as error:
         print(f"[ERROR] While listing decks: {error}")
         return {"error fetching decks": f"{error}"}, 500
-    
+
+
 def get_deck_by_id(id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -282,6 +287,8 @@ def get_deck_by_id(id: uuid.UUID):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
+
+
 def update_deck(id: uuid.UUID, **kwargs):
     try:
         with SessionLocal() as db:
@@ -291,7 +298,8 @@ def update_deck(id: uuid.UUID, **kwargs):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
+
 def delete_deck(id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -302,8 +310,10 @@ def delete_deck(id: uuid.UUID):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
 # Deck Card Logic
+
+
 def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -322,6 +332,7 @@ def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
     except Exception as error:
         return {"error": f"{error}"}, 500
 
+
 def list_deck_cards(deck_id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -338,6 +349,7 @@ def list_deck_cards(deck_id: uuid.UUID):
     except Exception as error:
         return {"error": f"{error}"}, 500
 
+
 def get_deck_card_by_id(deck_id: uuid.UUID, card_id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -353,6 +365,7 @@ def get_deck_card_by_id(deck_id: uuid.UUID, card_id: uuid.UUID):
     except Exception as error:
         return {"error": f"{error}"}, 500
 
+
 def update_deck_card(deck_id: uuid.UUID, card_id: uuid.UUID, **kwargs):
     try:
         with SessionLocal() as db:
@@ -367,7 +380,8 @@ def update_deck_card(deck_id: uuid.UUID, card_id: uuid.UUID, **kwargs):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
+
 def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
     try:
         with SessionLocal() as db:
@@ -385,19 +399,20 @@ def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
             return response, 200
     except Exception as error:
         return {"error": f"{error}"}, 500
-    
+
+
 def replace_deck_cards(deck_id, card_ids):
     try:
         with SessionLocal() as db:
 
-            deck_card = crud.replace_deck_cards(db,deck_id,card_ids)
+            deck_card = crud.replace_deck_cards(db, deck_id, card_ids)
 
             response = services.generate_response(
                 message="Deck is now empty" if not deck_card else "Deck has been saved with changes",
                 status=200,
                 data=[dc.to_dict() for dc in deck_card]
             )
-            return response,200
+            return response, 200
     except Exception as e:
 
         return {"error": str(e)}, 500
