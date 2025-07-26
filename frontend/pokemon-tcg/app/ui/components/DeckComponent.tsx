@@ -1,5 +1,5 @@
 'use client'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pagination as PaginationType, Pokemon } from '@/lib/definitions'
 import TransferList from './TransferList'
 import { useSession } from 'next-auth/react'
