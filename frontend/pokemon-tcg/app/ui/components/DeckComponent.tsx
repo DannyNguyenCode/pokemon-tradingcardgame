@@ -53,13 +53,6 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         )
     }, [deckPokemon, allPokemonList])
 
-    useEffect(() => {
-
-
-        if (session?.accessToken) {
-            fetchDecks()
-        }
-    }, [session?.accessToken])
 
     const fetchDecks = async () => {
         console.log("session?.accessToken", session?.accessToken)
