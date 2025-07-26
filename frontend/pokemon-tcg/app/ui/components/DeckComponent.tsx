@@ -52,6 +52,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
             const fetchDecks = async () => {
                 try {
                     console.log("session?.accessToken", session?.accessToken)
+                    console.log("session.user.id", session.user.id)
                     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                         method: 'GET',
                         headers: {
