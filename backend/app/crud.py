@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import select, update, insert, delete, func
 from app.models import Card, User, GoogleUser, LinkGoogle, Deck, DeckCard
 import uuid
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def create_card(db: Session, **kwargs) -> Card:
     stmt = (
@@ -180,9 +182,9 @@ def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int =
     except ValueError:
         raise ValueError("Invalid UUID format for user_id")
     filters = []
-    print(f"Listing decks for user ID: {user_id} in crud")
+    logger.info(f"Listing decks for user ID: {user_id} in crud")
     filters.append(Deck.user_id == user_id)
-    print(f"Filters applied: {filters[0]}")
+    logger.info(f"Filters applied: {filters[0]}")
     count_stmt = select(func.count(Deck.id).filter(*filters))
     total_count = db.execute(count_stmt).scalar()
     stmt = (select(Deck).where(Deck.user_id == user_id).order_by(

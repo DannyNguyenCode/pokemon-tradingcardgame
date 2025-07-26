@@ -4,6 +4,9 @@ from app import crud, services
 from app.pokeapi import Pokemon
 import uuid
 import time
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 from app.poke_utils import (
     select_best_levelup_move,
     map_power_to_damage,

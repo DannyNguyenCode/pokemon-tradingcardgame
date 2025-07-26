@@ -3,7 +3,9 @@ from flask_smorest import Blueprint
 from app.schemas import DeckIn, DeckUpdate, PageArgs
 from app import logic
 from app.services import jwt_required, get_jwt_identity
-
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 decks_blp = Blueprint("decks", __name__, url_prefix="/api/decks",
                       description="Deck operations")
 
@@ -32,7 +34,7 @@ class DeckCollection(MethodView):
         count_per_page = args.get("count_per_page", 12)
 
         user_id = get_jwt_identity()
-        print("user_id GET JWT", user_id)
+        logger.info("user_id GET JWT", user_id)
 
         response, status = logic.list_decks(page, user_id, count_per_page)
         return response, status
