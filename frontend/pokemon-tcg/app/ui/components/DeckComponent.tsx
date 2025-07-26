@@ -57,7 +57,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                 }
             })
             console.log("response", response)
-            if (!response.ok) throw new Error("Failed to fetch decks")
+            if (!response.ok) throw new Error()
             const res = await response.json()
             console.log("Decks Fetched in function", res)
             setDeckCardResponse(res)
