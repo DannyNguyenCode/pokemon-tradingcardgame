@@ -184,7 +184,7 @@ class Deck(Base):
     def to_dict(self):
         return {
             "id": str(self.id),
-            "created_at": self.created_at,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
             "name": self.name,
             "cards": [card.to_dict() for card in self.deck_cards],
         }
