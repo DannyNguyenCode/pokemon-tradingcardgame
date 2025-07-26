@@ -30,8 +30,9 @@ class DeckCollection(MethodView):
     def get(self, args):
         page = args.get("page", 1)
         count_per_page = args.get("count_per_page", 12)
-        user_id = get_jwt_identity()
 
+        user_id = get_jwt_identity()
+        print("user_id GET JWT",user_id)
 
         response, status = logic.list_decks(page, user_id,count_per_page)
         return response, status

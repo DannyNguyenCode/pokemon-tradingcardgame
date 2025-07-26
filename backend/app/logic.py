@@ -259,7 +259,7 @@ def list_decks(page: int, user_id: uuid.UUID | None,count_per_page):
         with SessionLocal() as db:
             decks, total_count = crud.list_decks(db, page,user_id)
             print("DEBUG user_id:", user_id, type(user_id))
-
+            
             response = services.generate_response(
                 message="Deck List retrieved",
                 status=200,

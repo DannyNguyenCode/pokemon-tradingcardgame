@@ -173,6 +173,12 @@ def get_deck_by_id(db: Session, id: uuid.UUID):
 
 
 def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int = 12):
+    try:
+        # Ensure user_id is a UUID instance
+        if isinstance(user_id, str):
+            user_id = uuid.UUID(user_id)
+    except ValueError:
+        raise ValueError("Invalid UUID format for user_id")
     filters = []
     print(f"Listing decks for user ID: {user_id} in crud")
     filters.append(Deck.user_id == user_id)
