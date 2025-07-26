@@ -79,9 +79,9 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         }
     }
     const onDeckSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        let deck_id = e.target.value
+        const deck_id = e.target.value
         setSelectDeck(deck_id)
-        let selectedDeck = deckCardResponse.data.find(deck => deck.id === deck_id)
+        const selectedDeck = deckCardResponse.data.find(deck => deck.id === deck_id)
         if (selectedDeck) {
             const pokemons = selectedDeck.cards.map((pokemonCard => pokemonCard.card))
             setDeckPokemon(pokemons)

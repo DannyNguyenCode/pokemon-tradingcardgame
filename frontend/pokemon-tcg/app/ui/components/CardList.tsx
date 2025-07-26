@@ -17,7 +17,7 @@ const columnMap: Record<string, string> = {
     "12": "md:grid-cols-12",
 }
 
-export default function CardList({ data, owned, columns }: { data: Pokemon[], owned: boolean, columns: string }) {
+export default function CardList({ data, columns }: { data: Pokemon[], columns: string }) {
     const columnClass = columnMap[columns]
     return (
         <>

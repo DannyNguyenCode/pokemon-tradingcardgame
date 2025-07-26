@@ -36,7 +36,7 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
             </div>
             <div className="flex flex-col items-center gap-4 w-full">
 
-                <CardList data={response.data} owned={false} columns='8' />
+                <CardList data={response.data} columns='8' />
             </div>
             <div className="w-full flex justify-center pb-4">
                 <Pagination pagination={response.pagination} />

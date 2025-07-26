@@ -128,7 +128,7 @@ def create_test_cards(patch_logic, monkeypatch):
         storage[card["id"]] = card
         return card, 201
 
-    def _list_cards(page=1, type_filter=None, pokemon_name=None):
+    def _list_cards(page=1, type_filter=None, pokemon_name=None,count_per_page=None):
         cards = list(storage.values())
         # Sort by collector_number for consistent pagination
         cards.sort(key=lambda x: x.get("collector_number", 0))

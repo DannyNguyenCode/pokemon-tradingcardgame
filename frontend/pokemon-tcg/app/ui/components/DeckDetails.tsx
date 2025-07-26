@@ -19,7 +19,7 @@ const DeckDetails = ({ deckName, openId, data }: { deckName: string, openId: str
                     <h3 className="font-bold text-lg">{deckName}</h3>
                     <div className='grid grid-cols-1 md:grid-cols-7 gap-4'>
                         {data.map((pokemon, i) => {
-                            return <div className='flex flex-col shadow-xl/20' key={i}><PokemonCard pokemon={pokemon.card} owned={false} />
+                            return <div className='flex flex-col shadow-xl/20' key={i}><PokemonCard pokemon={pokemon.card} />
                                 <div className="card-actions flex-1 items-end justify-evenly p-2">
                                     <PokemonAddBtn pokemonData={pokemon.card} />
                                     <PokemonRemoveBtn pokemonData={pokemon.card} />
