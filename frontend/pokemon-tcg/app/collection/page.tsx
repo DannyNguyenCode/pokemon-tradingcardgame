@@ -47,6 +47,7 @@ const CollectionPage = async ({ searchParams }: {
         status: 0
     };
     try {
+        console.log("session?.accessToken", session?.accessToken)
         const deckResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
             method: 'GET',
             headers: {
