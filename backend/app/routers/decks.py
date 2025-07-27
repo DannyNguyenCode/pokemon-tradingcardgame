@@ -30,6 +30,7 @@ class DeckCollection(MethodView):
     @decks_blp.arguments(PageArgs, location="query")
     @jwt_required(["admin", "user"])
     def get(self, args):
+        print("✅ ARGS RECEIVED:", args)
         try:
             page = args.get("page", 1)
             count_per_page = args.get("count_per_page", 12)
