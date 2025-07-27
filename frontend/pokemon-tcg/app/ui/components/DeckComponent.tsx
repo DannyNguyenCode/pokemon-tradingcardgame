@@ -69,6 +69,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
             //         console.error("Deck fetch error:", error)
             //     }
             // }
+            console.log("allpokemon", allPokemonList)
             setSelected(deckPokemon)
             setAvailable(
                 allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
@@ -131,7 +132,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
                 <option disabled value="">
                     Select Deck
                 </option>
-                {deckCardResponse && deckCardResponse.data.map(deck => (
+                {Array.isArray(deckCardResponse?.data) && deckCardResponse.data.map(deck => (
                     <option key={deck.id} value={deck.id}>
                         {deck.name}
                     </option>
