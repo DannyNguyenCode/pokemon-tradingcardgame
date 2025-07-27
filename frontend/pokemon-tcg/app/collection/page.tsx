@@ -33,7 +33,19 @@ const CollectionPage = async ({ searchParams }: {
         console.error('Error fetching cards:', error);
     }
 
-    let deckData;
+    let deckData = {
+        data: [],
+        message: '',
+        pagination: {
+            page: 1,
+            total_pages: 0,
+            has_next: false,
+            has_prev: false,
+            total_count: 0,
+            pageSize: 0
+        },
+        status: 0
+    };
     try {
         const deckResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
             method: 'GET',
