@@ -5,6 +5,7 @@ import { auth } from 'auth'
 const CollectionPage = async ({ searchParams }: {
     searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }>
 }) => {
+    console.log("collection page landed")
     const session = await auth();
     const params = await searchParams;
 
@@ -34,6 +35,7 @@ const CollectionPage = async ({ searchParams }: {
         },
         status: 0
     };
+    console.log("session?.accessToken outside try and catch block", session?.accessToken)
     try {
         console.log("session?.accessToken", session?.accessToken)
         const deckResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
