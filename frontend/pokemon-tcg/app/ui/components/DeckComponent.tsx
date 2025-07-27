@@ -140,7 +140,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
             </select>
             }
 
-            {status === 'loading' ?
+            {status === 'loading' && Array.isArray(deckCardResponse?.data) ?
                 <TransferListSkeleton /> : <TransferList
                     key={selectDeck}
                     available={available}
