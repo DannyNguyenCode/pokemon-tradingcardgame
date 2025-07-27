@@ -4,6 +4,7 @@ from app.schemas import DeckIn, DeckUpdate, PageArgs
 from app import logic
 from app.services import jwt_required, get_jwt_identity
 import logging
+import uuid
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 decks_blp = Blueprint("decks", __name__, url_prefix="/api/decks",
@@ -37,7 +38,8 @@ class DeckCollection(MethodView):
         except Exception:
             return {"error":"args error"}
         try:
-            user_id = get_jwt_identity()
+            
+            user_id = uuid.UUID(get_jwt_identity())
             logger.info(f"user_id GET JWT {user_id}")
         except Exception:
             return {"error":"get_jwt_indentity error"}

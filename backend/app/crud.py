@@ -181,7 +181,7 @@ def list_decks(db: Session, page: int, user_id: uuid.UUID, count_per_page: int =
     #         user_id = uuid.UUID(user_id)
     # except ValueError:
     #     raise ValueError("Invalid UUID format for user_id")
-    user_id = str(user_id)
+    # user_id = str(user_id)
     try:
         filters = []
         logger.info(f"Listing decks for user ID: {user_id} in crud")
