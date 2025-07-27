@@ -44,6 +44,7 @@ const CollectionPage = async ({ searchParams }: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${session?.accessToken}`
             },
+
             cache: 'no-store'
         });
         console.log("checkin deckresponse after fetch", deckResponse)
