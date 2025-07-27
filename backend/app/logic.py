@@ -45,7 +45,7 @@ def create_card_logic(**kwargs):
             )
             return response, 201
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error create card logic": f"{error}"}, 500
 
 
 def list_cards(page: int, type_filter: str | None, pokemon_name: str | None, count_per_page: int = 12):
@@ -65,7 +65,7 @@ def list_cards(page: int, type_filter: str | None, pokemon_name: str | None, cou
             )
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error list cards logic": f"{error}"}, 500
 
 
 def get_card_by_id(id: int):
@@ -78,7 +78,7 @@ def get_card_by_id(id: int):
                 "Card retrieved", 200, card.to_dict())
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error get card by id logic": f"{error}"}, 500
 
 
 def update_card(id: int, **kwargs):
@@ -89,7 +89,7 @@ def update_card(id: int, **kwargs):
                 "Card updated", 200, card.to_dict())
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error update card logic": f"{error}"}, 500
 
 
 def delete_card(id: int):
@@ -101,7 +101,7 @@ def delete_card(id: int):
             response = services.generate_response("Card deleted", 200)
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error delete card logic": f"{error}"}, 500
 
 
 def create_tcg_card(identifier: str | int):
@@ -158,7 +158,7 @@ def create_tcg_card_range(start: int, end: int):
             time.sleep(1)  # Optional: Throttle requests to avoid rate limits
         return cards, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error create tcg card range logic": f"{error}"}, 500
 
 
 def register_user(**data):
@@ -179,7 +179,7 @@ def register_user(**data):
                 message=f"User registered with {validate_password}", status=201, data=user.to_dict())
             return response, 201
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error register logic": f"{error}"}, 500
 
 
 def login_user(**data):
@@ -202,7 +202,7 @@ def login_user(**data):
                 }
             }, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error login user logic": f"{error}"}, 500
 
 
 def google_sync(**data):
@@ -235,7 +235,7 @@ def google_sync(**data):
 
     except Exception as error:
         # Optionally log the error here
-        return {"error": f"{error}"}, 500
+        return {"error google sync logic": f"{error}"}, 500
 
 # Deck Logic
 
@@ -253,7 +253,7 @@ def create_deck_logic(**kwargs):
             )
             return response, 201
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error create deck logic": f"{error}"}, 500
 
 
 def list_decks(page: int, user_id: uuid.UUID, count_per_page):
@@ -264,7 +264,7 @@ def list_decks(page: int, user_id: uuid.UUID, count_per_page):
 
         with SessionLocal() as db:
             try:
-                decks, total_count = crud.list_decks(db, page, user_id)
+                decks, total_count = crud.list_decks(db=db, page=page, user_id=user_id)
                 logger.info(f"DEBUG user_id {user_id}, {type(user_id)}")
                 logger.info(f"total_count {total_count}")
                 if not decks or total_count < 1:
@@ -298,7 +298,7 @@ def get_deck_by_id(id: uuid.UUID):
                 "Deck retrieved", 200, deck.to_dict())
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error get deck by id logic": f"{error}"}, 500
 
 
 def update_deck(id: uuid.UUID, **kwargs):
@@ -309,7 +309,7 @@ def update_deck(id: uuid.UUID, **kwargs):
                 "Deck updated", 200, deck.to_dict())
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error update deck logic": f"{error}"}, 500
 
 
 def delete_deck(id: uuid.UUID):
@@ -321,7 +321,7 @@ def delete_deck(id: uuid.UUID):
             response = services.generate_response("Deck deleted", 200)
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error delete deck logic": f"{error}"}, 500
 
 # Deck Card Logic
 
@@ -342,7 +342,7 @@ def add_card_to_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
             )
             return response, 201
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error add card to deck logic": f"{error}"}, 500
 
 
 def list_deck_cards(deck_id: uuid.UUID):
@@ -359,7 +359,7 @@ def list_deck_cards(deck_id: uuid.UUID):
             )
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error list deck cards logic": f"{error}"}, 500
 
 
 def get_deck_card_by_id(deck_id: uuid.UUID, card_id: uuid.UUID):
@@ -375,7 +375,7 @@ def get_deck_card_by_id(deck_id: uuid.UUID, card_id: uuid.UUID):
             )
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error get deck card by id logic": f"{error}"}, 500
 
 
 def update_deck_card(deck_id: uuid.UUID, card_id: uuid.UUID, **kwargs):
@@ -391,7 +391,7 @@ def update_deck_card(deck_id: uuid.UUID, card_id: uuid.UUID, **kwargs):
             )
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error update deck card logic": f"{error}"}, 500
 
 
 def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
@@ -410,7 +410,7 @@ def remove_deck_card_from_deck(deck_id: uuid.UUID, card_id: uuid.UUID):
             )
             return response, 200
     except Exception as error:
-        return {"error": f"{error}"}, 500
+        return {"error remove card from deck logic": f"{error}"}, 500
 
 
 def replace_deck_cards(deck_id, card_ids):
@@ -427,4 +427,4 @@ def replace_deck_cards(deck_id, card_ids):
             return response, 200
     except Exception as e:
 
-        return {"error": str(e)}, 500
+        return {"error replace deck cards logic": str(e)}, 500
