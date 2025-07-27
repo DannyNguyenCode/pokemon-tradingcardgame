@@ -257,7 +257,7 @@ def create_deck_logic(**kwargs):
 
 
 def list_decks(page: int, user_id: uuid.UUID, count_per_page):
-    logger.info("DEBUG FIRST user_id:", user_id, type(user_id))
+    logger.info(f"DEBUG FIRST user_id:, {user_id}, {type(user_id)}")
     if page < 1:
         return {"error": "Page must be 1 or greater"}, 400
     try:
@@ -265,7 +265,7 @@ def list_decks(page: int, user_id: uuid.UUID, count_per_page):
         with SessionLocal() as db:
             try:
                 decks, total_count = crud.list_decks(db, page, user_id)
-                logger.info("DEBUG user_id:", user_id, type(user_id))
+                logger.info(f"DEBUG user_id {user_id}, {type(user_id)}")
                 logger.info(f"total_count {total_count}")
                 if not decks or total_count < 1:
                     return {"error": "No Decks could be retreived"}, 401

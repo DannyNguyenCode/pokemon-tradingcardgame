@@ -37,7 +37,7 @@ class DeckCollection(MethodView):
             return {"error":"args error"}
         try:
             user_id = get_jwt_identity()
-            logger.info("user_id GET JWT", user_id)
+            logger.info(f"user_id GET JWT {user_id}")
         except Exception:
             return {"error":"get_jwt_indentity error"}
 
