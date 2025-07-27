@@ -55,10 +55,14 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${session?.accessToken}`
         }
+    }).then((res) => {
+        return res.json()
+    }).then((r) => {
+        console.log("resolved r", r)
+        return r
     })
     console.log("deckResponse", deckResponse)
-    const res = await deckResponse.json()
-    console.log("res", res)
+
 
 
 
@@ -67,7 +71,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
 
     return (
         <div className="flex-1 flex flex-col items-center justify-start md:justify-between min-h-0 pt-4 m-4">
-            <DeckComponent allPokemonList={response.data} deckCardResponse={res} />
+            <DeckComponent allPokemonList={response.data} deckCardResponse={deckResponse} />
 
         </div>
 
