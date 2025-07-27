@@ -61,7 +61,9 @@ const CollectionPage = async ({ searchParams }: {
         );
 
         if (!cardsResponse.ok) throw new Error(`Cards API error ${cardsResponse.status}`);
+        console.log("cardsResponse", cardsResponse)
         cardsData = await cardsResponse.json();
+        console.log("cardsData", cardsData)
     } catch (error) {
         console.error('Error fetching cards:', error);
     }
