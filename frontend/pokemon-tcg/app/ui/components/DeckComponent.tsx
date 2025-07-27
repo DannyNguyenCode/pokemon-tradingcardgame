@@ -143,14 +143,18 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
             </select>
             }
 
-            {status === 'loading' && Array.isArray(deckCardResponse?.data) ?
+            {status === 'loading' ?
                 <TransferListSkeleton /> : <TransferList
                     key={selectDeck}
                     available={available}
                     selected={selected}
                     setAvailable={setAvailable}
                     setSelected={setSelected}
-                    deckName={deckCardResponse.data.find(deck => deck.id === selectDeck)?.name}
+                    deckName={
+                        Array.isArray(deckCardResponse?.data)
+                            ? deckCardResponse.data.find(deck => deck.id === selectDeck)?.name
+                            : undefined
+                    }
                     onSave={onSave}
                     onCancel={onCancel} />
             }
