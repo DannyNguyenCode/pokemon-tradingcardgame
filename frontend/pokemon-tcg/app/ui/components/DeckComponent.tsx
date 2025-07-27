@@ -131,7 +131,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
                 <option disabled value="">
                     Select Deck
                 </option>
-                {deckCardResponse.data.map(deck => (
+                {deckCardResponse && deckCardResponse.data.map(deck => (
                     <option key={deck.id} value={deck.id}>
                         {deck.name}
                     </option>
