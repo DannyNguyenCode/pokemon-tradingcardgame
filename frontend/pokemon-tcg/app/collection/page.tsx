@@ -56,9 +56,9 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
             'Authorization': `Bearer ${session?.accessToken}`
         }
     })
-
+    console.log("deckResponse", deckResponse)
     const res = await deckResponse.json()
-
+    console.log("res", res)
 
 
 
