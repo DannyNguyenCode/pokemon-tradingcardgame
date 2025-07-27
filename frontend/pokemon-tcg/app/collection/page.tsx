@@ -38,7 +38,7 @@ const CollectionPage = async ({ searchParams }: {
     console.log("session?.accessToken outside try and catch block", session?.accessToken)
     try {
         console.log("session?.accessToken", session?.accessToken)
-        const deckResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/users/${session?.user.id}`, {
+        const deckResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/user/${session?.user.id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
