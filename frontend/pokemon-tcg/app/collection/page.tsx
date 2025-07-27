@@ -2,25 +2,25 @@
 import React from 'react'
 import DeckComponent from '@/ui/components/DeckComponent'
 import { auth } from 'auth'
-import { Pagination } from '@/lib/definitions'
-import { Pokemon } from '@/lib/definitions'
-type Cards = {
-    card: Pokemon
-    card_id: string
-    deck_id: string
-}
-type Data = {
-    cards: Cards[]
-    created_at: Date
-    id: string
-    name: string
-}
-type DeckCardsResponse = {
-    data: Data[]
-    message: string
-    pagination: Pagination
-    status: number
-}
+// import { Pagination } from '@/lib/definitions'
+// import { Pokemon } from '@/lib/definitions'
+// type Cards = {
+//     card: Pokemon
+//     card_id: string
+//     deck_id: string
+// }
+// type Data = {
+//     cards: Cards[]
+//     created_at: Date
+//     id: string
+//     name: string
+// }
+// type DeckCardsResponse = {
+//     data: Data[]
+//     message: string
+//     pagination: Pagination
+//     status: number
+// }
 
 const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
     const params = await searchParams
