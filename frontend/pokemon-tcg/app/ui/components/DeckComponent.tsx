@@ -24,7 +24,7 @@ type DeckCardsResponse = {
     status: number
 }
 
-const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
+const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: Pokemon[], deckCardResponse: DeckCardsResponse }) => {
     const dispatch = useAppDispatch()
     const [selectDeck, setSelectDeck] = useState<string>('')
     const [deckPokemon, setDeckPokemon] = useState<Pokemon[]>([])
@@ -33,47 +33,47 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
     )
     const [selected, setSelected] = useState<Pokemon[]>(deckPokemon)
-    const [deckCardResponse, setDeckCardResponse] = useState<DeckCardsResponse>({
-        data: [],
-        message: '',
-        pagination: {
-            page: 0,
-            total_pages: 0,
-            has_next: false,
-            has_prev: false,
-            total_count: 0,
-            pageSize: 0
-        },
-        status: 0
-    });
+    // const [deckCardResponse, setDeckCardResponse] = useState<DeckCardsResponse>({
+    //     data: [],
+    //     message: '',
+    //     pagination: {
+    //         page: 0,
+    //         total_pages: 0,
+    //         has_next: false,
+    //         has_prev: false,
+    //         total_count: 0,
+    //         pageSize: 0
+    //     },
+    //     status: 0
+    // });
 
     useEffect(() => {
         if (status === 'authenticated') {
-            const fetchDecks = async () => {
-                try {
-                    console.log("session?.accessToken", session?.accessToken)
-                    console.log("session.user.id", session.user.id)
-                    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${session?.accessToken}`
-                        }
-                    })
-                    console.log("response", response)
-                    if (!response.ok) throw new Error("Failed to fetch decks")
-                    const res = await response.json()
-                    console.log("Decks Fetched in function", res)
-                    setDeckCardResponse(res)
-                } catch (error) {
-                    console.error("Deck fetch error:", error)
-                }
-            }
+            // const fetchDecks = async () => {
+            //     try {
+            //         console.log("session?.accessToken", session?.accessToken)
+            //         console.log("session.user.id", session.user.id)
+            //         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
+            //             method: 'GET',
+            //             headers: {
+            //                 'Content-Type': 'application/json',
+            //                 'Authorization': `Bearer ${session?.accessToken}`
+            //             }
+            //         })
+            //         console.log("response", response)
+            //         if (!response.ok) throw new Error("Failed to fetch decks")
+            //         const res = await response.json()
+            //         console.log("Decks Fetched in function", res)
+            //         setDeckCardResponse(res)
+            //     } catch (error) {
+            //         console.error("Deck fetch error:", error)
+            //     }
+            // }
             setSelected(deckPokemon)
             setAvailable(
                 allPokemonList.filter(p => !deckPokemon.some(d => d.id === p.id))
             )
-            fetchDecks()
+            // fetchDecks()
         }
 
 
