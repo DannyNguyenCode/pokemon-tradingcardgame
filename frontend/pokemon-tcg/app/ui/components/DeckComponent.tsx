@@ -48,6 +48,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
     // });
 
     useEffect(() => {
+        console.log("deckCardResponse", deckCardResponse)
         if (status === 'authenticated') {
             // const fetchDecks = async () => {
             //     try {
