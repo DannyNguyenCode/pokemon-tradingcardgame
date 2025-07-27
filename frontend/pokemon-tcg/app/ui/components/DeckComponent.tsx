@@ -79,7 +79,7 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
         }
 
 
-    }, [deckPokemon, allPokemonList, status, session])
+    }, [deckPokemon, allPokemonList, status, session, deckCardResponse])
 
 
 
