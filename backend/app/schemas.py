@@ -121,7 +121,7 @@ class PageArgs(Schema):
         title = "PageArgs"
 
 class DeckPageArgs(PageArgs):
-    user_id = fields.UUID(required=False)
+    user_id = fields.Str(required=False)
     class Meta:
         title="DeckPageArgs"
 
