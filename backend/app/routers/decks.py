@@ -82,3 +82,23 @@ class DeckItem(MethodView):
     def delete(self, id):
         response, status = logic.delete_deck(id)
         return response, status
+    
+@decks_blp.route("/user/<uuid:user_id>")
+class DecksByUser(MethodView):
+    """Get all decks for a specific user ID."""
+
+    @decks_blp.doc(
+        security=[{"Bearer": []}],
+        description="Get decks by user_id (admin-only or diagnostic)",
+    )
+    @jwt_required(["admin"])
+    def get(self, user_id):
+        try:
+            page = 1
+            count_per_page = 100  # or some high default
+            logger.info(f"[ADMIN] Fetching decks for user_id: {user_id}")
+            response, status = logic.list_decks(page, user_id, count_per_page)
+            return response, status
+        except Exception as e:
+            logger.exception(f"[ADMIN] Error fetching decks for user_id: {user_id}")
+            return {"error": f"Could not fetch decks for user_id {user_id}"}, 500
