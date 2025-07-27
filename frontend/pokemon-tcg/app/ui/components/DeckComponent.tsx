@@ -85,13 +85,16 @@ const DeckComponent = ({ allPokemonList, deckCardResponse }: { allPokemonList: P
     const onDeckSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const deck_id = e.target.value
         setSelectDeck(deck_id)
-        const selectedDeck = deckCardResponse.data.find(deck => deck.id === deck_id)
-        if (selectedDeck) {
-            const pokemons = selectedDeck.cards.map((pokemonCard => pokemonCard.card))
-            setDeckPokemon(pokemons)
-        } else {
-            setDeckPokemon([])
+        if (Array.isArray(deckCardResponse?.data)) {
+            const selectedDeck = deckCardResponse.data.find(deck => deck.id === deck_id)
+            if (selectedDeck) {
+                const pokemons = selectedDeck.cards.map((pokemonCard => pokemonCard.card))
+                setDeckPokemon(pokemons)
+            } else {
+                setDeckPokemon([])
+            }
         }
+
 
     }
     const onSave = async () => {
