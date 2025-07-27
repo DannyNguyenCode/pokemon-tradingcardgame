@@ -55,9 +55,10 @@ const CollectionPage = async ({ searchParams }: {
             },
             cache: 'no-store'
         });
-
+        console.log("checkin deckresponse after fetch", deckResponse)
         if (!deckResponse.ok) throw new Error(`Decks API error ${deckResponse.status}`);
         deckData = await deckResponse.json();
+        console.log("check for deckData after await json", deckData)
     } catch (error) {
         console.error('Error fetching decks:', error);
     }
