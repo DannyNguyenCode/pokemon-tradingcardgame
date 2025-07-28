@@ -30,7 +30,7 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
         if (!response.ok) throw new Error(`Fetch error: ${response.status}`);
         data = await response.json();
     } catch (error) {
-        console.log("error collection route fetch cards")
+        console.log("error collection route fetch cards", error)
     }
     return (
         <div className="flex-1 flex flex-col items-center justify-between min-h-0 pt-6">

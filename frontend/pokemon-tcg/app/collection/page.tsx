@@ -27,7 +27,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
         if (!response.ok) throw new Error(`Fetch error: ${response.status}`);
         data = await response.json();
     } catch (error) {
-        console.log("error collection route fetch cards")
+        console.log("error collection route fetch cards", error)
     }
 
 

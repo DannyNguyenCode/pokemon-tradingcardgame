@@ -1,6 +1,6 @@
 'use client'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Deck, Pagination as PaginationType, Pokemon, Cards } from '@/lib/definitions'
+import { Deck, Pokemon, Cards } from '@/lib/definitions'
 import TransferList from './TransferList'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '@/lib/hooks'

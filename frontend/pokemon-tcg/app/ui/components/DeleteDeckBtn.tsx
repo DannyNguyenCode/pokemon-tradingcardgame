@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
 import { Deck } from '@/lib/definitions'
 import { useRouter } from 'next/navigation'
-const DeleteDeckBtn = ({ deck, fetchDecks, onDelete }: { deck?: Deck | null, fetchDecks: () => void, onDelete: () => void }) => {
+const DeleteDeckBtn = ({ deck, onDelete }: { deck?: Deck | null, onDelete: () => void }) => {
     const [isModalOpen, setIsModalOpen] = useState(false)
     const { data: session } = useSession()
     const dispatch = useAppDispatch()

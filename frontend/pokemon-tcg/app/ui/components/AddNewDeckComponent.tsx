@@ -5,7 +5,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
 
 const AddNewDeckComponent = ({ newDeckName, setNewDeckName, fetchDecks }: { newDeckName: string, setNewDeckName: (name: string) => void, fetchDecks: () => void }) => {
-    const { data: session, status } = useSession()
+    const { data: session } = useSession()
     const dispatch = useAppDispatch()
     return (
 
