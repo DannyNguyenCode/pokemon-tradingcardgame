@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useAppDispatch } from '@/lib/hooks'
 import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
@@ -10,9 +10,7 @@ const DeleteDeckBtn = ({ deck, onDelete }: { deck?: Deck | null, onDelete: () =>
     const { data: session } = useSession()
     const dispatch = useAppDispatch()
     const router = useRouter()
-    useEffect(() => {
-        console.log("deck", deck)
-    }, [])
+
     return (
         <>
             <button disabled={deck?.name ? false : true} className="btn btn-error btn-sm" onClick={() => setIsModalOpen(true)}>

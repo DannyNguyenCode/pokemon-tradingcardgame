@@ -181,7 +181,6 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                             deck={selectDeck}
                             onSave={onSave}
                             onCancel={onCancel}
-                            fetchDecks={fetchDecks}
                             onDelete={onDelete}
                         />
                     )}

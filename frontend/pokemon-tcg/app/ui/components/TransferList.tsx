@@ -15,7 +15,6 @@ const TransferList = ({
     onCancel,
     maxCards = 20,
     deck,
-    fetchDecks,
     onDelete
 }: {
     onSave: (selected: Pokemon[]) => void
@@ -27,7 +26,6 @@ const TransferList = ({
     setAvailable: (pokemon: Pokemon[]) => void,
     setSelected: (pokemon: Pokemon[]) => void,
     deck?: Deck | null,
-    fetchDecks: () => void
 }) => {
 
 
