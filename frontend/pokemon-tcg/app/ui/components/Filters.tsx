@@ -22,9 +22,13 @@ const colorTypes: Record<string, string> = {
     steel: '#B7B7CE',
     fairy: '#D685AD',
 };
-const Filters = () => {
+// group name is needed + unique in order for multiple filters to be added across the app.
+// if there are similar group names, some filters will not work properly
+// example the filter-reset input will not show when radio is clicked
+const Filters = ({ groupName }: { groupName: string }) => {
     const params = useSearchParams()
     const router = useRouter()
+    const selectedFilter = params.get('type_filter') || '';
 
     const handleFilterChange = (filter: string) => {
         const currentParams = new URLSearchParams(params)
@@ -43,27 +47,27 @@ const Filters = () => {
     }
 
     return (
-        <div className="filter flex flex-row justify-start md:justify-center items-center mb-2 md:mb-0">
+        <div className="filter flex flex-row justify-start mb-2 md:mb-0">
 
-            <input onClick={() => handleFilterChange('')} className="btn filter-reset" type="radio" name="metaframeworks" aria-label="All" />
-            <input className="btn" onClick={() => handleFilterChange('fire')} style={{ backgroundColor: colorTypes['fire'] }} type="radio" name="metaframeworks" aria-label="Fire" />
-            <input className="btn" onClick={() => handleFilterChange('water')} style={{ backgroundColor: colorTypes['water'] }} type="radio" name="metaframeworks" aria-label="Water" />
-            <input className="btn" onClick={() => handleFilterChange('grass')} style={{ backgroundColor: colorTypes['grass'] }} type="radio" name="metaframeworks" aria-label="Grass" />
-            <input className="btn" onClick={() => handleFilterChange('electric')} style={{ backgroundColor: colorTypes['electric'] }} type="radio" name="metaframeworks" aria-label="Electric" />
-            <input className="btn" onClick={() => handleFilterChange('psychic')} style={{ backgroundColor: colorTypes['psychic'] }} type="radio" name="metaframeworks" aria-label="Psychic" />
-            <input className="btn" onClick={() => handleFilterChange('ice')} style={{ backgroundColor: colorTypes['ice'] }} type="radio" name="metaframeworks" aria-label="Ice" />
-            <input className="btn" onClick={() => handleFilterChange('fighting')} style={{ backgroundColor: colorTypes['fighting'] }} type="radio" name="metaframeworks" aria-label="Fighting" />
-            <input className="btn" onClick={() => handleFilterChange('poison')} style={{ backgroundColor: colorTypes['poison'] }} type="radio" name="metaframeworks" aria-label="Poison" />
-            <input className="btn" onClick={() => handleFilterChange('ground')} style={{ backgroundColor: colorTypes['ground'] }} type="radio" name="metaframeworks" aria-label="Ground" />
-            <input className="btn" onClick={() => handleFilterChange('flying')} style={{ backgroundColor: colorTypes['flying'] }} type="radio" name="metaframeworks" aria-label="Flying" />
-            <input className="btn" onClick={() => handleFilterChange('rock')} style={{ backgroundColor: colorTypes['rock'] }} type="radio" name="metaframeworks" aria-label="Rock" />
-            <input className="btn" onClick={() => handleFilterChange('bug')} style={{ backgroundColor: colorTypes['bug'] }} type="radio" name="metaframeworks" aria-label="Bug" />
-            <input className="btn" onClick={() => handleFilterChange('ghost')} style={{ backgroundColor: colorTypes['ghost'] }} type="radio" name="metaframeworks" aria-label="Ghost" />
-            <input className="btn" onClick={() => handleFilterChange('steel')} style={{ backgroundColor: colorTypes['steel'] }} type="radio" name="metaframeworks" aria-label="Steel" />
-            <input className="btn" onClick={() => handleFilterChange('fairy')} style={{ backgroundColor: colorTypes['fairy'] }} type="radio" name="metaframeworks" aria-label="Fairy" />
-            <input className="btn" onClick={() => handleFilterChange('dragon')} style={{ backgroundColor: colorTypes['dragon'] }} type="radio" name="metaframeworks" aria-label="Dragon" />
-            <input className="btn" onClick={() => handleFilterChange('dark')} style={{ backgroundColor: colorTypes['dark'] }} type="radio" name="metaframeworks" aria-label="Darkness" />
-            <input className="btn" onClick={() => handleFilterChange('normal')} style={{ backgroundColor: colorTypes['normal'] }} type="radio" name="metaframeworks" aria-label="Normal" />
+            <input onClick={() => handleFilterChange('')} className="btn filter-reset" type="radio" name={groupName} aria-label="All" />
+            <input className="btn" checked={selectedFilter === 'fire'} onChange={() => handleFilterChange('fire')} style={{ backgroundColor: colorTypes['fire'] }} type="radio" name={groupName} aria-label="Fire" />
+            <input className="btn" checked={selectedFilter === 'water'} onChange={() => handleFilterChange('water')} style={{ backgroundColor: colorTypes['water'] }} type="radio" name={groupName} aria-label="Water" />
+            <input className="btn" checked={selectedFilter === 'grass'} onChange={() => handleFilterChange('grass')} style={{ backgroundColor: colorTypes['grass'] }} type="radio" name={groupName} aria-label="Grass" />
+            <input className="btn" checked={selectedFilter === 'electric'} onChange={() => handleFilterChange('electric')} style={{ backgroundColor: colorTypes['electric'] }} type="radio" name={groupName} aria-label="Electric" />
+            <input className="btn" checked={selectedFilter === 'psychic'} onChange={() => handleFilterChange('psychic')} style={{ backgroundColor: colorTypes['psychic'] }} type="radio" name={groupName} aria-label="Psychic" />
+            <input className="btn" checked={selectedFilter === 'ice'} onChange={() => handleFilterChange('ice')} style={{ backgroundColor: colorTypes['ice'] }} type="radio" name={groupName} aria-label="Ice" />
+            <input className="btn" checked={selectedFilter === 'fighting'} onChange={() => handleFilterChange('fighting')} style={{ backgroundColor: colorTypes['fighting'] }} type="radio" name={groupName} aria-label="Fighting" />
+            <input className="btn" checked={selectedFilter === 'poison'} onChange={() => handleFilterChange('poison')} style={{ backgroundColor: colorTypes['poison'] }} type="radio" name={groupName} aria-label="Poison" />
+            <input className="btn" checked={selectedFilter === 'ground'} onChange={() => handleFilterChange('ground')} style={{ backgroundColor: colorTypes['ground'] }} type="radio" name={groupName} aria-label="Ground" />
+            <input className="btn" checked={selectedFilter === 'flying'} onChange={() => handleFilterChange('flying')} style={{ backgroundColor: colorTypes['flying'] }} type="radio" name={groupName} aria-label="Flying" />
+            <input className="btn" checked={selectedFilter === 'rock'} onChange={() => handleFilterChange('rock')} style={{ backgroundColor: colorTypes['rock'] }} type="radio" name={groupName} aria-label="Rock" />
+            <input className="btn" checked={selectedFilter === 'bug'} onChange={() => handleFilterChange('bug')} style={{ backgroundColor: colorTypes['bug'] }} type="radio" name={groupName} aria-label="Bug" />
+            <input className="btn" checked={selectedFilter === 'ghost'} onChange={() => handleFilterChange('ghost')} style={{ backgroundColor: colorTypes['ghost'] }} type="radio" name={groupName} aria-label="Ghost" />
+            <input className="btn" checked={selectedFilter === 'steel'} onChange={() => handleFilterChange('steel')} style={{ backgroundColor: colorTypes['steel'] }} type="radio" name={groupName} aria-label="Steel" />
+            <input className="btn" checked={selectedFilter === 'fairy'} onChange={() => handleFilterChange('fairy')} style={{ backgroundColor: colorTypes['fairy'] }} type="radio" name={groupName} aria-label="Fairy" />
+            <input className="btn" checked={selectedFilter === 'dragon'} onChange={() => handleFilterChange('dragon')} style={{ backgroundColor: colorTypes['dragon'] }} type="radio" name={groupName} aria-label="Dragon" />
+            <input className="btn" checked={selectedFilter === 'dark'} onChange={() => handleFilterChange('dark')} style={{ backgroundColor: colorTypes['dark'] }} type="radio" name={groupName} aria-label="Darkness" />
+            <input className="btn" checked={selectedFilter === 'normal'} onChange={() => handleFilterChange('normal')} style={{ backgroundColor: colorTypes['normal'] }} type="radio" name={groupName} aria-label="Normal" />
         </div>
     )
 }

@@ -53,22 +53,22 @@ README in frontend directory to set up and run client
 - ~~Middleware: enforce JWT on protected routes~~
 
 #### 2.2 Back-end: Deck Service
-- Models: Deck { id, name, user_id }, DeckCard { deck_id, card_id, count }
+- ~~Models: Deck { id, name, user_id }, DeckCard { deck_id, card_id, count }~~
 - Endpoints:
-    - GET /decks (user’s decks)
-    - POST /decks, PUT /decks/{id}, DELETE /decks/{id}
-    - POST /decks/{id}/cards (add/remove cards)
-- Business rule: max 4 copies per card, deck size rules
+    - ~~GET /decks (user’s decks)~~
+    - ~~POST /decks, PUT /decks/{id}, DELETE /decks/{id}~~
+    - ~~POST /decks/{id}/cards (add/remove cards)~~
+- ~~Business rule: max 4 copies per card, deck size rules~~
 
 #### 2.3 Front-end: Auth Integration
 - ~~Install Auth.js in React; configure providers (email/password + OAuth)~~
 - ~~Build /login, /signup, /profile pages; Redux “auth” slice for tokens/user~~
 
 #### 2.4 Front-end: Deck Builder Page
-- Create /decks and /decks/[id] routes
-- Deck list with “Create Deck” modal
-- Deck editor: drag/drop or select cards from catalog, show counts, enforce rules
-- Save to API; optimistic UI updates
+- ~~Create /decks and /decks/[id] routes~~
+- ~~Deck list with “Create Deck” modal~~
+- ~~Deck editor: drag/drop or select cards from catalog, show counts, enforce rules~~
+- ~~Save to API; optimistic UI updates~~
 
 #### 2.5 Infra & CI/CD
 - Update docker-compose.yml to include Redis (for rate-limiting or session store) if needed

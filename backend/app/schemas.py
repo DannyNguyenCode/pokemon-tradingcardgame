@@ -128,7 +128,6 @@ class DeckSchema(Schema):
     id = fields.UUID(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
     name = fields.Str(required=True, validate=Length(min=1, max=100))
-    user_id = fields.UUID(required=True)
     # cards comes from DeckCard relationship
     cards = fields.List(fields.Nested(CardOut), dump_only=True)
 

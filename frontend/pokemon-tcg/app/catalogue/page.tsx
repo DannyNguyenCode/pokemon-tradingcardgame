@@ -23,25 +23,27 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
         queryParams.append('pokemon_name', params.pokemon_name);
     }
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?${queryParams.toString()}`).then((res) => {
-        if (!res.ok) throw new Error(`API ${res.status} ${`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?${queryParams.toString()}`}`);
-        return res.json()
-    }).then((data) => {
-        return data
-    })
+    let data = null;
+    try {
 
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/cards/?${queryParams.toString()}`);
+        if (!response.ok) throw new Error(`Fetch error: ${response.status}`);
+        data = await response.json();
+    } catch (error) {
+        console.log("error collection route fetch cards")
+    }
     return (
         <div className="flex-1 flex flex-col items-center justify-between min-h-0 pt-6">
             <div className='w-full px-4 flex flex-col md:flex-row'>
                 <SearchBarFilter />
-                <Filters />
+                <Filters groupName='metaframeworks' />
             </div>
             <div className="flex flex-col items-center gap-4 w-full">
 
-                <CardList data={response.data} columns='8' />
+                <CardList data={data.data} columns='8' />
             </div>
             <div className="w-full flex justify-center pb-4">
-                <Pagination pagination={response.pagination} />
+                <Pagination pagination={data.pagination} />
             </div>
         </div>
     )

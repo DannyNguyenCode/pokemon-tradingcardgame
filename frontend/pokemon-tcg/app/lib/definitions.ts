@@ -57,3 +57,27 @@ export type Pagination = {
     total_count: number;
     pageSize: number;
 }
+export type Cards = {
+    card: Pokemon;
+    card_id: string;
+    deck_id: string;
+};
+export type Deck = {
+    cards: Cards[];
+    created_at: Date
+    id: string,
+    name: string
+}
+
+export type Data = {
+    cards: Cards[]
+    created_at: Date
+    id: string
+    name: string
+}
+export type DeckCardsResponse = {
+    data: Data[]
+    message: string
+    pagination: Pagination
+    status: number
+}

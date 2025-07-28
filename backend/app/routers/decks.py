@@ -23,6 +23,8 @@ class DeckCollection(MethodView):
     )
     @jwt_required(["admin", "user"])
     def post(self, data):
+        user_id = uuid.UUID(get_jwt_identity())
+        data["user_id"] = user_id
         response, status = logic.create_deck_logic(**data)
         return response, status
 
@@ -31,7 +33,7 @@ class DeckCollection(MethodView):
     @decks_blp.arguments(PageArgs, location="query")
     @jwt_required(["admin", "user"])
     def get(self, args):
-        print("✅ ARGS RECEIVED:", args)
+        print("ARGS RECEIVED:", args)
         try:
             page = args.get("page", 1)
             count_per_page = args.get("count_per_page", 12)
@@ -56,7 +58,7 @@ class DeckItem(MethodView):
     """Retrieve, update, or delete one deck."""
 
     # READ
-    @decks_blp.doc(description="Get a single deck by identifier")
+    @decks_blp.doc(security=[{"Bearer": []}],description="Get a single deck by identifier")
     @jwt_required(["admin", "user"])
     def get(self, id):
         response, status = logic.get_deck_by_id(id)
@@ -78,27 +80,7 @@ class DeckItem(MethodView):
         security=[{"Bearer": []}],
         description="Delete a single deck by identifier"
     )
-    @jwt_required(["admin"])
+    @jwt_required(["admin","user"])
     def delete(self, id):
         response, status = logic.delete_deck(id)
         return response, status
-    
-@decks_blp.route("/user/<uuid:user_id>")
-class DecksByUser(MethodView):
-    """Get all decks for a specific user ID."""
-
-    @decks_blp.doc(
-        security=[{"Bearer": []}],
-        description="Get decks by user_id (admin-only or diagnostic)",
-    )
-    @jwt_required(["admin"])
-    def get(self, user_id):
-        try:
-            page = 1
-            count_per_page = 100  # or some high default
-            logger.info(f"[ADMIN] Fetching decks for user_id: {user_id}")
-            response, status = logic.list_decks(page, user_id, count_per_page)
-            return response, status
-        except Exception as e:
-            logger.exception(f"[ADMIN] Error fetching decks for user_id: {user_id}")
-            return {"error": f"Could not fetch decks for user_id {user_id}"}, 500
