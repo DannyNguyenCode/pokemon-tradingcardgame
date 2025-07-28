@@ -5,7 +5,7 @@ import Pagination from '@/ui/components/Pagination'
 import Filters from '../ui/components/Filters'
 import SearchBarFilter from '@/ui/components/SearchBarFilter'
 
-const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
+const CatalogPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
     const params = await searchParams
     const pageNumber = Math.max(1, Number(params.page ?? '1'));
     const count_per_page = '16'
@@ -49,4 +49,4 @@ const CataloguePage = async ({ searchParams }: { searchParams: Promise<{ page?: 
     )
 }
 
-export default CataloguePage
+export default CatalogPage

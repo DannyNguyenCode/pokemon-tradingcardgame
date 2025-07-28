@@ -99,7 +99,7 @@ const AdminPanel = () => {
                         <h2 className='text-xl font-semibold'>Import Card</h2>
                         <p className='text-md'>Provide pokedex number or name of pokemon to add to database</p>
                         <input onChange={handleIdentifierChange} value={indentifier} aria-label='enter pokedex id or name input field' type="text" placeholder="Enter Pokedex number or Pokemon name" className="input input-bordered w-full max-w-xs mt-2" />
-                        <p className='text-sm mt-2'>Note: This will add the card to the database and make it available in the catalogue.</p>
+                        <p className='text-sm mt-2'>Note: This will add the card to the database and make it available in the catalog.</p>
                         <button onClick={handleImportCard} aria-label='single pokemon card import' className='btn btn-primary mt-4'>Import Card</button>
                     </div>
                     <div className='flex flex-col items-center justify-center gap-10'>
@@ -124,7 +124,7 @@ const AdminPanel = () => {
                         <p className='text-md'>Provide range of pokedex number to add to database</p>
                         <input onChange={(e) => setStart(e.target.value)} value={start} aria-label='enter start pokedex id' type="text" placeholder="Enter start Pokedex number" className="input input-bordered mt-2" />
                         <input onChange={(e) => setEnd(e.target.value)} value={end} aria-label='enter end pokedex id' type="text" placeholder="Enter end Pokedex number" className="input input-bordered mt-2" />
-                        <p className='text-sm mt-2'>Note: This will add the card to the database and make it available in the catalogue.</p>
+                        <p className='text-sm mt-2'>Note: This will add the card to the database and make it available in the catalog.</p>
                         <button onClick={handleImportCardRange} aria-label='single pokemon card import' className='btn btn-primary mt-4'>Import Card</button>
                     </div>
                 </div>

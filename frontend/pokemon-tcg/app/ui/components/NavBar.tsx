@@ -15,11 +15,12 @@ export default async function NavBar() {
                         tabIndex={0}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li><Link role="link" href={'/'} aria-label="redicrect to home page">Home</Link></li>
-                        <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
+                        <li><Link role="link" href={'/catalog'} aria-label="redicrect to catalog page">Catalog</Link></li>
 
                         {session ? (
                             <>
                                 <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
+                                <li><Link role="link" href={'/play'} aria-label="redicrect to play page">Play</Link></li>
                                 <LogoutBtn />
                             </>
                         ) : (
@@ -45,11 +46,12 @@ export default async function NavBar() {
                     {session && session.user.role === 'admin' && (
                         <li><Link role="link" href={'/admin'} aria-label="redicrect to admin panel page">AdminPanel</Link></li>
                     )}
-                    <li><Link role="link" href={'/catalogue'} aria-label="redicrect to catalogue page">Catalogue</Link></li>
+                    <li><Link role="link" href={'/catalog'} aria-label="redicrect to catalog page">Catalog</Link></li>
 
                     {session ? (
                         <>
                             <li><Link role="link" href={'/collection'} aria-label="redicrect to collection page">Collection</Link></li>
+                            <li><Link role="link" href={'/play'} aria-label="redicrect to play page">Play</Link></li>
                             <LogoutBtn />
                         </>
                     ) : (
