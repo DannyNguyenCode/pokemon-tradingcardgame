@@ -121,7 +121,7 @@ const TransferList = ({
                             <h3 className="font-bold mb-4 pt-4 text-lg">
                                 {deck ? `${deck.name} Deck Pokémon (${selected.length}/${maxCards})` : 'Select Deck'}
                             </h3>
-                            {<DeleteDeckBtn deck={deck} onDelete={onDelete} fetchDecks={fetchDecks} />}
+                            {<DeleteDeckBtn deck={deck} onDelete={onDelete} />}
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
                             {selected.map(poke => (
