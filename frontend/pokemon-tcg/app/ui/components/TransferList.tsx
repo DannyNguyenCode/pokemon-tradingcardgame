@@ -98,7 +98,7 @@ const TransferList = ({
                     {/* Available Pokémon */}
 
 
-                    <div className="bg-base-200 rounded-lg p-4 shadow">
+                    <div className="bg-base-200 rounded-lg min-h-screen p-4 shadow">
                         <h3 className="font-bold mb-4 pt-4 text-lg">Available Pokémon</h3>
                         <div className='flex flex-col justify-start items-start gap-2 mb-2'>
                             <SearchBarFilter />
