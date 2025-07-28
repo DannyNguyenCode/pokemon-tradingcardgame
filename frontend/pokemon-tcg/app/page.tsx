@@ -11,7 +11,7 @@ export default function Home() {
   const dispatch = useAppDispatch()
   useEffect(() => {
     dispatch(loadToastifyState(''))
-  }, [])
+  }, [dispatch])
 
   return (
     <section className="min-h-[calc(100vh-105px)] bg-gradient-to-br from-[#6390F0] via-[#EE8130] to-[#F7D02C] text-base-content dark:text-white  flex flex-col justify-center items-center p-8">

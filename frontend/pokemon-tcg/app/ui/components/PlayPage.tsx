@@ -45,7 +45,7 @@ export default function PlayPage() {
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    It's Time to Duel!
+                    It&apos;s Time to Duel!
                 </motion.h1>
 
                 <motion.p
