@@ -31,7 +31,7 @@ const FlipCard = (
     const officialArtworkUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.collector_number}.png`
 
     return (
-        <div className="group perspective w-full max-w-[250px] h-72">
+        <div className="group perspective w-52 h-72">
             <div className={`relative w-full h-full transition-transform duration-700 transform-style preserve-3d ${flipped ? 'rotate-y-180' : ''} md:group-hover:rotate-y-180`}
                 onClick={() => setFlipped(!flipped)}
             >
