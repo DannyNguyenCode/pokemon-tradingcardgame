@@ -2,6 +2,7 @@ import React from 'react'
 import DeckComponent from '@/ui/components/DeckComponent'
 import { auth } from 'auth'
 import { redirect } from 'next/navigation'
+import DeckBuilderPage from '@/ui/components/DeckBuilderPage'
 const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
     const session = await auth()
 
@@ -43,6 +44,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
         <div className="flex-1 flex flex-col items-center justify-start md:justify-between min-h-0 pt-4 m-4">
 
             <DeckComponent allPokemonList={data.data} />
+            {/* <DeckBuilderPage allPokemonList={data.data} /> */}
 
         </div>
 

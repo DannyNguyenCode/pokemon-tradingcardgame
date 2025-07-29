@@ -1,37 +1,53 @@
 'use client'
-
 import React from 'react'
 
 const DeckComponentSkeleton = () => {
     return (
-        <div className="flex flex-col gap-4 w-full px-4 py-6">
-            {/* Deck Filter Skeleton */}
-            <div className="flex flex-wrap gap-2">
-                <div className="skeleton h-10 w-24 rounded"></div>
-                <div className="skeleton h-10 w-24 rounded"></div>
-                <div className="skeleton h-10 w-24 rounded"></div>
-                <div className="skeleton h-10 w-24 rounded"></div>
+        <div className="space-y-6 max-w-5xl w-full">
+            {/* Header */}
+            <div className="flex justify-between items-center pb-4">
+                <div className="h-8 w-48 rounded-md bg-base-300 animate-pulse"></div>
+                <div className="h-10 w-32 rounded-md bg-base-300 animate-pulse"></div>
             </div>
 
-            {/* Transfer List Header Skeleton */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-                <div className="space-y-2">
-                    <div className="skeleton h-6 w-32 rounded"></div>
-                    <div className="grid grid-cols-2 gap-2">
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="skeleton h-32 w-full rounded"></div>
+            {/* Deck Cards List */}
+            <div className="flex gap-4 flex-wrap">
+                {[...Array(3)].map((_, i) => (
+                    <div key={i} className="w-64 h-40 bg-base-200 rounded-xl shadow animate-pulse p-4 flex flex-col justify-between">
+                        <div className="h-4 w-3/4 bg-base-300 rounded mb-2"></div>
+                        <div className="h-3 w-1/2 bg-base-300 rounded mb-4"></div>
+                        <div className="h-8 w-20 bg-base-300 rounded self-end"></div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Transfer List Skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                {/* Available Pokémon List */}
+                <div>
+                    <div className="h-6 w-48 bg-base-300 rounded mb-4 animate-pulse"></div>
+                    <div className="grid grid-cols-3 gap-4">
+                        {[...Array(6)].map((_, i) => (
+                            <div key={i} className="w-36 h-56 rounded-lg bg-base-300 animate-pulse"></div>
                         ))}
                     </div>
                 </div>
 
-                <div className="space-y-2">
-                    <div className="skeleton h-6 w-32 rounded"></div>
-                    <div className="grid grid-cols-2 gap-2">
-                        {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="skeleton h-32 w-full rounded"></div>
+                {/* Deck Pokémon List */}
+                <div>
+                    <div className="h-6 w-48 bg-base-300 rounded mb-4 animate-pulse"></div>
+                    <div className="grid grid-cols-3 gap-4">
+                        {[...Array(3)].map((_, i) => (
+                            <div key={i} className="w-36 h-56 rounded-lg bg-base-300 animate-pulse"></div>
                         ))}
                     </div>
                 </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-4 mt-6">
+                <div className="w-20 h-10 bg-base-300 rounded animate-pulse"></div>
+                <div className="w-20 h-10 bg-base-300 rounded animate-pulse"></div>
             </div>
         </div>
     )

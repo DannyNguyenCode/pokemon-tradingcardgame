@@ -31,13 +31,13 @@ const FlipCard = (
     const officialArtworkUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokemon.collector_number}.png`
 
     return (
-        <div className="group perspective w-52 h-72">
+        <div className="group perspective w-full max-w-[250px] h-72">
             <div className={`relative w-full h-full transition-transform duration-700 transform-style preserve-3d ${flipped ? 'rotate-y-180' : ''} md:group-hover:rotate-y-180`}
                 onClick={() => setFlipped(!flipped)}
             >
                 {/* Front */}
                 <motion.div
-                    className="absolute w-full h-full backface-hidden rounded-lg shadow-lg p-4 flex flex-col items-center justify-center"
+                    className="absolute w-full h-full backface-hidden rounded-lg shadow-lg p-4 flex flex-col items-center justify-center border border-white"
                     style={{ backgroundColor: colorTypes[`${pokemon.type.toLowerCase()}`] }}
                 >
                     <Image src={officialArtworkUrl} alt={pokemon.name} width={100} height={100} />
@@ -48,7 +48,7 @@ const FlipCard = (
 
                 {/* Back */}
                 <motion.div
-                    className="absolute w-full h-full backface-hidden rotate-y-180 rounded-lg shadow-lg p-4 flex flex-col items-start justify-start bg-gray-100"
+                    className="absolute w-full h-full backface-hidden rotate-y-180 rounded-lg shadow-lg p-4 flex flex-col items-start justify-start bg-gray-100 border border-white"
                 >
                     <p className='text-[12px] font-bold'>HP: {pokemon.hp}</p>
                     <div className='flex flex-row justify-center items-center gap-2'>

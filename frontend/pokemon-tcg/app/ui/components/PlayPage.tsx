@@ -32,7 +32,8 @@ export default function PlayPage() {
                 }
             })
             const json = await response.json()
-            setDecks(json.data)
+            setDecks(Array.isArray(json.data) ? json.data : []);
+
         }
         fetchDecks()
     }, [session])
@@ -123,7 +124,7 @@ export default function PlayPage() {
 
 
     return (
-        <section className="min-h-[calc(100vh-105px)] bg-gradient-to-br from-[#6390F0] via-[#EE8130] to-[#F7D02C] text-base-content  flex flex-col justify-center items-center p-8">
+        <section className="min-h-[calc(100vh-105px)] text-base-content  flex flex-col justify-center items-center p-8">
             <div className="text-center max-w-3xl">
                 <motion.h1
                     className="text-4xl dark:text-white md:text-6xl font-bold mb-4 drop-shadow-lg"
@@ -154,36 +155,56 @@ export default function PlayPage() {
                     WebSocket: {socketStatus}
                 </div>
 
-                {!selectedDeck && !connected && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                        {decks.map((deck) => (
-                            <div
-                                key={deck.id}
-                                className="card bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0] shadow-xl hover:scale-105 transition-transform"
+                {Array.isArray(decks) && (
+                    decks.length === 0 ? (
+                        <div className="mt-10 text-center space-y-6">
+                            <h2 className="text-3xl font-bold text-white drop-shadow-lg">
+                                🧩 No Decks Found
+                            </h2>
+                            <p className="text-lg text-white/80">
+                                Looks like you haven’t built a deck yet. Head to your collection and start building your ultimate Pokémon team!
+                            </p>
+                            <button
+                                onClick={() => router.push('/collection')}
+                                className="btn btn-accent btn-lg hover:scale-105 transition-transform shadow-md"
                             >
-                                <div className="card-body items-center text-center">
-                                    <h2 className="card-title text-xl font-bold uppercase tracking-wider">{deck.name}</h2>
-                                    <p className="text-sm opacity-90">{deck.cards.length} cards in this deck</p>
-                                    <div className="card-actions mt-4">
-                                        <button
-                                            onClick={() => setSelectedDeck(deck)}
-                                            className="btn btn-outline border-white text-white hover:bg-white hover:text-black"
-                                        >
-                                            🔥 Choose
-                                        </button>
-                                        <button
-                                            onClick={() => router.push(`/collection`)}
-                                            className="btn btn-ghost text-sm text-white hover:text-yellow-200"
-                                        >
-                                            ✏️ Edit
-                                        </button>
+                                ➕ Build Your First Deck
+                            </button>
+                        </div>
+                    ) : (
+                        !selectedDeck && !connected && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                                {decks.map((deck) => (
+                                    <div
+                                        key={deck.id}
+                                        className="card bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0] shadow-xl hover:scale-105 transition-transform"
+                                    >
+                                        <div className="card-body items-center text-center">
+                                            <h2 className="card-title text-xl font-bold uppercase tracking-wider">{deck.name}</h2>
+                                            <p className="text-sm opacity-90">{deck.cards.length} cards in this deck</p>
+                                            <div className="card-actions mt-4">
+                                                <button
+                                                    onClick={() => setSelectedDeck(deck)}
+                                                    className="btn btn-outline border-white text-white hover:bg-white hover:text-black"
+                                                >
+                                                    🔥 Choose
+                                                </button>
+                                                <button
+                                                    onClick={() => router.push(`/collection`)}
+                                                    className="btn btn-ghost text-sm text-white hover:text-yellow-200"
+                                                >
+                                                    ✏️ Edit
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-
+                        )
+                    )
                 )}
+
+
                 {selectedDeck && !connected && (
                     <div className="mt-6 flex flex-col items-center">
                         <h3 className="text-lg font-semibold">Ready to battle with &quot;{selectedDeck.name}&quot;?</h3>

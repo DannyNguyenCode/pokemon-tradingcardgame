@@ -34,7 +34,7 @@ const CatalogPage = async ({ searchParams }: { searchParams: Promise<{ page?: st
     }
     return (
         <div className="flex-1 flex flex-col items-center justify-between min-h-0 pt-6">
-            <div className='w-full px-4 flex flex-col md:flex-row'>
+            <div className='w-full px-4 gap-1 flex flex-col md:flex-row'>
                 <SearchBarFilter />
                 <Filters groupName='metaframeworks' />
             </div>

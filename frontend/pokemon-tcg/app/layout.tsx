@@ -30,7 +30,7 @@ export default async function RootLayout({
               <div className="min-h-screen flex flex-col ">
                 <NavBar />
                 <ToastManager />
-                <div className="flex-1 flex flex-col overflow-y-auto">
+                <div className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0]">
                   {children}
                 </div>
                 <Footer />

@@ -9,7 +9,6 @@ import TransferListSkeleton from './TransferListSkeleton'
 import DeckComponentSkeleton from './DeckComponentSkeleton'
 import CreateDeckModal from './CreateDeckModal'
 import { DeckCardsResponse } from '@/lib/definitions'
-import DeckSelect from './DeckSelect'
 
 const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     const dispatch = useAppDispatch()
@@ -41,11 +40,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     const fetchDecks = useCallback(async () => {
         try {
-            const token = session?.accessToken
-            if (!token) {
-                console.warn("No access token available.")
-                return
-            }
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
                 headers: {
@@ -164,23 +159,41 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     return (
         <>
-            {status === 'loading' ? (
+            {status === 'loading' || deckCardResponse.data.length === 0 ? (
                 <DeckComponentSkeleton />
-            ) : deckCardResponse.data.length === 0 ? (
-                <div className="text-center mt-12 space-y-4">
-                    <h2 className="text-2xl font-semibold">You don’t have any decks yet!</h2>
-                    <p className="text-gray-600 dark:text-gray-300">
-                        Create a deck to start building your Pokémon team.
-                    </p>
-                    <CreateDeckModal onCreate={onCreate} />
-                </div>
             ) : (
                 <>
-                    <div className="flex flex-row gap-2">
-                        <DeckSelect selectDeck={selectDeck} onDeckSelect={onDeckSelect} deckCardResponse={deckCardResponse} />
+                    <div className="flex max-w-5xl w-full justify-between items-center pb-4">
+                        <h1 className="text-2xl font-bold">🎴 Deck Builder</h1>
                         <CreateDeckModal onCreate={onCreate} />
                     </div>
 
+                    {/* 🧠 Deck List */}
+                    {deckCardResponse.data.length === 0 ? (
+                        <div className="text-center text-lg mt-10">
+                            <p>No decks yet. Start building your Pokémon dream team!</p>
+                        </div>
+                    ) : (
+                        <div className="flex gap-4 flex-wrap mb-4">
+                            {deckCardResponse.data.map(deck => (
+                                <div
+                                    key={deck.id}
+                                    className={`card w-64 bg-base-200 shadow-xl ${selectDeck?.id === deck.id ? 'border-2 border-accent' : ''}`}
+                                >
+                                    <div className="card-body">
+                                        <h2 className="card-title">{deck.name}</h2>
+                                        <p>{deck.cards.length} cards</p>
+                                        <div className="card-actions justify-end">
+                                            <button onClick={() => onDeckSelect(deck.id)} className="btn btn-outline btn-sm">
+                                                Select
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {/* Transfer List Skeleton while switching decks */}
                     {isLoading ? (
                         <TransferListSkeleton />
                     ) : (
@@ -198,7 +211,6 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                     )}
                 </>
             )}
-
         </>
     )
 }

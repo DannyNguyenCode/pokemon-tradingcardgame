@@ -43,11 +43,7 @@ const TransferList = ({
     return (
         <>
             <div className="join join-vertical bg-base-100 md:hidden w-full">
-                {/* Actions */}
-                <div className="flex flex-row justify-center my-2 md:my-0 gap-2 md:gap-6 w-12/12 md:w-1/6">
-                    <button className="btn btn-primary btn-sm md:btn-md" onClick={() => onSave(selected)}>Save</button>
-                    <button className="btn btn-secondary btn-sm md:btn-md" onClick={onCancel}>Cancel</button>
-                </div>
+
                 <div className="collapse collapse-arrow join-item border-base-300 border">
                     <input type="checkbox" name="my-accordion-4" />
                     <div className="collapse-title font-semibold">Available Pokémon</div>
@@ -66,7 +62,14 @@ const TransferList = ({
                 </div>
                 <div className="collapse collapse-arrow join-item border-base-300 border">
                     <input type="checkbox" name="my-accordion-4" />
-                    <div className="collapse-title font-semibold"> {deck ? `${deck.name} Deck Pokémon (${selected.length}/${maxCards})` : 'Select Deck'}</div>
+                    {/* Actions */}
+
+                    <div className="collapse-title font-semibold"> {deck ? `${deck.name} Deck Pokémon (${selected.length}/${maxCards})` : 'Select Deck'}                    <div className="flex flex-row justify-center my-2 md:my-0 gap-2 md:gap-6 w-12/12 md:w-1/6">
+                        {<DeleteDeckBtn deck={deck} onDelete={onDelete} />}
+                        <button className="btn btn-primary btn-sm md:btn-md" onClick={() => onSave(selected)}>Save</button>
+                        <button className="btn btn-secondary btn-sm md:btn-md" onClick={onCancel}>Cancel</button>
+                    </div></div>
+
                     <div className="collapse-content text-sm">
                         <div className="bg-base-200 rounded-lg p-4 shadow">
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
@@ -90,10 +93,7 @@ const TransferList = ({
             {/* Desktop */}
             <div className="w-full hidden md:flex md:flex-col gap-4 justify-center">
                 {/* Actions */}
-                <div className="flex flex-row justify-center items-center gap-6 w-12/12 my-4">
-                    <button className="btn btn-primary btn-md" onClick={() => onSave(selected)}>Save</button>
-                    <button className="btn btn-secondary btn-md" onClick={onCancel}>Cancel</button>
-                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Available Pokémon */}
 
@@ -119,7 +119,12 @@ const TransferList = ({
                             <h3 className="font-bold mb-4 pt-4 text-lg">
                                 {deck ? `${deck.name} Deck Pokémon (${selected.length}/${maxCards})` : 'Select Deck'}
                             </h3>
-                            {<DeleteDeckBtn deck={deck} onDelete={onDelete} />}
+                            <div className="flex flex-row justify-center items-center gap-6">
+                                {<DeleteDeckBtn deck={deck} onDelete={onDelete} />}
+                                <button className="btn btn-primary btn-sm" onClick={() => onSave(selected)}>Save Deck</button>
+                                <button className="btn btn-secondary btn-sm" onClick={onCancel}>Reset Deck</button>
+                            </div>
+
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-3">
                             {selected.map(poke => (
