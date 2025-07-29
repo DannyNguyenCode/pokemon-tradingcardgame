@@ -13,7 +13,7 @@ const DeckSelect = ({ onDeckSelect, selectDeck, deckCardResponse }: { onDeckSele
                     aria-label="All"
                     checked={!selectDeck}
                 />
-                {deckCardResponse.data.map(deck => (
+                {deckCardResponse.data.length > 0 && deckCardResponse.data.map(deck => (
                     <input
                         key={deck.id}
                         onChange={() => onDeckSelect(deck.id)}

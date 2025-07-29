@@ -1,8 +1,13 @@
 import React from 'react'
 import DeckComponent from '@/ui/components/DeckComponent'
-
-
+import { auth } from 'auth'
+import { redirect } from 'next/navigation'
 const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
+    const session = await auth()
+
+    if (!session || !session.user) {
+        redirect('/login') // Or to a custom login page
+    }
     const params = await searchParams
     const pageNumber = Math.max(1, Number(params.page ?? '1'));
     const count_per_page = '151'

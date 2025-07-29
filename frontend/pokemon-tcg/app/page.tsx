@@ -5,12 +5,12 @@ import { motion } from 'framer-motion'
 import ToastifyComponent from "./ui/components/ToastifyComponent";
 import { useEffect } from 'react';
 import { useAppDispatch } from './lib/hooks';
-import { loadToastifyState } from './lib/features/toastify/toastifySlice';
+import { clearToastifyState } from './lib/features/toastify/toastifySlice';
 export default function Home() {
   const router = useRouter()
   const dispatch = useAppDispatch()
   useEffect(() => {
-    dispatch(loadToastifyState(''))
+    dispatch(clearToastifyState())
   }, [dispatch])
 
   return (

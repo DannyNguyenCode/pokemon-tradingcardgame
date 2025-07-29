@@ -41,7 +41,11 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     const fetchDecks = useCallback(async () => {
         try {
-
+            const token = session?.accessToken
+            if (!token) {
+                console.warn("No access token available.")
+                return
+            }
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
                 method: 'GET',
                 headers: {
@@ -160,15 +164,23 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     return (
         <>
-            {status === 'loading' || deckCardResponse.data.length === 0 ? (
+            {status === 'loading' ? (
                 <DeckComponentSkeleton />
+            ) : deckCardResponse.data.length === 0 ? (
+                <div className="text-center mt-12 space-y-4">
+                    <h2 className="text-2xl font-semibold">You don’t have any decks yet!</h2>
+                    <p className="text-gray-600 dark:text-gray-300">
+                        Create a deck to start building your Pokémon team.
+                    </p>
+                    <CreateDeckModal onCreate={onCreate} />
+                </div>
             ) : (
                 <>
-                    <div className='flex flex-row gap-2'>
+                    <div className="flex flex-row gap-2">
                         <DeckSelect selectDeck={selectDeck} onDeckSelect={onDeckSelect} deckCardResponse={deckCardResponse} />
                         <CreateDeckModal onCreate={onCreate} />
                     </div>
-                    {/* Transfer List Skeleton while switching decks */}
+
                     {isLoading ? (
                         <TransferListSkeleton />
                     ) : (
@@ -186,6 +198,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                     )}
                 </>
             )}
+
         </>
     )
 }

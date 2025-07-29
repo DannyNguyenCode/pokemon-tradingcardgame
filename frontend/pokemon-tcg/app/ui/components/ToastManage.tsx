@@ -16,5 +16,5 @@ export default function ToastManager() {
         }
     }, [message, dispatch]);
 
-    return <ToastContainer position="top-right" theme={theme} newestOnTop />;
+    return <ToastContainer style={{ marginTop: '49px' }} position="top-right" theme={theme} newestOnTop />;
 }

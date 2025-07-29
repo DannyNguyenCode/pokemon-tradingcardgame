@@ -267,8 +267,6 @@ def list_decks(page: int, user_id: uuid.UUID, count_per_page):
                 decks, total_count = crud.list_decks(db=db, page=page, user_id=user_id)
                 logger.info(f"DEBUG user_id {user_id}, {type(user_id)}")
                 logger.info(f"total_count {total_count}")
-                if not decks or total_count < 1:
-                    return {"error": "No Decks could be retreived"}, 401
             except Exception:
                 return {"error":"logic error"}
             try:

@@ -2,7 +2,7 @@ import React from 'react'
 
 const Footer = () => {
     return (
-        <footer className="footer sm:footer-horizontal bg-neutral text-neutral-content items-center p-2">
+        <footer className="footer sm:footer-horizontal items-center p-2">
             <aside className="grid-flow-col items-center">
                 <svg
                     width="25"
