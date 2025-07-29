@@ -2,7 +2,6 @@ import React from 'react'
 import DeckComponent from '@/ui/components/DeckComponent'
 import { auth } from 'auth'
 import { redirect } from 'next/navigation'
-import DeckBuilderPage from '@/ui/components/DeckBuilderPage'
 const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
     const session = await auth()
 
