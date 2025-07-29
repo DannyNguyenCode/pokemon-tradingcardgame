@@ -115,6 +115,7 @@ export default function PlayPage() {
                     userId: session?.user?.id,
                     deck: selectedDeck,
                 })
+                console.log("board", board)
             })
         }
     }
@@ -185,7 +186,7 @@ export default function PlayPage() {
                 )}
                 {selectedDeck && !connected && (
                     <div className="mt-6 flex flex-col items-center">
-                        <h3 className="text-lg font-semibold">Ready to battle with "{selectedDeck.name}"?</h3>
+                        <h3 className="text-lg font-semibold">Ready to battle with &quot;{selectedDeck.name}&quot;?</h3>
                         <div className='flex flex-row gap-4'>
                             <button className="btn btn-success mt-2" onClick={joinGame}>
                                 🎮 Start Match
@@ -200,11 +201,11 @@ export default function PlayPage() {
                 {connected && playerHand.length > 0 && (
                     <div className="mt-8 w-full flex flex-col gap-4 items-center">
                         <h2 className="text-xl font-semibold">
-                            {turn === 'me' ? '🟢 Your Turn' : '🕓 Opponent’s Turn'}
+                            {turn === 'me' ? '🟢 Your Turn' : '🕓 Opponent Turn'}
                         </h2>
 
                         <div className="flex flex-col items-center gap-2">
-                            <p>Opponent's Hand</p>
+                            <p>Opponent&apos;s Hand</p>
                             <div className="flex gap-2">
                                 {Array.from({ length: opponentHandSize }).map((_, idx) => (
                                     <div key={idx} className="card w-16 h-24 bg-neutral text-neutral-content flex items-center justify-center">
