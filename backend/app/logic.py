@@ -267,6 +267,15 @@ def list_decks(page: int, user_id: uuid.UUID, count_per_page):
                 decks, total_count = crud.list_decks(db=db, page=page, user_id=user_id)
                 logger.info(f"DEBUG user_id {user_id}, {type(user_id)}")
                 logger.info(f"total_count {total_count}")
+                logger.info(f"decks {decks}")
+                if not decks:
+                    logger.info("if check")
+                    return services.generate_response(message="Deck List retrieved (empty)",
+                    status=200,
+                    data=[],
+                    pagination=services.generate_pagination(
+                        page, total_count, count_per_page)), 200  # ✅ Always return array
+
             except Exception:
                 return {"error":"logic error"}
             try:

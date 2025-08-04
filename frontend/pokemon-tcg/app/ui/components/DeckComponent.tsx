@@ -48,6 +48,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                     'Authorization': `Bearer ${session?.accessToken}`
                 }
             })
+            console.log("Response inside fetch decks", response)
             if (!response.ok) throw new Error("Failed to fetch decks")
             const res = await response.json()
             console.log("Decks Fetched in function", res)
@@ -159,7 +160,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     return (
         <>
-            {status === 'loading' || deckCardResponse.data.length === 0 ? (
+            {status === 'loading' ? (
                 <DeckComponentSkeleton />
             ) : (
                 <>
@@ -170,7 +171,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
                     {/* 🧠 Deck List */}
                     {deckCardResponse.data.length === 0 ? (
-                        <div className="text-center text-lg mt-10">
+                        <div className="text-center text-lg my-10">
                             <p>No decks yet. Start building your Pokémon dream team!</p>
                         </div>
                     ) : (

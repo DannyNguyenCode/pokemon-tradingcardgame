@@ -61,6 +61,8 @@ export type Cards = {
     card: Pokemon;
     card_id: string;
     deck_id: string;
+    currentHp?: number;
+    status?: string | 'ko' | null;
 };
 export type Deck = {
     cards: Cards[];

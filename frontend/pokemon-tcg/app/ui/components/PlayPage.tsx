@@ -1,261 +1,290 @@
 'use client'
-
-import { useRef, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { io, Socket } from 'socket.io-client'
-import { Deck, Cards } from '@/lib/definitions'
+
 import { useSession } from 'next-auth/react'
-export default function PlayPage() {
-    const [decks, setDecks] = useState<Deck[]>([])
-    const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null)
+import { useDecks } from '@/lib/hooks/useDecks'
+import { Cards, Deck } from '@/lib/definitions'
+import { useGameSocket } from '@/lib/hooks/useGameSocket'
+import DeckSelector from './card-game/DeckSelector'
+import GameBoard from './card-game/GameBoard'
+import GameErrorBoundary from './card-game/GameErrorBoundary'
+import WinnerModal from './card-game/WinnerModal'
+
+function PlayPageContent() {
+
     const { data: session } = useSession()
-    const router = useRouter()
-    const socketRef = useRef<Socket | null>(null)
-    const [socketStatus, setSocketStatus] = useState('🔴 Not connected')
-    const [connected, setConnected] = useState(false)
-    const [playerHand, setPlayerHand] = useState<Cards[]>([])
-    const [opponentHandSize, setOpponentHandSize] = useState(0)
-    const [board, setBoard] = useState<{ player: Cards[]; opponent: Cards[] }>({
-        player: [],
-        opponent: [],
-    })
-    const [turn, setTurn] = useState<'me' | 'opponent' | null>(null)
+    const { decks, selectedDeck, isLoading, setSelectedDeck } = useDecks()
+    const {
+        connected,
+        waitingForOpponent,
+        playerHand,
+        opponentHandSize,
+        activePokemon,
+        opponentActive,
+        turn,
+        socketStatus,
+        joinGame,
+        playCard,
+        selectActiveCard,
+        endTurn,
+        leaveGame,
+        isAttackPhase,
+        hasAttacked,
+        attack,
+        lastAttack,
+        resolveKO,
+        koCue,
+        opponentOut,
+        iAmOut,
+        error,
+        clearError
+    } = useGameSocket()
+    const [showWinner, setShowWinner] = useState(false)
+    const [winner, setWinner] = useState<'me' | 'opponent' | null>(null)
+
+
     useEffect(() => {
-        const fetchDecks = async () => {
-            if (!session?.user?.id) return
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session?.accessToken}`
-                }
-            })
-            const json = await response.json()
-            setDecks(Array.isArray(json.data) ? json.data : []);
+        // Only react to opponent being KO'd
+        if (koCue?.side !== 'opponent') return
 
-        }
-        fetchDecks()
-    }, [session])
+        // Wait for faint animation + their chance to promote a new active
+        const t = setTimeout(() => {
+            if (!opponentActive) {
+                console.log('[WINCHECK] Opponent failed to promote a new active → YOU WIN')
+                setWinner('me')
+                setShowWinner(true)
+            }
+        }, 2200) // 0.28s animation + buffer
+
+        return () => clearTimeout(t)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [koCue?.nonce]) // fire once per KO event
+
     useEffect(() => {
-        if (!socketRef.current) return
-
-        socketRef.current.on('match_end', ({ matchId, message }) => {
-            console.log(`🛑 Match ${matchId} ended: ${message}`)
-            // Maybe route to history or show toast
-        })
-
-        return () => {
-            socketRef.current?.off('match_end')
+        if (opponentOut) {
+            setWinner('me')
+            setShowWinner(true)
         }
-    }, [])
+    }, [opponentOut])
 
-    const playCard = (card: Cards) => {
-        if (turn !== 'me') return
+    useEffect(() => {
+        if (iAmOut) {
+            setWinner('opponent')
+            setShowWinner(true)
+        }
+    }, [iAmOut])
 
-        socketRef.current?.emit('play_card', { cardId: card.card_id })
-
-        setPlayerHand((prev) => prev.filter(c => c.card_id !== card.card_id))
-        setBoard((prev) => ({
-            ...prev,
-            player: [...prev.player, card],
-        }))
-        setTurn('opponent')
-    }
-
-    const joinGame = () => {
+    useEffect(() => {
         if (!connected) {
-            const socket = io('http://localhost:3001')
-            socketRef.current = socket
-
-            // Setup listeners ONCE
-            socket.on('match_ready', (data) => {
-                setOpponentHandSize(data.opponentHandSize)
-                setPlayerHand(data.yourHand)
-                setBoard({ player: [], opponent: [] })
-                setTurn(data.firstTurn === 'you' ? 'me' : 'opponent')
-            })
-
-
-            socket.on('card_played', ({ card }) => {
-                setBoard((prev) => ({
-                    ...prev,
-                    opponent: [...prev.opponent, card],
-                }))
-                setTurn('me')
-            })
-            socket.on('opponent_draw_card', () => {
-                setOpponentHandSize((prev) => prev + 1)
-            })
-            socket.on('opponent_card_played', (card) => {
-                setOpponentHandSize((prev) => Math.max(0, prev - 1))
-                setBoard((prev) => ({
-                    ...prev,
-                    opponent: [...prev.opponent, card],
-                }))
-            })
-
-            socket.on('match_event', (data) => {
-                console.log('🎮 Server event:', data)
-            })
-
-            socket.on('disconnect', () => {
-                setConnected(false)
-                setSocketStatus('🔴 Disconnected from server')
-            })
-
-            socket.on('connect_error', () => {
-                setSocketStatus('⚠️ Connection error')
-            })
-
-            // Only emit after connection established
-            socket.on('connect', () => {
-                setConnected(true)
-                setSocketStatus('🟢 Connected to game server')
-                socket.emit('join_match', {
-                    userId: session?.user?.id,
-                    deck: selectedDeck,
-                })
-                console.log("board", board)
-            })
+            prevFlags.current = {
+                myAlive: true,
+                oppAlive: true,
+            }
         }
+    }, [connected])
+
+    // win/lose effect
+    // helper lives outside effects so it runs each render
+    const isAlive = (c: Cards | null | undefined) =>
+        !!c && ((c?.currentHp ?? c?.card?.hp ?? 0) > 0) && c?.status !== 'ko'
+
+    // Derived each render
+    const myAliveFromHand = playerHand.some(isAlive)
+    const myActiveAlive = isAlive(activePokemon)
+    const myAlive = myAliveFromHand || myActiveAlive
+
+    // Opponent: we only know active + hand size
+    const oppActiveAlive = isAlive(opponentActive)
+    const oppAlive = oppActiveAlive || opponentHandSize > 0
+
+
+    // Open modal only when we *enter* a terminal state
+    const prevFlags = React.useRef<{ myAlive: boolean; oppAlive: boolean } | null>(null)
+    useEffect(() => {
+        const prev = prevFlags.current
+        prevFlags.current = { myAlive, oppAlive }
+
+        // on first render, don't trigger
+        if (!prev) return
+
+        const justLost = prev.myAlive && !myAlive && oppAlive
+        const justWon = prev.oppAlive && !oppAlive && myAlive
+
+        if (justLost) {
+            console.log('[WINCHECK] -> YOU LOSE (transition detected)')
+            setWinner('opponent')
+            setShowWinner(true)
+        } else if (justWon) {
+            console.log('[WINCHECK] -> YOU WIN (transition detected)')
+            setWinner('me')
+            setShowWinner(true)
+        }
+    }, [myAlive, oppAlive])
+
+    const handleDeckSelect = (deck: Deck) => {
+        setSelectedDeck(deck)
     }
 
-
+    const handleJoinGame = () => {
+        console.log("hanle join game triggered", selectedDeck)
+        if (selectedDeck) {
+            joinGame(selectedDeck)
+        }
+    }
+    const handlePlayAgain = () => {
+        // Clear winner modal first
+        setShowWinner(false)
+        setWinner(null)
+        prevFlags.current = {
+            myAlive: true,
+            oppAlive: true,
+        }
+        // Delay leave + redirect so state resets before unmount
+        setTimeout(() => {
+            leaveGame()  // will reset useSocket state
+            window.location.href = '/play'
+        }, 100)
+    }
 
     return (
-        <section className="min-h-[calc(100vh-105px)] text-base-content  flex flex-col justify-center items-center p-8">
+        <section className="min-h-[calc(100vh-105px)] text-base-content flex flex-col justify-center items-center p-8">
             <div className="text-center max-w-3xl">
-                <motion.h1
-                    className="text-4xl dark:text-white md:text-6xl font-bold mb-4 drop-shadow-lg"
-                    initial={{ y: -50, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.8 }}
-                >
-                    It&apos;s Time to Duel!
-                </motion.h1>
+                <div className='flex flex-row gap-4'>
+                    {/* Connection Status */}
+                    <div className="absolute top-4 left-4 mt-16 text-sm opacity-80 px-3 py-1.5 rounded-md bg-base-200 dark:bg-base-300 shadow">
+                        WebSocket: {socketStatus}
+                    </div>
 
-                <motion.p
-                    className="text-lg md:text-xl mb-6 dark:text-white"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 1 }}
-                >
-                    Ready to test your deck? Connect to the battle server and face off against another trainer in real-time!
-                </motion.p>
-
-                <motion.div
-                    className="flex gap-4 justify-center mb-6"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.6, duration: 1 }}
-                >
-                </motion.div>
-                <div className="absolute top-4 left-4 mt-16 text-sm opacity-80 px-3 py-1 rounded-md bg-base-200 dark:bg-base-300 shadow">
-                    WebSocket: {socketStatus}
+                    {/* Leave Game Button */}
+                    {connected && (
+                        <button
+                            onClick={() => leaveGame()}
+                            className="absolute top-4 left-80 mt-16 z-50 btn btn-sm btn-error"
+                        >
+                            Leave Match
+                        </button>
+                    )}
                 </div>
+                {/* Welcome Screen */}
+                {!connected && (
+                    <>
+                        <motion.h1
+                            className="text-4xl dark:text-white md:text-6xl font-bold mb-4 drop-shadow-lg"
+                            initial={{ y: -50, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.8 }}
+                        >
+                            It&apos;s Time to Duel!
+                        </motion.h1>
 
-                {Array.isArray(decks) && (
-                    decks.length === 0 ? (
-                        <div className="mt-10 text-center space-y-6">
-                            <h2 className="text-3xl font-bold text-white drop-shadow-lg">
-                                🧩 No Decks Found
-                            </h2>
-                            <p className="text-lg text-white/80">
-                                Looks like you haven’t built a deck yet. Head to your collection and start building your ultimate Pokémon team!
-                            </p>
-                            <button
-                                onClick={() => router.push('/collection')}
-                                className="btn btn-accent btn-lg hover:scale-105 transition-transform shadow-md"
-                            >
-                                ➕ Build Your First Deck
-                            </button>
-                        </div>
-                    ) : (
-                        !selectedDeck && !connected && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                                {decks.map((deck) => (
-                                    <div
-                                        key={deck.id}
-                                        className="card bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0] shadow-xl hover:scale-105 transition-transform"
-                                    >
-                                        <div className="card-body items-center text-center">
-                                            <h2 className="card-title text-xl font-bold uppercase tracking-wider">{deck.name}</h2>
-                                            <p className="text-sm opacity-90">{deck.cards.length} cards in this deck</p>
-                                            <div className="card-actions mt-4">
-                                                <button
-                                                    onClick={() => setSelectedDeck(deck)}
-                                                    className="btn btn-outline border-white text-white hover:bg-white hover:text-black"
-                                                >
-                                                    🔥 Choose
-                                                </button>
-                                                <button
-                                                    onClick={() => router.push(`/collection`)}
-                                                    className="btn btn-ghost text-sm text-white hover:text-yellow-200"
-                                                >
-                                                    ✏️ Edit
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )
-                    )
+                        <motion.p
+                            className="text-lg md:text-xl mb-6 dark:text-white"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.4, duration: 1 }}
+                        >
+                            Ready to test your deck? Connect to the battle server and face off against another trainer in real-time!
+                        </motion.p>
+                    </>
                 )}
 
+                {/* Deck Selection */}
+                {!selectedDeck && !connected && (
+                    <DeckSelector
+                        decks={decks}
+                        onDeckSelect={handleDeckSelect}
+                        isLoading={isLoading}
+                    />
+                )}
 
+                {/* Selected Deck Confirmation */}
                 {selectedDeck && !connected && (
                     <div className="mt-6 flex flex-col items-center">
-                        <h3 className="text-lg font-semibold">Ready to battle with &quot;{selectedDeck.name}&quot;?</h3>
+                        <h3 className="text-lg font-semibold">
+                            Ready to battle with &quot;{selectedDeck.name}&quot;?
+                        </h3>
                         <div className='flex flex-row gap-4'>
-                            <button className="btn btn-success mt-2" onClick={joinGame}>
+                            <button
+                                className="btn btn-success mt-2"
+                                onClick={handleJoinGame}
+                            >
                                 🎮 Start Match
                             </button>
-                            <button className="btn btn-outline mt-2" onClick={() => setSelectedDeck(null)}>
+                            <button
+                                className="btn btn-outline mt-2"
+                                onClick={() => setSelectedDeck(null)}
+                            >
                                 🔄 Choose Another Deck
                             </button>
                         </div>
                     </div>
                 )}
+                {error && (
+                    <div className="text-black-500 text-lg p-2">
+                        <h3 className="text-lg font-semibold">
+                            {error}
+                        </h3>
 
-                {connected && playerHand.length > 0 && (
-                    <div className="mt-8 w-full flex flex-col gap-4 items-center">
-                        <h2 className="text-xl font-semibold">
-                            {turn === 'me' ? '🟢 Your Turn' : '🕓 Opponent Turn'}
-                        </h2>
-
-                        <div className="flex flex-col items-center gap-2">
-                            <p>Opponent&apos;s Hand</p>
-                            <div className="flex gap-2">
-                                {Array.from({ length: opponentHandSize }).map((_, idx) => (
-                                    <div key={idx} className="card w-16 h-24 bg-neutral text-neutral-content flex items-center justify-center">
-                                        🎴
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="divider">VS</div>
-
-                        {/* Player hand */}
-                        <div className="flex flex-col items-center gap-2">
-                            <p>Your Hand</p>
-                            <div className="flex gap-2">
-                                {playerHand.map((card, idx) => (
-                                    <button
-                                        key={idx}
-                                        className="card w-24 h-36 bg-base-200 text-xs hover:scale-105 transition"
-                                        onClick={() => playCard(card)}
-                                    >
-                                        {card.card.name}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
+                        <button
+                            className="btn btn-outline mt-2"
+                            onClick={() => { setSelectedDeck(null); clearError(); leaveGame() }}
+                        >
+                            🔄 Choose Another Deck
+                        </button>
                     </div>
                 )}
+
+                {/* Waiting for Opponent */}
+                {connected && waitingForOpponent && (
+                    <div className="mt-10 text-center space-y-4">
+                        <h2 className="text-2xl font-semibold text-white">
+                            ⏳ Waiting for opponent...
+                        </h2>
+                        <p className="text-white/70">
+                            Sit tight! We&apos;ll start the duel once another trainer joins.
+                        </p>
+                    </div>
+                )}
+
+                {/* Game Board */}
+                {connected && playerHand.length > 0 && (
+                    <GameBoard
+                        playerHand={playerHand}
+                        opponentHandSize={opponentHandSize}
+                        activePokemon={activePokemon}
+                        opponentActive={opponentActive}
+                        turn={turn}
+                        onPlayCard={playCard}
+                        onSelectActiveCard={selectActiveCard}
+                        onEndTurn={endTurn}
+                        isAttackPhase={isAttackPhase}
+                        hasAttacked={hasAttacked}
+                        attack={attack}
+                        lastAttack={lastAttack}
+                        resolveKO={resolveKO}
+                        koCue={koCue}
+                    />
+                )}
             </div>
+            <WinnerModal
+                show={showWinner}
+                winner={winner ?? 'me'}
+                winningPokemon={winner === 'me' ? activePokemon : opponentActive}
+                onPlayAgain={() => {
+
+                    handlePlayAgain()
+                }}
+            />
+
         </section>
+    )
+}
+
+export default function PlayPage() {
+    return (
+        <GameErrorBoundary>
+            <PlayPageContent />
+        </GameErrorBoundary>
     )
 }

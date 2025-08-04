@@ -19,10 +19,14 @@ policy = PasswordPolicy.from_names(
 
 
 def generate_response(message="", status=200, data=None, pagination=None):
+    if data is None:
+        data = {}
+    elif isinstance(data, list) and len(data) == 0:
+        data = []
     return {
         "status": status,
         "message": message,
-        "data": data or {},
+        "data": data,
         "pagination": pagination or {},
     }
 

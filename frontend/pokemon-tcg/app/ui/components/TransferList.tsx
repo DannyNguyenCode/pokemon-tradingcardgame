@@ -13,7 +13,7 @@ const TransferList = ({
     setSelected,
     onSave,
     onCancel,
-    maxCards = 20,
+    maxCards = 5,
     deck,
     onDelete
 }: {
