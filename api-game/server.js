@@ -8,15 +8,21 @@ import { randomUUID } from 'crypto'
 dotenv.config()
 
 const app = express()
-app.use(cors())
+app.use(cors({
+    origin: "https://pokemon-tradingcardgame.vercel.app", // Match exactly
+    credentials: true
+}))
+
 
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: process.env.FRONTEND_URL || '*',
+        origin: "https://pokemon-tradingcardgame.vercel.app", // Exact frontend domain
         methods: ['GET', 'POST'],
+        credentials: true,
     },
 })
+
 
 // Game constants
 const INITIAL_HAND_SIZE = 5
