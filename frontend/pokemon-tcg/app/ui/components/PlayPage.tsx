@@ -1,8 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-
-import { useSession } from 'next-auth/react'
 import { useDecks } from '@/lib/hooks/useDecks'
 import { Cards, Deck } from '@/lib/definitions'
 import { useGameSocket } from '@/lib/hooks/useGameSocket'
@@ -13,7 +11,6 @@ import WinnerModal from './card-game/WinnerModal'
 
 function PlayPageContent() {
 
-    const { data: session } = useSession()
     const { decks, selectedDeck, isLoading, setSelectedDeck } = useDecks()
     const {
         connected,

@@ -312,7 +312,7 @@ export function useGameSocket(): UseGameSocketReturn {
                 error: error instanceof Error ? error.message : 'Failed to join game'
             }))
         }
-    }, [session?.user?.id, resetGame])
+    }, [session?.user?.id, resetGame, gameState.connected])
 
     const playCard = useCallback((card: Cards) => {
         if (gameState.turn !== TURN_STATES.ME) return
