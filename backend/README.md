@@ -11,8 +11,9 @@ API for pokemon trading card game, written in Python
     1. install requirements - pip install -r requirements.txt (pip freeze > requirements.txt)
         - Run project
     2. Build and run via Docker
-        - ```bash
-        - docker compose up --build
+        ```bash
+        docker compose up --build
+        ```
     3. If not working, might be missing .env file
 3. Running Pytest
     - Make sure in root directory
