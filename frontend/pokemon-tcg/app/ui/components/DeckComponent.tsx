@@ -195,6 +195,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         setAvailable(allPokemonList)
         setSelected([])
         setSelectDeck(null)
+        void fetchDecks()
     }
 
     return (

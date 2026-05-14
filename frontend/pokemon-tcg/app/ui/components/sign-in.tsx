@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Email from "./Email"
 import LoginBtn from "./LoginBtn"
-import SigninGoogleAuth from "./SigninGoogleAuth"
+// import SigninGoogleAuth from "./SigninGoogleAuth"
 import Link from "next/link"
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -112,12 +112,12 @@ export const SignIn = () => {
                         </Link>
                     </p>
                 </div>
-                <div className="divider">OR</div>
+                {/* <div className="divider">OR</div> */}
 
             </form>
-            <div className="flex justify-center">
+            {/* <div className="flex justify-center">
                 <SigninGoogleAuth />
-            </div>
+            </div> */}
         </>
     )
 }

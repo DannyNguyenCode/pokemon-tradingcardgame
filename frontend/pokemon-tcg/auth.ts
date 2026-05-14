@@ -1,7 +1,7 @@
 import NextAuth, { type NextAuthConfig } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { signInSchema } from "@/lib/zod"
-import Google from "next-auth/providers/google"
+// import Google from "next-auth/providers/google"
 import { SignJWT } from 'jose'
 // Check for required environment variables with better error handling
 const requiredEnvVars = {
@@ -77,21 +77,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 }
             },
         }),
-        Google({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            profile: (profile) => {
-                return {
-                    id: profile.id,
-                    email: profile.email,
-                    name: profile.name || profile.email.split('@')[0],
-                    image: profile.picture || null,
-                    message: "Logged in with Google"
-                }
-            }
+        // Google login temporarily disabled
+        // Google({
+        //     clientId: process.env.GOOGLE_CLIENT_ID,
+        //     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        //     profile: (profile) => {
+        //         return {
+        //             id: profile.id,
+        //             email: profile.email,
+        //             name: profile.name || profile.email.split('@')[0],
+        //             image: profile.picture || null,
+        //             message: "Logged in with Google"
+        //         }
+        //     }
 
-        },
-        ),
+        // },
+        // ),
     ],
     session: {
         strategy: "jwt",
@@ -105,7 +106,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     callbacks: {
         jwt: async ({ token, user, account }) => {
-            if (account?.provider === 'google' || account?.provider === 'credentials') {
+            if (account?.provider === 'credentials') {
                 token.accessToken = await new SignJWT({
                     sub: token.sub,
                     role: user.role as string
@@ -134,19 +135,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return session
         },
-        async signIn({ user, profile, account }) {
-            if (account?.provider === 'google' && profile) {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/authentications/google-sync`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ id: profile.sub, email: profile.email, name: user.name, picture: profile.picture, email_verified: profile.email_verified, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
-                })
-                const data = await res.json()
-                user.message = data.message
-                user.role = data.data.role
-            }
+        async signIn() {
+            // if (account?.provider === 'google' && profile) {
+            //     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/authentications/google-sync`, {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/json",
+            //         },
+            //         body: JSON.stringify({ id: profile.sub, email: profile.email, name: user.name, picture: profile.picture, email_verified: profile.email_verified, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }),
+            //     })
+            //     const data = await res.json()
+            //     user.message = data.message
+            //     user.role = data.data.role
+            // }
             return true // Allow sign-in
         }
     },
