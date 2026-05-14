@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/material-symbols-outlined";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ToastManager from "./ui/components/ToastManage";
@@ -19,12 +20,6 @@ export default async function RootLayout({
 }>) {
   return (
     <html data-theme="light" lang="en">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
-        />
-      </head>
       <body >
         <Providers>
           <StoreProvider>

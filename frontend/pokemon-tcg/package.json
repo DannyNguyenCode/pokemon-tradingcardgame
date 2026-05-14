@@ -12,6 +12,7 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
+    "@fontsource-variable/material-symbols-outlined": "^5.2.44",
     "@reduxjs/toolkit": "^2.8.2",
     "canvas-confetti": "^1.9.3",
     "daisyui": "^5.0.43",

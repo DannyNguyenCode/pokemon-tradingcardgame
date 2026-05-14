@@ -1,5 +1,5 @@
 // frontend/pokemon-tcg/jest.config.ts
-import nextJest from 'next/jest'
+import nextJest from 'next/jest.js'
 
 const createJestConfig = nextJest({
     dir: './',
