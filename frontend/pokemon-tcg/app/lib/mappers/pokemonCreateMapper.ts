@@ -1,5 +1,6 @@
-import { RawPokemon } from '../definitions'
-export function mapPokemonToCardBase(pokemon: RawPokemon) {
+import type { Pokemon } from '../definitions'
+
+export function mapPokemonToCardBase(pokemon: Pokemon) {
     return {
         name: pokemon.name,
         rarity: pokemon.rarity,

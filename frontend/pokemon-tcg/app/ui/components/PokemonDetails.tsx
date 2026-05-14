@@ -2,6 +2,7 @@
 import React from 'react'
 import { Pokemon } from '@/lib/definitions'
 import typeMap from '@/lib/data/typeMap.json';
+import { normalizePokemonType, typeIconUrl } from '@/lib/pokemon'
 import Image from 'next/image';
 type TypeMeta = (typeof typeMap)[keyof typeof typeMap];
 
@@ -114,15 +115,19 @@ const PokemonDetails = ({ pokemon }: { pokemon: Pokemon }) => {
                                 <span>Weakness</span>
                                 <span className="flex gap-1">
                                     <div className="grid grid-cols-3 gap-1">
-                                        {pokemon.weakness?.map((s, i) => {
-
-                                            return (
-                                                <Image loading='lazy' className='object-over' key={i} src={pokemonTypeIconUrl(s)} alt="" width={50} height={20} style={{ borderRadius: '50%', width: '50px', height: '20px' }} />
-                                            )
-
-
-                                        }
-                                        )}
+                                        {pokemon.weakness?.map((s, i) => (
+                                            <Image
+                                                loading="lazy"
+                                                className="object-cover"
+                                                key={i}
+                                                src={typeIconUrl(s)}
+                                                alt={normalizePokemonType(s)}
+                                                width={20}
+                                                height={20}
+                                                style={{ borderRadius: '50%', width: '20px', height: '20px' }}
+                                                title={s}
+                                            />
+                                        ))}
                                     </div>
                                 </span>
                             </div>
@@ -130,13 +135,19 @@ const PokemonDetails = ({ pokemon }: { pokemon: Pokemon }) => {
                                 <span>Resistance </span>
                                 <span className="flex gap-1">
                                     <div className="grid grid-cols-3 gap-1">
-                                        {pokemon.resistance?.map((s, i) => {
-
-                                            return (
-                                                <Image loading='lazy' className='object-over' key={i} src={pokemonTypeIconUrl(s)} alt="" width={50} height={20} style={{ borderRadius: '50%', width: '50px', height: '20px' }} />
-                                            )
-                                        }
-                                        )}
+                                        {pokemon.resistance?.map((s, i) => (
+                                            <Image
+                                                loading="lazy"
+                                                className="object-cover"
+                                                key={i}
+                                                src={typeIconUrl(s)}
+                                                alt={normalizePokemonType(s)}
+                                                width={20}
+                                                height={20}
+                                                style={{ borderRadius: '50%', width: '20px', height: '20px' }}
+                                                title={s}
+                                            />
+                                        ))}
                                     </div>
                                 </span>
                             </div>

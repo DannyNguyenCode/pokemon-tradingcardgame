@@ -42,23 +42,6 @@ function PlayPageContent() {
 
 
     useEffect(() => {
-        // Only react to opponent being KO'd
-        if (koCue?.side !== 'opponent') return
-
-        // Wait for faint animation + their chance to promote a new active
-        const t = setTimeout(() => {
-            if (!opponentActive) {
-                console.log('[WINCHECK] Opponent failed to promote a new active → YOU WIN')
-                setWinner('me')
-                setShowWinner(true)
-            }
-        }, 2200) // 0.28s animation + buffer
-
-        return () => clearTimeout(t)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [koCue?.nonce]) // fire once per KO event
-
-    useEffect(() => {
         if (opponentOut) {
             setWinner('me')
             setShowWinner(true)
@@ -127,6 +110,11 @@ function PlayPageContent() {
         console.log("hanle join game triggered", selectedDeck)
         if (selectedDeck) {
             joinGame(selectedDeck)
+        }
+    }
+    const handleBattleComputer = () => {
+        if (selectedDeck) {
+            joinGame(selectedDeck, { battleComputer: true })
         }
     }
     const handlePlayAgain = () => {
@@ -207,6 +195,12 @@ function PlayPageContent() {
                                 onClick={handleJoinGame}
                             >
                                 🎮 Start Match
+                            </button>
+                            <button
+                                className="btn btn-primary mt-2"
+                                onClick={handleBattleComputer}
+                            >
+                                🤖 Battle Computer
                             </button>
                             <button
                                 className="btn btn-outline mt-2"

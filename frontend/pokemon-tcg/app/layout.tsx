@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StoreProvider from "./StoreProvider";
 import ToastManager from "./ui/components/ToastManage";
-import { cookies } from 'next/headers'
 import NavBar from './ui/components/NavBar'
 import ThemeProvider from "./ui/theme/ThemeProvider";
 import Providers from "./providers";
@@ -18,19 +17,22 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theme = (await cookies()).get('theme')?.value ?? 'light'
-
-
   return (
-    <html data-theme={theme} lang="en">
+    <html data-theme="light" lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap"
+        />
+      </head>
       <body >
         <Providers>
           <StoreProvider>
-            <ThemeProvider initialTheme={theme}>
+            <ThemeProvider>
               <div className="min-h-screen flex flex-col ">
                 <NavBar />
                 <ToastManager />
-                <div className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0]">
+                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto bg-gradient-to-r from-[#A8A77A] via-[#EE8130] to-[#6390F0]">
                   {children}
                 </div>
                 <Footer />

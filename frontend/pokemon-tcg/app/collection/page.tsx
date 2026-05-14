@@ -1,7 +1,15 @@
 import React from 'react'
+import { Lexend } from 'next/font/google'
+import { normalizeTypeFilterParam } from '@/lib/pokemon'
+import { mapApiCardsToPokemon } from '@/lib/mappers/apiCardMapper'
 import DeckComponent from '@/ui/components/DeckComponent'
 import { auth } from 'auth'
 import { redirect } from 'next/navigation'
+
+const lexend = Lexend({
+    subsets: ['latin'],
+    display: 'swap',
+})
 const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?: string, type_filter?: string, pokemon_name?: string, count_per_page?: string }> }) => {
     const session = await auth()
 
@@ -19,7 +27,7 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
     queryParams.append('count_per_page', count_per_page);
 
     if (params.type_filter) {
-        queryParams.append('type_filter', params.type_filter);
+        queryParams.append('type_filter', normalizeTypeFilterParam(params.type_filter))
     }
 
     if (params.pokemon_name) {
@@ -40,13 +48,11 @@ const CollectionPage = async ({ searchParams }: { searchParams: Promise<{ page?:
 
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-start md:justify-between min-h-0 pt-4 m-4">
-
-            <DeckComponent allPokemonList={data.data} />
-            {/* <DeckBuilderPage allPokemonList={data.data} /> */}
-
+        <div
+            className={`${lexend.className} hq-collection flex min-h-0 w-full max-w-none flex-1 flex-col bg-hq-background px-0 pt-0 pb-0 text-hq-on-background antialiased md:justify-between`}
+        >
+            <DeckComponent allPokemonList={mapApiCardsToPokemon(data?.data)} />
         </div>
-
     )
 }
 

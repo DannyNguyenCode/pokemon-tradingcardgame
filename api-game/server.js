@@ -7,17 +7,43 @@ import { randomUUID } from 'crypto'
 
 dotenv.config()
 
+const DEFAULT_ALLOWED_ORIGINS = [
+    'https://pokemon-tradingcardgame.vercel.app',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:3001',
+    'http://127.0.0.1:3001',
+]
+
+function getAllowedOrigins() {
+    const raw = process.env.ALLOWED_ORIGINS
+    if (raw && raw.trim()) {
+        return raw.split(',').map((s) => s.trim()).filter(Boolean)
+    }
+    return DEFAULT_ALLOWED_ORIGINS
+}
+
+const allowedOrigins = getAllowedOrigins()
+
+function allowCorsOrigin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true)
+        return
+    }
+    console.warn(`[cors] blocked origin: ${origin}`)
+    callback(new Error(`Not allowed by CORS: ${origin}`))
+}
+
 const app = express()
 app.use(cors({
-    origin: "https://pokemon-tradingcardgame.vercel.app", // Match exactly
-    credentials: true
+    origin: allowCorsOrigin,
+    credentials: true,
 }))
-
 
 const server = http.createServer(app)
 const io = new Server(server, {
     cors: {
-        origin: "https://pokemon-tradingcardgame.vercel.app", // Exact frontend domain
+        origin: allowCorsOrigin,
         methods: ['GET', 'POST'],
         credentials: true,
     },
@@ -27,11 +53,124 @@ const io = new Server(server, {
 // Game constants
 const INITIAL_HAND_SIZE = 5
 const MAX_PLAYERS_PER_MATCH = 2
+const COMPUTER_USER_ID = 'Battle Computer'
 
 // In-memory store with better structure
 const matches = new Map() // matchId -> Match
 const socketToMatch = new Map() // socket.id -> matchId
 const socketToUser = new Map()  // socket.id -> userId
+
+function createBattleComputerCard(name, type, hp, damage, collectorNumber) {
+    const normalizedName = name.toLowerCase()
+    return {
+        card_id: `computer-${normalizedName}`,
+        deck_id: 'computer-deck',
+        card: {
+            id: `computer-${normalizedName}`,
+            created_at: new Date().toISOString(),
+            name,
+            rarity: 'common',
+            type,
+            hp,
+            set_code: 'base',
+            collector_number: collectorNumber,
+            description: `${name} controlled by the Battle Computer.`,
+            attacks: [
+                {
+                    name: 'Computer Strike',
+                    damage,
+                    cost: '1'
+                }
+            ],
+            weakness: [],
+            resistance: [],
+            retreat_cost: 1,
+            image_url: ''
+        }
+    }
+}
+
+function buildBattleComputerDeck() {
+    return {
+        id: 'battle-computer-deck',
+        name: COMPUTER_USER_ID,
+        created_at: new Date().toISOString(),
+        cards: [
+            createBattleComputerCard('charmander', 'fire', 39, 12, 4),
+            createBattleComputerCard('bulbasaur', 'grass', 45, 10, 1),
+            createBattleComputerCard('squirtle', 'water', 44, 11, 7),
+            createBattleComputerCard('pikachu', 'electric', 35, 14, 25),
+            createBattleComputerCard('eevee', 'normal', 55, 9, 133),
+        ]
+    }
+}
+
+function ensureComputerActiveCard(match, computerUserId) {
+    if (!match.computerState) return null
+    const existingActive = match.getActiveCard(computerUserId)
+    const stillAlive = existingActive && (existingActive.currentHp ?? existingActive.card?.hp ?? 0) > 0 && existingActive.status !== 'ko'
+    if (stillAlive) {
+        return existingActive
+    }
+    const nextActive = match.computerState.hand.find(card => (card.currentHp ?? card.card?.hp ?? 0) > 0 && card.status !== 'ko')
+    if (!nextActive) {
+        return null
+    }
+    match.computerState.hand = match.computerState.hand.filter(card => card.card_id !== nextActive.card_id)
+    const cardWithHp = {
+        ...nextActive,
+        currentHp: nextActive.currentHp ?? nextActive.card?.hp ?? 0,
+        status: null
+    }
+    match.setActiveCard(computerUserId, cardWithHp)
+    return cardWithHp
+}
+
+function runComputerTurn({ match, humanPlayer, computerPlayer, humanSocket }) {
+    const computerUserId = computerPlayer.userId
+    const humanUserId = humanPlayer.userId
+    const computerActive = ensureComputerActiveCard(match, computerUserId)
+    const humanActive = match.getActiveCard(humanUserId)
+    const humanAlive = humanActive && (humanActive.currentHp ?? humanActive.card?.hp ?? 0) > 0 && humanActive.status !== 'ko'
+
+    io.to(humanSocket).emit('active_card_chosen', {
+        activeCards: {
+            [humanUserId]: humanActive ?? null,
+            [computerUserId]: computerActive ?? null
+        }
+    })
+
+    if (computerActive && humanAlive) {
+        const updatedHuman = {
+            ...humanActive,
+            currentHp: humanActive.currentHp ?? humanActive.card?.hp ?? 0
+        }
+        const updatedComputer = {
+            ...computerActive,
+            currentHp: computerActive.currentHp ?? computerActive.card?.hp ?? 0
+        }
+        const damage = updatedComputer.card?.attacks?.[0]?.damage || 0
+        updatedHuman.currentHp = Math.max(0, updatedHuman.currentHp - damage)
+
+        match.setActiveCard(humanUserId, updatedHuman)
+        match.setActiveCard(computerUserId, updatedComputer)
+
+        io.to(humanSocket).emit('attack', {
+            player1Card: JSON.parse(JSON.stringify(updatedHuman)),
+            player2Card: JSON.parse(JSON.stringify(updatedComputer)),
+            attackerUserId: computerUserId,
+            damage,
+        })
+    }
+
+    io.to(humanSocket).emit('turn_changed', {
+        nextTurn: 'you',
+        endedBy: computerUserId,
+        nextTurnPlayer: humanUserId,
+        message: `${COMPUTER_USER_ID} ended turn. Your move.`,
+        phase: `${match.activeCards.size === 2 ? 'attack' : 'select'}`
+    })
+}
 
 // Types
 class Match {
@@ -112,10 +251,12 @@ function handlePlayerDisconnect(socketId) {
             const remainingPlayers = match.players.length
             if (remainingPlayers === 1) {
                 const opponent = match.players[0]
-                io.to(opponent.socketId).emit('match_end', {
-                    matchId,
-                    message: `🏆 You win! Your opponent (${userId}) left the match.`,
-                })
+                if (opponent.socketId) {
+                    io.to(opponent.socketId).emit('match_end', {
+                        matchId,
+                        message: `🏆 You win! Your opponent (${userId}) left the match.`,
+                    })
+                }
             } else if (remainingPlayers === 0) {
                 cleanupMatch(matchId)
             }
@@ -131,7 +272,7 @@ function handlePlayerDisconnect(socketId) {
 io.on('connection', (socket) => {
     console.log(`🔌 Client connected: ${socket.id}`)
 
-    socket.on('join_match', ({ userId, deck }) => {
+    socket.on('join_match', ({ userId, deck, battleComputer = false }) => {
         console.log('Server received join_match:', { userId, deck })
 
         try {
@@ -143,12 +284,64 @@ io.on('connection', (socket) => {
 
             validateDeck(deck)
 
-            if (!deck || deck.length < 5) {
+            if (!deck || !deck.cards || deck.cards.length < 5) {
                 socket.emit('match_error', { message: 'Deck must contain at least 5 Pokémon to start a match.' })
                 return
             }
 
             socketToUser.set(socket.id, userId)
+
+            if (battleComputer) {
+                const matchId = randomUUID()
+                const player1 = { userId, socketId: socket.id, deck }
+                const computerDeck = buildBattleComputerDeck()
+                const computerPlayer = { userId: COMPUTER_USER_ID, socketId: null, deck: computerDeck, isComputer: true }
+                const match = new Match(matchId, player1)
+                match.addPlayer(computerPlayer)
+
+                const player1Hand = getInitialHand(player1.deck)
+                const computerHand = getInitialHand(computerDeck)
+                const computerActive = {
+                    ...computerHand[0],
+                    currentHp: computerHand[0]?.currentHp ?? computerHand[0]?.card?.hp ?? 0,
+                    status: null
+                }
+                match.computerState = {
+                    hand: computerHand.slice(1),
+                }
+                match.setActiveCard(COMPUTER_USER_ID, computerActive)
+
+                matches.set(matchId, match)
+                socketToMatch.set(socket.id, matchId)
+                socket.join(matchId)
+
+                io.to(player1.socketId).emit('match_ready', {
+                    matchId,
+                    players: [player1.userId, COMPUTER_USER_ID],
+                    yourHand: player1Hand,
+                    opponentHandSize: computerHand.length,
+                    firstTurn: 'you',
+                    board: {
+                        player: player1Hand.map(card => ({
+                            ...card,
+                            currentHp: card.hp,
+                            status: null
+                        })),
+                        opponent: computerHand.map(card => ({
+                            card_id: card.card_id,
+                            currentHp: card.hp
+                        }))
+                    }
+                })
+
+                io.to(player1.socketId).emit('active_card_chosen', {
+                    activeCards: {
+                        [player1.userId]: match.getActiveCard(player1.userId) ?? null,
+                        [COMPUTER_USER_ID]: computerActive
+                    }
+                })
+                return
+            }
 
             // Look for an available match with 1 player
             const waitingMatch = Array.from(matches.values()).find(m =>
@@ -388,12 +581,14 @@ io.on('connection', (socket) => {
             damage,
         })
 
-        io.to(defender.socketId).emit('attack', {
-            player1Card: updatedDefender,   // their view
-            player2Card: updatedAttacker,
-            attackerUserId: attacker.userId,
-            damage,
-        })
+        if (defender.socketId) {
+            io.to(defender.socketId).emit('attack', {
+                player1Card: updatedDefender,   // their view
+                player2Card: updatedAttacker,
+                attackerUserId: attacker.userId,
+                damage,
+            })
+        }
     })
 
     socket.on('no_battlers', () => {
@@ -406,8 +601,12 @@ io.on('connection', (socket) => {
         if (!loser || !winner) return
 
         // Notify both sides deterministically
-        io.to(winner.socketId).emit('opponent_no_battlers', { winner: winner.userId, loser: loser.userId })
-        io.to(loser.socketId).emit('you_have_no_battlers', { winner: winner.userId, loser: loser.userId })
+        if (winner.socketId) {
+            io.to(winner.socketId).emit('opponent_no_battlers', { winner: winner.userId, loser: loser.userId })
+        }
+        if (loser.socketId) {
+            io.to(loser.socketId).emit('you_have_no_battlers', { winner: winner.userId, loser: loser.userId })
+        }
 
         // (Optional) also end the match room-side if you want:
         // io.to(matchId).emit('match_end', { matchId, message: `${loser.userId} has no battlers left` })
@@ -446,15 +645,33 @@ io.on('connection', (socket) => {
             console.log(`   Next player: ${nextTurnPlayer}`)
             console.log(`   Match ID: ${matchId}`)
             console.log(`   activeCards length: ${Object.keys(match.activeCards).length}`)
-            // Notify both players about turn change
-            io.to(matchId).emit('turn_changed', {
-                nextTurn: 'opponent',
-                endedBy: currentUserId,
-                nextTurnPlayer: nextTurnPlayer,
-                message: `${currentUserId} ended their turn, ${nextTurnPlayer} is next`,
-                phase: `${match.activeCards.size === 2 ? 'attack' : 'select'}`
+            if (opponent.isComputer) {
+                io.to(socket.id).emit('turn_changed', {
+                    nextTurn: 'opponent',
+                    endedBy: currentUserId,
+                    nextTurnPlayer: nextTurnPlayer,
+                    message: `${currentUserId} ended their turn, ${nextTurnPlayer} is thinking...`,
+                    phase: `${match.activeCards.size === 2 ? 'attack' : 'select'}`
+                })
 
-            })
+                setTimeout(() => {
+                    runComputerTurn({
+                        match,
+                        humanPlayer: player,
+                        computerPlayer: opponent,
+                        humanSocket: socket.id
+                    })
+                }, 700)
+            } else {
+                // Notify both players about turn change
+                io.to(matchId).emit('turn_changed', {
+                    nextTurn: 'opponent',
+                    endedBy: currentUserId,
+                    nextTurnPlayer: nextTurnPlayer,
+                    message: `${currentUserId} ended their turn, ${nextTurnPlayer} is next`,
+                    phase: `${match.activeCards.size === 2 ? 'attack' : 'select'}`
+                })
+            }
         } catch (error) {
             console.error('❌ Error ending turn:', error.message)
             socket.emit('error', { message: error.message })

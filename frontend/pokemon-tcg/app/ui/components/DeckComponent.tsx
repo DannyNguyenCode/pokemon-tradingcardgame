@@ -9,6 +9,7 @@ import TransferListSkeleton from './TransferListSkeleton'
 import DeckComponentSkeleton from './DeckComponentSkeleton'
 import CreateDeckModal from './CreateDeckModal'
 import { DeckCardsResponse } from '@/lib/definitions'
+import { mapApiDeckCardRowToCards } from '@/lib/mappers/apiCardMapper'
 
 const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
     const dispatch = useAppDispatch()
@@ -32,7 +33,7 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
             has_next: false,
             has_prev: false,
             total_count: 0,
-            pageSize: 0
+            page_size: 0
         },
         status: 0
     });
@@ -40,36 +41,71 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
 
     const fetchDecks = useCallback(async () => {
         try {
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${session?.accessToken}`
+            const qs = new URLSearchParams({ page: '1', count_per_page: '100' })
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BASE_API_URL}/api/decks/?${qs.toString()}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${session?.accessToken}`,
+                    },
                 }
-            })
-            console.log("Response inside fetch decks", response)
-            if (!response.ok) throw new Error("Failed to fetch decks")
+            )
+            console.log('Response inside fetch decks', response)
             const res = await response.json()
-            console.log("Decks Fetched in function", res)
-            setDeckCardResponse(res)
-
-        } catch (error) {
-            console.error("Deck fetch error:", error)
-        }
-    }, [session])
-    useEffect(() => {
-        const loadData = async () => {
-            if (status === 'authenticated') {
-                console.log("useEffect triggers per interactions/visit")
-                setIsLoading(true);
-                setAvailable(allPokemonList)
-                await fetchDecks();
-                setIsLoading(false);
+            if (!response.ok) {
+                const msg =
+                    (typeof res?.message === 'string' && res.message) ||
+                    (typeof res?.error === 'string' && res.error) ||
+                    `Could not load teams (${response.status})`
+                throw new Error(msg)
             }
-        };
-        loadData();
-    }, [status, allPokemonList, fetchDecks]);
+            console.log('Decks Fetched in function', res)
+            setDeckCardResponse({
+                data: Array.isArray(res?.data) ? res.data : [],
+                message: typeof res?.message === 'string' ? res.message : '',
+                pagination:
+                    res?.pagination && typeof res.pagination === 'object'
+                        ? res.pagination
+                        : {
+                              page: 0,
+                              total_pages: 0,
+                              has_next: false,
+                              has_prev: false,
+                              total_count: 0,
+                              page_size: 0,
+                          },
+                status: typeof res?.status === 'number' ? res.status : 0,
+            })
+        } catch (error) {
+            console.error('Deck fetch error:', error)
+            dispatch(
+                loadToastifyState(
+                    error instanceof Error ? error.message : 'Could not load teams. Check that you are signed in.'
+                )
+            )
+        }
+    }, [session, dispatch])
+
+    // Deck list: refresh when auth is ready (not when catalog filters change).
+    useEffect(() => {
+        if (status !== 'authenticated') return
+        let cancelled = false
+        setIsLoading(true)
+        void (async () => {
+            await fetchDecks()
+            if (!cancelled) setIsLoading(false)
+        })()
+        return () => {
+            cancelled = true
+        }
+    }, [status, fetchDecks])
+
+    // Catalog pool: server `allPokemonList` reflects URL filters — always omit Pokémon currently in the team editor.
+    useEffect(() => {
+        setAvailable(allPokemonList.filter(p => !selected.some(s => s.id === p.id)))
+    }, [allPokemonList, selected])
 
 
 
@@ -98,7 +134,9 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                 console.log("selectedDeck", selectedDeck)
                 if (selectedDeck) {
                     setSelectDeck(selectedDeck.data)
-                    const pokemons = selectedDeck.data.cards
+                    const pokemons = Array.isArray(selectedDeck.data.cards)
+                        ? selectedDeck.data.cards.map(mapApiDeckCardRowToCards)
+                        : []
                     console.log("pokemons", pokemons)
                     setAvailable(
                         Array.isArray(allPokemonList)
@@ -106,9 +144,9 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                             : []
                     );
                     console.log("allPokemonList", allPokemonList.filter(p => !pokemons.some((d: Cards) => d.card_id === p.id)))
-                    setDeckPokemon(pokemons.map((p: Cards) => { return p.card }))
-                    setSelected(pokemons.map((p: Cards) => { return p.card }))
-                    console.log("pokemons.map((p: Cards) => { return p.card })", pokemons.map((p: Cards) => { return p.card }))
+                    setDeckPokemon(pokemons.map((p: Cards) => p.card))
+                    setSelected(pokemons.map((p: Cards) => p.card))
+                    console.log("pokemons mapped cards", pokemons.map((p: Cards) => p.card))
                     console.log("selectedDeck.data.id", selectedDeck.data.id)
                 }
                 setIsLoading(false)
@@ -133,10 +171,11 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
         }).then((res) => {
             if (!res.ok) throw new Error(`API ${res.status} ${`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/deck-cards/${selectDeck?.id}/replace`}`);
             return res.json()
-        }).then((data) => {
+        }).then(async (data) => {
             console.log('update deck success:', data);
             dispatch(loadToastifyState(data.message))
-            fetchDecks()
+            await fetchDecks()
+            await onDeckSelect('')
             return data
         }).catch((error) => {
             console.error('Error updating decks decks:', error);
@@ -164,50 +203,23 @@ const DeckComponent = ({ allPokemonList }: { allPokemonList: Pokemon[] }) => {
                 <DeckComponentSkeleton />
             ) : (
                 <>
-                    <div className="flex max-w-5xl w-full justify-between items-center pb-4">
-                        <h1 className="text-2xl font-bold">🎴 Deck Builder</h1>
-                        <CreateDeckModal onCreate={onCreate} />
-                    </div>
-
-                    {/* 🧠 Deck List */}
-                    {deckCardResponse.data.length === 0 ? (
-                        <div className="text-center text-lg my-10">
-                            <p>No decks yet. Start building your Pokémon dream team!</p>
-                        </div>
-                    ) : (
-                        <div className="flex gap-4 flex-wrap mb-4">
-                            {deckCardResponse.data.map(deck => (
-                                <div
-                                    key={deck.id}
-                                    className={`card w-64 bg-base-200 shadow-xl ${selectDeck?.id === deck.id ? 'border-2 border-accent' : ''}`}
-                                >
-                                    <div className="card-body">
-                                        <h2 className="card-title">{deck.name}</h2>
-                                        <p>{deck.cards.length} cards</p>
-                                        <div className="card-actions justify-end">
-                                            <button onClick={() => onDeckSelect(deck.id)} className="btn btn-outline btn-sm">
-                                                Select
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {/* Transfer List Skeleton while switching decks */}
                     {isLoading ? (
                         <TransferListSkeleton />
                     ) : (
                         <TransferList
-                            key={selectDeck?.id}
+                            key={selectDeck?.id ?? 'none'}
                             available={available}
                             selected={selected}
                             setAvailable={setAvailable}
                             setSelected={setSelected}
-                            deck={selectDeck}
+                            deck={selectDeck?.id ? selectDeck : null}
                             onSave={onSave}
                             onCancel={onCancel}
                             onDelete={onDelete}
+                            decks={deckCardResponse.data}
+                            activeDeckId={selectDeck?.id && selectDeck.id !== '' ? selectDeck.id : null}
+                            onDeckSelect={onDeckSelect}
+                            createDeckSlot={<CreateDeckModal onCreate={onCreate} />}
                         />
                     )}
                 </>

@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
 import { Pagination as PaginationType } from '@/lib/definitions';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const Pagination = ({
     pagination,
@@ -9,14 +9,15 @@ const Pagination = ({
     pagination: PaginationType;
 }) => {
     const router = useRouter()
+    const pathname = usePathname()
     const params = useSearchParams()
     const currentPage = Number(params.get('page')) || 1
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > pagination.total_pages) return
-        const currentParams = new URLSearchParams(params)
+        const currentParams = new URLSearchParams(params.toString())
         currentParams.set('page', page.toString())
-        router.push(`?${currentParams.toString()}`)
+        router.push(`${pathname}?${currentParams.toString()}`)
     }
 
     return (
@@ -25,6 +26,7 @@ const Pagination = ({
             {currentPage > 1 && (
 
                 <button
+                    type="button"
                     className="join-item btn"
                     onClick={() => handlePageChange(1)}
                 >
@@ -34,6 +36,7 @@ const Pagination = ({
             {currentPage > 1 && (
 
                 <button
+                    type="button"
                     className="join-item btn"
                     onClick={() => handlePageChange(currentPage - 1)}
                 >
@@ -42,13 +45,14 @@ const Pagination = ({
             )}
 
             {/* Current page in the middle */}
-            <button className="join-item btn" disabled>
+            <button type="button" className="join-item btn" disabled>
                 {currentPage}
             </button>
 
             {/* Next button - only show if not on last page */}
             {currentPage < pagination.total_pages && (
                 <button
+                    type="button"
                     className="join-item btn"
                     onClick={() => handlePageChange(currentPage + 1)}
                 >
@@ -57,6 +61,7 @@ const Pagination = ({
             )}
             {currentPage < pagination.total_pages && (
                 <button
+                    type="button"
                     className="join-item btn"
                     onClick={() => handlePageChange(pagination.total_pages)}
                 >

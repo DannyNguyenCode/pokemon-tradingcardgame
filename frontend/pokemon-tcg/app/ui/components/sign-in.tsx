@@ -4,14 +4,11 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Email from "./Email"
 import LoginBtn from "./LoginBtn"
-import { useAppDispatch } from "../../lib/hooks"
-import { loadToastifyState } from "../../lib/features/toastify/toastifySlice"
 import SigninGoogleAuth from "./SigninGoogleAuth"
 import Link from "next/link"
 export const SignIn = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState("")
-    const dispatch = useAppDispatch()
     const { data: session } = useSession()
     const router = useRouter()
     const [password, setPassword] = useState("")
@@ -23,16 +20,13 @@ export const SignIn = () => {
         setPassword(value)
 
     }
-    // Show toast when session is available (after successful login)
+    // Redirect when session is available (welcome toast is handled by ToastifyComponent on `/`)
+    const loginMessage = session?.user?.message
     useEffect(() => {
-        if (session?.user?.message) {
-            dispatch(loadToastifyState(session.user.message))
-
-            // Redirect to dashboard or home page immediately
-            router.push("/")
-            router.refresh()
-        }
-    }, [session, dispatch, router])
+        if (!loginMessage) return
+        router.push("/")
+        router.refresh()
+    }, [loginMessage, router])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()

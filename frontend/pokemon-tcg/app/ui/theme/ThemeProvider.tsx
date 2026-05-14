@@ -1,40 +1,23 @@
 'use client'
-import React, { createContext, useContext, useState, useEffect } from 'react';
-interface Ctx { theme: string; toggle: () => void; }
 
-const ThemeCtx = createContext<Ctx | null>(null);
-export const useTheme = () => useContext(ThemeCtx)!;
+import React, { createContext, useContext, useEffect } from 'react'
 
-// component
-const ThemeProvider = ({
-    initialTheme,
-    children,
-}: {
-    initialTheme: string;
-    children: React.ReactNode;
-}) => {
-    // state
-    const [theme, setTheme] = useState<string>(initialTheme);
-    // set document theme
+const THEME = 'light' as const
+
+interface Ctx {
+    theme: typeof THEME
+}
+
+const ThemeCtx = createContext<Ctx>({ theme: THEME })
+
+export const useTheme = () => useContext(ThemeCtx)
+
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
-        document.documentElement.dataset.theme = theme;
-    }, [theme]);
-    const toggle = async () => {
-        const next: string = theme === 'light' ? 'dark' : 'light';
-        setTheme(next);
+        document.documentElement.dataset.theme = THEME
+    }, [])
 
-
-        fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/api/authentications/set-theme`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ theme: next }),
-            credentials: 'include'
-        }).catch(() => { });
-
-    }
-    return (
-        <ThemeCtx.Provider value={{ theme, toggle }}>{children}</ThemeCtx.Provider>
-    )
+    return <ThemeCtx.Provider value={{ theme: THEME }}>{children}</ThemeCtx.Provider>
 }
 
 export default ThemeProvider

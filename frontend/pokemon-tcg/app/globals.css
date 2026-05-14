@@ -2,6 +2,20 @@
 
 @plugin "daisyui";
 
+@import "./lib/theme/pokedexHq.theme.css";
+
+/* Holo trading card (Lovable-style shimmer + lift shadow) */
+:root {
+  --shadow-card:
+    0 14px 44px -12px rgb(0 0 0 / 0.35),
+    0 6px 18px rgb(0 0 0 / 0.12);
+  --gradient-holo: linear-gradient(115deg,
+      transparent 38%,
+      rgb(255 255 255 / 0.75) 45%,
+      rgb(255 255 255 / 0.3) 50%,
+      transparent 58%);
+}
+
 /* :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -53,4 +67,48 @@ input:-webkit-autofill:active {
 
 .rotate-y-180 {
   transform: rotateY(180deg);
+}
+
+/* Deck builder — Pokedex HQ light canvas (aligned with home / hq-* tokens) */
+.deck-binder-texture {
+  background-color: var(--color-hq-surface-container-low, #f6f3f2);
+  background-image: radial-gradient(circle at 2px 2px, rgba(26, 26, 26, 0.06) 1px, transparent 0);
+  background-size: 24px 24px;
+  position: relative;
+}
+
+.deck-binder-texture::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 203, 5, 0.08) 0%,
+    rgba(255, 255, 255, 0.5) 45%,
+    rgba(239, 83, 80, 0.04) 100%
+  );
+  pointer-events: none;
+}
+
+.deck-sleeve-overlay {
+  background: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0.65) 0%,
+    rgba(255, 255, 255, 0.08) 35%,
+    rgba(0, 0, 0, 0) 50%,
+    rgba(0, 0, 0, 0.04) 85%
+  );
+  border: 1px solid rgba(128, 118, 95, 0.12);
+  backdrop-filter: blur(2px);
+}
+
+.deck-holo-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.deck-holo-lift:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 0 22px rgba(255, 203, 5, 0.35),
+    0 12px 28px rgba(0, 0, 0, 0.1);
 }
