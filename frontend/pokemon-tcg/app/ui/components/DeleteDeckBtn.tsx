@@ -14,13 +14,13 @@ const DeleteDeckBtn = ({ deck, onDelete }: { deck?: Deck | null, onDelete: () =>
     return (
         <>
             <button disabled={deck?.name ? false : true} className="btn btn-error btn-sm" onClick={() => setIsModalOpen(true)}>
-                Delete Deck
+                Delete team
             </button>
             {isModalOpen && (
                 <dialog id="delete_modal" className="modal modal-open" onClick={() => setIsModalOpen(false)}>
                     <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                        <h3 className="font-bold text-lg">Delete <span className='text-error font-semibold underline'>{deck?.name}</span> Deck</h3>
-                        <p className="py-4">Are you sure you want to permanently delete your <span className='text-error font-semibold underline'>{deck?.name}</span> deck?</p>
+                        <h3 className="font-bold text-lg">Delete team <span className='text-error font-semibold underline'>{deck?.name}</span></h3>
+                        <p className="py-4">Are you sure you want to permanently delete the team <span className='text-error font-semibold underline'>{deck?.name}</span>?</p>
                         <div className="modal-action">
                             <form method="dialog" className="flex gap-2">
                                 <button className="btn" onClick={() => setIsModalOpen(false)}>
@@ -42,7 +42,7 @@ const DeleteDeckBtn = ({ deck, onDelete }: { deck?: Deck | null, onDelete: () =>
                                             setIsModalOpen(false)
                                             onDelete()
                                             router.refresh()
-                                            dispatch(loadToastifyState('Deck has been deleted'))
+                                            dispatch(loadToastifyState('Team has been deleted'))
                                         } catch (err) {
                                             console.error('Delete failed', err)
                                         }

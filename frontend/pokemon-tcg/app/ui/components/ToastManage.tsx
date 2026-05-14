@@ -11,9 +11,11 @@ export default function ToastManager() {
     const message = useAppSelector((s) => s.toastify.message);
     const { theme } = useTheme();
     useEffect(() => {
-        if (message) {
-            toast(message, { onClose: () => dispatch(clearToastifyState()) });
-        }
+        if (!message) return;
+        toast(message, {
+            toastId: `app-${message}`,
+            onClose: () => dispatch(clearToastifyState()),
+        });
     }, [message, dispatch]);
 
     return <ToastContainer style={{ marginTop: '49px' }} position="top-right" theme={theme} newestOnTop />;

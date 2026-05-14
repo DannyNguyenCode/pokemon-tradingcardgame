@@ -1,24 +1,33 @@
 'use client'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAppDispatch } from '@/lib/hooks'
-import { loadToastifyState, clearToastifyState } from '@/lib/features/toastify/toastifySlice'
+import { loadToastifyState } from '@/lib/features/toastify/toastifySlice'
 import { useSession } from 'next-auth/react'
+
+/** Dedupe session welcome toasts across navigations/remounts (module survives component remount). */
+let lastSessionWelcomeKey: string | null = null
+
 const ToastifyComponent = () => {
     const dispatch = useAppDispatch()
-    const { data: session } = useSession()
-    useEffect(() => {
-        if (session?.user?.message) {
-            dispatch(loadToastifyState(session.user.message))
-        }
-        return () => {
-            // Clear the toastify state when the component unmounts or session changes
-            dispatch(clearToastifyState())
-        }
-    }, [session, dispatch])
+    const { data: session, status } = useSession()
+    const welcomeMessage = session?.user?.message
+    const userKey = session?.user?.id ?? session?.user?.email ?? ''
 
-    return (
-        <></>
-    )
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            lastSessionWelcomeKey = null
+            return
+        }
+        if (status !== 'authenticated' || !welcomeMessage || !userKey) return
+
+        const dedupeKey = `${userKey}:${welcomeMessage}`
+        if (lastSessionWelcomeKey === dedupeKey) return
+
+        lastSessionWelcomeKey = dedupeKey
+        dispatch(loadToastifyState(welcomeMessage))
+    }, [status, welcomeMessage, userKey, dispatch])
+
+    return null
 }
 
 export default ToastifyComponent

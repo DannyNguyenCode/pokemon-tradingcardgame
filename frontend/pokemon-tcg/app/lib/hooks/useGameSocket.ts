@@ -2,7 +2,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import { io, Socket } from 'socket.io-client'
 import { useSession } from 'next-auth/react'
 import { Cards, Deck } from '@/lib/definitions'
-import { GAME_CONSTANTS, SOCKET_EVENTS, CONNECTION_STATUS, TURN_STATES } from '@/lib/constants/game'
+import { getGameSocketUrl, SOCKET_EVENTS, CONNECTION_STATUS, TURN_STATES } from '@/lib/constants/game'
 
 interface PlayingCards extends Cards {
     currentHp: number,
@@ -29,7 +29,7 @@ interface GameState {
 }
 
 interface UseGameSocketReturn extends GameState {
-    joinGame: (deck: Deck) => void
+    joinGame: (deck: Deck, options?: { battleComputer?: boolean }) => void
     playCard: (card: Cards) => void
     selectActiveCard: (card: Cards) => void
     endTurn: () => void
@@ -107,12 +107,13 @@ export function useGameSocket(): UseGameSocketReturn {
     }, [resetGame]);
 
 
-    const joinGame = useCallback((deck: Deck) => {
+    const joinGame = useCallback((deck: Deck, options?: { battleComputer?: boolean }) => {
         if (gameState.connected) return
 
 
         try {
-            const socket = io(GAME_CONSTANTS.SOCKET_URL)
+            const socketUrl = getGameSocketUrl()
+            const socket = io(socketUrl)
             socketRef.current = socket
 
             // Setup event listeners
@@ -127,6 +128,7 @@ export function useGameSocket(): UseGameSocketReturn {
                 socket.emit(SOCKET_EVENTS.JOIN_MATCH, {
                     userId: session?.user?.id,
                     deck,
+                    battleComputer: options?.battleComputer ?? false,
                 })
             })
             socket.on('match_error', (err) => {
@@ -291,11 +293,12 @@ export function useGameSocket(): UseGameSocketReturn {
                 resetGame()
             })
 
-            socket.on('connect_error', () => {
+            socket.on('connect_error', (err) => {
+                console.error('[socket] connect_error', socketUrl, err)
                 setGameState(prev => ({
                     ...prev,
                     socketStatus: CONNECTION_STATUS.CONNECTION_ERROR,
-                    error: 'Failed to connect to game server'
+                    error: `Failed to connect to game server (${socketUrl})`,
                 }))
             })
 
@@ -392,7 +395,9 @@ export function useGameSocket(): UseGameSocketReturn {
                 return {
                     ...prev,
                     opponentActive: null,
-                    opponentHandSize: prev.opponentHandSize + 1,
+                    // Bench size unchanged here; promotion/decrement happens when `active_card_chosen`
+                    // fires from the server. Do not +1 — that kept oppAlive true after the last KO.
+                    opponentHandSize: prev.opponentHandSize,
                     koCue: undefined,
                     damageCue: undefined,
                 }

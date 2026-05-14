@@ -1,9 +1,27 @@
+/**
+ * Socket URL for the Node game server (Render, Fly, local Docker, etc.).
+ *
+ * - `next dev`: defaults to `http://localhost:3001` so a Render URL in `.env`
+ *   does not send every click (including Battle Computer) to production.
+ * - To hit your hosted socket from local dev: set `NEXT_PUBLIC_SOCKET_FORCE_REMOTE=true`
+ *   (then `NEXT_PUBLIC_SOCKET_URL` is used), or set `NEXT_PUBLIC_SOCKET_URL_DEV` to any URL.
+ * - `next build` / production: uses `NEXT_PUBLIC_SOCKET_URL` when set, else localhost.
+ */
+export function getGameSocketUrl(): string {
+    const remoteUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'
+    if (process.env.NODE_ENV === 'development' && process.env.NEXT_PUBLIC_SOCKET_FORCE_REMOTE !== 'true') {
+        return process.env.NEXT_PUBLIC_SOCKET_URL_DEV || 'http://localhost:3001'
+    }
+    return remoteUrl
+}
+
 // Game Configuration
 export const GAME_CONSTANTS = {
     INITIAL_HAND_SIZE: 5,
     MAX_PLAYERS_PER_MATCH: 2,
-    SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001',
     API_BASE_URL: process.env.NEXT_PUBLIC_BASE_API_URL || 'http://localhost:8000',
+    /** Team builder (collection): max Pokémon per saved team (UI + save payload). */
+    TEAM_BUILDER_MAX_CARDS: 5,
 } as const
 
 // Socket Event Names

@@ -1,12 +1,8 @@
 'use client'
 import Image from "next/image"
 import { Pokemon } from "@/lib/definitions"
+import { normalizePokemonType, typeIconUrl } from '@/lib/pokemon'
 import { motion } from 'framer-motion'
-const TYPE_ICON_INDEX: Record<string, number> = {
-    normal: 1, fighting: 2, flying: 3, poison: 4, ground: 5, rock: 6,
-    bug: 7, ghost: 8, steel: 9, fire: 10, water: 11, grass: 12,
-    electric: 13, psychic: 14, ice: 15, dragon: 16, dark: 17, fairy: 18
-};
 const GlassCard = ({ pokemon }: { pokemon: Pokemon }) => {
     return (
         <motion.div
@@ -17,16 +13,22 @@ const GlassCard = ({ pokemon }: { pokemon: Pokemon }) => {
             <h2 className="text-xl text-white font-semibold text-center mt-2">{pokemon.name}</h2>
             <div className="flex justify-center gap-2 mt-1">
                 {pokemon.weakness.map((type, i) => (
-                    <motion.img
+                    <motion.div
                         key={i}
-                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-vi/x-y/${TYPE_ICON_INDEX[type.toLowerCase()]}.png`}
-                        alt={type}
-                        width={24}
-                        height={24}
                         initial={{ scale: 0.8 }}
                         animate={{ scale: 1 }}
                         whileHover={{ scale: 1.2 }}
-                    />
+                        className="relative h-6 w-6"
+                    >
+                        <Image
+                            src={typeIconUrl(type)}
+                            alt={normalizePokemonType(type)}
+                            fill
+                            className="rounded-full object-cover"
+                            sizes="24px"
+                            title={type}
+                        />
+                    </motion.div>
                 ))}
             </div>
         </motion.div>

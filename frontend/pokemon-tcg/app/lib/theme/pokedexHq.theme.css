@@ -1,0 +1,134 @@
+/**
+ * Pokedex HQ — reusable Tailwind v4 theme tokens and helpers.
+ * Utilities use the `hq-*` prefix so they do not clash with DaisyUI (`primary`, `secondary`, etc.).
+ * Imported from globals.css; use these classes on pages that adopt this theme (homepage only for now).
+ */
+
+@theme {
+  /* Semantic palette (Material-style naming, hq-prefixed) */
+  --color-hq-surface: #ffffff;
+  --color-hq-outline-variant: #d2c5ab;
+  --color-hq-surface-dim: #f3f0ef;
+  --color-hq-tertiary-container: #b8d3ff;
+  --color-hq-secondary: #ef5350;
+  --color-hq-error: #ba1a1a;
+  --color-hq-background: #ffffff;
+  --color-hq-secondary-container: #ffdad7;
+  --color-hq-surface-container-lowest: #ffffff;
+  --color-hq-inverse-surface: #313030;
+  --color-hq-on-primary-fixed: #241a00;
+  --color-hq-on-tertiary: #ffffff;
+  --color-hq-on-secondary-fixed: #410004;
+  --color-hq-surface-container-low: #f6f3f2;
+  --color-hq-inverse-primary: #f2c000;
+  --color-hq-primary: #ffcb05;
+  --color-hq-surface-variant: #f0eded;
+  --color-hq-error-container: #ffdad6;
+  --color-hq-surface-bright: #ffffff;
+  --color-hq-tertiary-fixed: #d4e3ff;
+  --color-hq-on-secondary-fixed-variant: #910816;
+  --color-hq-secondary-fixed-dim: #ffb3ae;
+  --color-hq-surface-container-highest: #e5e2e1;
+  --color-hq-tertiary: #155fa8;
+  --color-hq-surface-container-high: #eae7e7;
+  --color-hq-on-secondary-container: #410002;
+  --color-hq-on-tertiary-fixed-variant: #004784;
+  --color-hq-on-error: #ffffff;
+  --color-hq-on-tertiary-fixed: #001c3a;
+  --color-hq-on-surface: #1a1a1a;
+  --color-hq-surface-tint: #745b00;
+  --color-hq-surface-container: #f0eded;
+  --color-hq-inverse-on-surface: #f3f0ef;
+  --color-hq-secondary-fixed: #ffdad7;
+  --color-hq-primary-container: #ffcb05;
+  --color-hq-on-error-container: #93000a;
+  --color-hq-on-primary-container: #241a00;
+  --color-hq-on-secondary: #ffffff;
+  --color-hq-primary-fixed: #ffe08d;
+  --color-hq-on-tertiary-container: #0a5ba3;
+  --color-hq-primary-fixed-dim: #f2c000;
+  --color-hq-on-primary-fixed-variant: #584400;
+  --color-hq-outline: #80765f;
+  --color-hq-tertiary-fixed-dim: #a4c8ff;
+  --color-hq-on-background: #1a1a1a;
+  --color-hq-on-surface-variant: #4e4632;
+  --color-hq-on-primary: #1a1a1a;
+
+  /* Spacing scale from the reference design */
+  --spacing-hq-section-gap: 48px;
+  --spacing-hq-gutter: 16px;
+  --spacing-hq-stack-sm: 4px;
+  --spacing-hq-unit: 8px;
+  --spacing-hq-container-padding: 24px;
+  --spacing-hq-stack-md: 12px;
+
+  /* Radii */
+  --radius-hq-sm: 0.25rem;
+  --radius-hq-lg: 0.5rem;
+  --radius-hq-xl: 0.75rem;
+  --radius-hq-full: 9999px;
+}
+
+@layer components {
+  .hq-card-shadow {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .hq-glass-card-light {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings:
+      "FILL" 0,
+      "wght" 400,
+      "GRAD" 0,
+      "opsz" 24;
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hq-text-display-xl {
+    font-size: 48px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+  }
+
+  .hq-text-headline-lg {
+    font-size: 32px;
+    line-height: 1.2;
+    font-weight: 700;
+  }
+
+  .hq-text-label-caps {
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .hq-text-body-md {
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .hq-text-stat-value {
+    font-size: 24px;
+    line-height: 1;
+    font-weight: 600;
+  }
+}

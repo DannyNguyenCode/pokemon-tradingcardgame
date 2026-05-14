@@ -9,26 +9,28 @@ const CreateDeckModal = ({ onCreate }: { onCreate: () => void }) => {
     const router = useRouter()
     const [newDeckName, setNewDeckName] = useState('');
     const { data: session } = useSession()
+    const openModal = () => {
+        const modal = document.getElementById('create_deck_modal') as HTMLDialogElement
+        modal?.showModal()
+    }
+
     return (
         <div>
-            <input
-                type='radio'
-                name="deckSelect"
-                className="btn btn-info"
-                value='+ Create Deck'
-                aria-label='+ Create Deck'
-                onClick={() => {
-                    const modal = document.getElementById('create_deck_modal') as HTMLDialogElement;
-                    modal?.showModal();
-                }}
-            />
+            <button
+                type="button"
+                className="hq-text-label-caps inline-flex items-center justify-center rounded-hq-lg bg-hq-secondary px-4 py-2.5 text-hq-on-secondary shadow-md shadow-hq-secondary/25 transition-all hover:brightness-95 active:scale-95"
+                aria-label="Create team"
+                onClick={openModal}
+            >
+                Create team
+            </button>
             <dialog id="create_deck_modal" className="modal">
                 <div className="modal-box">
-                    <h3 className="font-bold text-lg">Create New Deck</h3>
-                    <p className="py-2">Give your deck a name:</p>
+                    <h3 className="font-bold text-lg">Create new team</h3>
+                    <p className="py-2">Give your team a name:</p>
                     <input
                         type="text"
-                        placeholder="Deck name"
+                        placeholder="Team name"
                         className="input input-bordered w-full"
                         value={newDeckName}
                         onChange={(e) => setNewDeckName(e.target.value)}
@@ -55,20 +57,20 @@ const CreateDeckModal = ({ onCreate }: { onCreate: () => void }) => {
                                         });
 
                                         const data = await res.json();
-                                        if (!res.ok) throw new Error(data?.error || 'Failed to create deck');
+                                        if (!res.ok) throw new Error(data?.error || 'Failed to create team');
 
-                                        dispatch(loadToastifyState(`Deck "${newDeckName.trim()}" has been created`));
+                                        dispatch(loadToastifyState(`Team "${newDeckName.trim()}" has been created`));
                                         setNewDeckName('');
                                         (document.getElementById('create_deck_modal') as HTMLDialogElement)?.close();
                                         onCreate();
                                         router.refresh()
                                     } catch (err) {
                                         console.error('Error creating deck:', err);
-                                        dispatch(loadToastifyState(`Failed to create deck`));
+                                        dispatch(loadToastifyState(`Failed to create team`));
                                     }
                                 }}
                             >
-                                Create Deck
+                                Create team
                             </button>
                         </form>
                     </div>

@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Pokemon } from '@/lib/definitions'
+import { normalizePokemonType, typeIconUrl } from '@/lib/pokemon'
 import TypeBadge from './TypeBadge'
 
 const colorTypes: Record<string, string> = {
@@ -59,9 +60,17 @@ const PopCard = ({
                         <div className="flex justify-between w-full text-xs p-2">
                             <div className="flex flex-col items-start">
                                 <span className="text-[12px] font-bold mb-1">Weak</span>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="flex flex-wrap gap-1">
                                     {pokemon.weakness.map((type, i) => (
-                                        <TypeBadge key={i} type={type} />
+                                        <Image
+                                            key={i}
+                                            src={typeIconUrl(type)}
+                                            alt={normalizePokemonType(type)}
+                                            width={22}
+                                            height={22}
+                                            className="rounded-full object-cover"
+                                            title={type}
+                                        />
                                     ))}
                                 </div>
                             </div>
@@ -70,9 +79,17 @@ const PopCard = ({
                         <div className="flex justify-between w-full text-xs mt-2 pl-2 pr-2 pb-2">
                             <div className="flex flex-col items-start">
                                 <span className="text-[12px] font-bold mb-1">Resist</span>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="flex flex-wrap gap-1">
                                     {pokemon.resistance.map((type, i) => (
-                                        <TypeBadge key={i} type={type} />
+                                        <Image
+                                            key={i}
+                                            src={typeIconUrl(type)}
+                                            alt={normalizePokemonType(type)}
+                                            width={22}
+                                            height={22}
+                                            className="rounded-full object-cover"
+                                            title={type}
+                                        />
                                     ))}
                                 </div>
                             </div>
