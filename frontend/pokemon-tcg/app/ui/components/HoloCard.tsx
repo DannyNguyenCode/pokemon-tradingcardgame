@@ -32,7 +32,7 @@ export function HoloCard({ pokemon, className = '', variant = 'default' }: HoloC
 
     return (
         <div
-            className={`relative flex h-full min-h-[22rem] w-full min-w-[14rem] max-w-[14rem] flex-col rounded-3xl p-1 ${className}`.trim()}
+            className={`relative flex h-full min-h-[22rem] w-full min-w-0 max-w-[14rem] flex-col rounded-3xl p-1 ${className}`.trim()}
             style={{
                 background: `linear-gradient(140deg, ${color}, oklch(0.95 0.05 80) 50%, ${color})`,
                 boxShadow: 'var(--shadow-card)',
