@@ -23,11 +23,11 @@ export default function CardList({ data, columns }: { data: Pokemon[], columns: 
         <>
             {data && data.length > 0 ? (
                 <div
-                    className={`grid w-full grid-cols-1 ${columnClass} items-stretch px-4`}
+                    className={`grid w-full ${columnClass} px-4`}
                 >
                     {data.map((pokemon) => (
-                        <div key={pokemon.id} className="flex min-h-0 min-w-0 h-full justify-center mx-auto w-full max-w-[14rem] flex-col items-stretch gap-2 py-2">
-                            <HoloCard pokemon={pokemon} className="min-h-0 flex-1" />
+                        <div key={pokemon.id} className="flex justify-center w-full gap-2 py-2">
+                            <HoloCard pokemon={pokemon} className="" />
                         </div>
 
                     ))}
